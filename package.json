@@ -40,6 +40,5 @@
     "plugins/*",
     "packages/*"
   ],
-  "module": "index.ts",
   "type": "module"
 }
