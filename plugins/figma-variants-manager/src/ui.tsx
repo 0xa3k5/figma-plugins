@@ -1,13 +1,13 @@
-// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
 import '!./output.css';
+import '@repo/ui/styles.css';
 import {
   Button,
   Stack,
   render,
   useWindowResize,
 } from '@create-figma-plugin/ui';
-import { Fragment, h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
+import { Fragment, h } from 'preact';
 import { emit, on } from '@create-figma-plugin/utilities';
 import {
   FindComponents,
@@ -19,16 +19,17 @@ import {
   ISearchSettings,
 } from './types';
 import IconButton from './components/button/IconButton';
+import HighlightedText from './components/highlighted-text/HighlightedText';
+import groupByParent from './utils';
 import {
+  TextInput,
+  ChoiceChip,
+  IconChip,
   IconCaseSensitive,
   IconComponent,
   IconTarget,
   IconWholeWord,
-} from './components/icons';
-import HighlightedText from './components/highlighted-text/HighlightedText';
-import groupByParent from './utils';
-import TextInput from './components/input';
-import { ChoiceChip, IconChip } from './components/chip';
+} from '@repo/ui';
 
 function Plugin() {
   const [searchKey, setSearchKey] = useState('');
@@ -114,10 +115,10 @@ function Plugin() {
 
   return (
     <Fragment>
-      <div className="sticky inset-0 z-10 flex w-full flex-col gap-4 border-b border-border bg-bg p-4">
+      <div className="border-border bg-bg sticky inset-0 z-10 flex w-full flex-col gap-4 border-b p-4">
         <Stack space="small">
           <div className="flex items-center gap-1">
-            <span className="mr-2 text-text-secondary">Search in</span>
+            <span className="text-text-secondary mr-2">Search in</span>
             {searchScopeOpts.map((opt) => (
               <ChoiceChip
                 key={opt}
@@ -232,7 +233,7 @@ function Plugin() {
                       <IconComponent />
                     </span>
                     <span className="flex flex-col items-start gap-1 py-1">
-                      <span className="text-xs text-text-component">
+                      <span className="text-text-component text-xs">
                         {components[0].parent?.name ?? components[0].name}
                       </span>
                       {searchKey.length > 0 &&

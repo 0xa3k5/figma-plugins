@@ -1,10 +1,1 @@
-{
-  "api": "1.0.0",
-  "editorType": [
-    "figma"
-  ],
-  "id": "1341787472715232173",
-  "name": "Variants Manager",
-  "main": "build/main.js",
-  "ui": "build/ui.js"
-}
+{"api":"1.0.0","editorType":["figma"],"id":"1341787472715232173","name":"Variants Manager","main":"build/main.js","ui":"build/ui.js"}

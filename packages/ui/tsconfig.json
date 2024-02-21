@@ -1,0 +1,4 @@
+{
+  "extends": "@repo/typescript-config/preact.json",
+  "include": ["components/**/*.ts", "components/**/*.tsx"]
+}

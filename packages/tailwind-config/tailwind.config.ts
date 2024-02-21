@@ -2,7 +2,6 @@ import type { Config } from 'tailwindcss';
 
 const config: Omit<Config, 'content'> = {
   darkMode: ['class', '.figma-dark'],
-  content: ['./src/**/*.{tsx,jsx}'],
   theme: {
     extend: {
       colors: {

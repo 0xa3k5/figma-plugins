@@ -18,14 +18,14 @@ export default function TextInput({
   children,
 }: PropsWithChildren<Props>): JSX.Element {
   return (
-    <div className="relative flex items-center gap-2 rounded-md border border-border px-2 focus-within:border-border-brand-strong">
+    <div className="border-border focus-within:border-border-brand-strong relative flex items-center gap-2 rounded-md border px-2">
       {icon && <span className="p-2">{icon}</span>}
       <input
         label={label}
         placeholder={placeholder}
         value={value}
         onInput={onInput}
-        className="h-8 w-full rounded-sm border bg-bg text-text placeholder:text-text-tertiary"
+        className="bg-bg text-text placeholder:text-text-tertiary h-8 w-full rounded-sm border"
       />
       {children}
     </div>
