@@ -1,5 +1,5 @@
-import groupByPage from './group-by-page';
-import groupByMain from './group-by-main';
 import compareWithLibrary from './compare-with-library';
+import groupByMain from './group-by-main';
+import groupByPage from './group-by-page';
 
-export { groupByPage, groupByMain, compareWithLibrary };
+export { compareWithLibrary, groupByMain, groupByPage };

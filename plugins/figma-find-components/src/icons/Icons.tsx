@@ -1,10 +1,10 @@
-import { h, JSX } from 'preact';
+import { h } from 'preact';
 
 interface Props {
   size?: number;
 }
 
-export function IconTrash({ size = 24 }: Props): JSX.Element {
+export function IconTrash({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +23,7 @@ export function IconTrash({ size = 24 }: Props): JSX.Element {
   );
 }
 
-export function IconLinkBreak({ size = 24 }: Props): JSX.Element {
+export function IconLinkBreak({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -40,7 +40,7 @@ export function IconLinkBreak({ size = 24 }: Props): JSX.Element {
   );
 }
 
-export function IconTarget({ size = 24 }: Props): JSX.Element {
+export function IconTarget({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +59,7 @@ export function IconTarget({ size = 24 }: Props): JSX.Element {
   );
 }
 
-export function IconComponent({ size = 24 }: Props): JSX.Element {
+export function IconComponent({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -76,7 +76,7 @@ export function IconComponent({ size = 24 }: Props): JSX.Element {
   );
 }
 
-export function IconInstance({ size = 24 }: Props): JSX.Element {
+export function IconInstance({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -94,7 +94,7 @@ export function IconInstance({ size = 24 }: Props): JSX.Element {
     </svg>
   );
 }
-export function IconRefresh({ size = 24 }: Props): JSX.Element {
+export function IconRefresh({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

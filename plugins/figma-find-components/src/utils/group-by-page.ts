@@ -9,12 +9,14 @@ export default function groupByPage(
     const groupedByPageName = components[mainCompName].reduce(
       (acc, componentInstance) => {
         const pageName = componentInstance.page.name;
+
         acc[pageName] = acc[pageName] || [];
         acc[pageName].push(componentInstance);
         return acc;
       },
       {} as Record<string, ILocalInstance[]>
     );
+
     grouped[mainCompName] = groupedByPageName;
   });
 

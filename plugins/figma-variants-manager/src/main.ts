@@ -1,4 +1,6 @@
 import { emit, on, showUI } from '@create-figma-plugin/utilities';
+import SceneNode from '@figma/plugin-typings';
+
 import {
   ComponentTargetHandler,
   FindComponents,
@@ -35,6 +37,7 @@ const findMatchingComponents = (
 ) => {
   const matchingComps: IComponent[] = [];
   let nodes;
+
   switch (searchSettings.searchScope) {
     case 'Page':
       nodes = searchPage();
@@ -71,6 +74,7 @@ const findMatchingComponents = (
             name: node.parent.name,
           },
         };
+
         matchingComps.push(component);
       }
     }
@@ -91,6 +95,7 @@ const handleReplace = (
 
       if (key.includes(searchKey)) {
         const newKey = key.replace(new RegExp(searchKey, 'gi'), replacement);
+
         return `${newKey}=${value}`;
       }
 
@@ -98,6 +103,7 @@ const handleReplace = (
     });
 
     const node = figma.getNodeById(comp.node.id);
+
     if (node) node.name = newProperties.join(', ');
   });
 
@@ -115,13 +121,16 @@ export default function () {
 
   on<FindComponents>('FIND_COMPONENTS', (searchKey, searchSettings) => {
     const matchingComps = findMatchingComponents(searchKey, searchSettings);
+
     emit<MatchingComponents>('MATCHING_COMPONENTS', matchingComps);
   });
 
   on<ComponentTargetHandler>('TARGET_COMPONENT', (parentId) => {
     const node = figma.getNodeById(parentId);
+
     if (node && (node.type === 'COMPONENT' || node.type === 'COMPONENT_SET')) {
       const pageNode = getPage(node);
+
       if (pageNode) figma.currentPage = pageNode;
       figma.currentPage.selection = [node];
       figma.viewport.scrollAndZoomIntoView([node]);
@@ -132,6 +141,7 @@ export default function () {
     'RESIZE_WINDOW',
     (windowSize: { width: number; height: number }): void => {
       const { width, height } = windowSize;
+
       figma.ui.resize(width, height);
     }
   );

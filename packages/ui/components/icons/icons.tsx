@@ -1,10 +1,10 @@
-import { h, JSX } from 'preact';
+import { h } from 'preact';
 
 interface Props {
   size?: number;
 }
 
-export function IconTarget({ size = 24 }: Props): JSX.Element {
+export function IconTarget({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +23,7 @@ export function IconTarget({ size = 24 }: Props): JSX.Element {
   );
 }
 
-export function IconComponent({ size = 24 }: Props): JSX.Element {
+export function IconComponent({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -40,7 +40,7 @@ export function IconComponent({ size = 24 }: Props): JSX.Element {
   );
 }
 
-export function IconCaseSensitive({ size = 24 }: Props): JSX.Element {
+export function IconCaseSensitive({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +56,7 @@ export function IconCaseSensitive({ size = 24 }: Props): JSX.Element {
     </svg>
   );
 }
-export function IconWholeWord({ size = 24 }: Props): JSX.Element {
+export function IconWholeWord({ size = 24 }: Props): h.JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -1,4 +1,4 @@
-import { h, JSX } from 'preact';
+import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { emit, on } from '@create-figma-plugin/utilities';
 import { Button, IconLayerComponent16 } from '@create-figma-plugin/ui';
@@ -19,7 +19,7 @@ interface Props {
   instances: ILocalInstance[];
 }
 
-export default function Remote({ libraries, instances }: Props): JSX.Element {
+export default function Remote({ libraries, instances }: Props): h.JSX.Element {
   useEffect(() => {
     emit<GetLibraries>('GET_LIBRARIES');
     emit<GetRemoteMissing>('GET_REMOTE_MISSING');
@@ -51,7 +51,7 @@ export default function Remote({ libraries, instances }: Props): JSX.Element {
 
   if (libraries.length === 0) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4 py-8">
+      <div className="flex size-full flex-col items-center justify-center gap-4 py-8">
         <h2 className="">No User Libraries</h2>
         <Button onClick={handleScanLibrary}>Scan this file as library</Button>
         <Button onClick={handleGetUserLibraries}>Find User Libraries</Button>

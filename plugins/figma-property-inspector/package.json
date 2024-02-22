@@ -1,0 +1,34 @@
+{
+  "scripts": {
+    "build": "bun run build:css && bun run build:js",
+    "build:css": "tailwindcss --input ./src/css/input.css --output ./src/css/output.css",
+    "build:js": "build-figma-plugin --typecheck --minify",
+    "watch": "bun run build:css && concurrently bun:watch:css bun:watch:js",
+    "watch:css": "tailwindcss --input ./src/css/input.css --output ./src/css/output.css --watch",
+    "watch:js": "build-figma-plugin --typecheck --watch",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "format": "prettier --write '*/**/*.{js,ts,tsx,json}'"
+  },
+  "figma-plugin": {
+    "editorType": [
+      "figma"
+    ],
+    "id": "1300926061062623974",
+    "name": "Property Inspector",
+    "main": "src/main.ts",
+    "ui": "src/ui.tsx"
+  },
+  "name": "figma-property-inspector",
+  "type": "module",
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "react-chartjs-2": "^5.2.0",
+    "@figma/plugin-typings": "1.82.0"
+  },
+  "devDependencies": {
+    "@repo/ui": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/tailwind-config": "workspace:*"
+  }
+}

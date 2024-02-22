@@ -21,7 +21,7 @@ export default function InstanceDisplayer({
   checkedInstanceIds,
   setCheckedInstanceIds,
   isAnyInstanceChecked,
-}: Props): JSX.Element {
+}: Props): h.JSX.Element {
   const handleSelect = () => {
     emit<SelectNodes>('SELECT_NODES', instances);
   };

@@ -1,4 +1,4 @@
-import { h, JSX } from 'preact';
+import { h } from 'preact';
 import { PropsWithChildren } from 'preact/compat';
 
 interface Props {
@@ -10,7 +10,7 @@ export default function IconButton({
   className,
   children,
   onClick,
-}: PropsWithChildren<Props>): JSX.Element {
+}: PropsWithChildren<Props>): h.JSX.Element {
   return (
     <button
       type="button"

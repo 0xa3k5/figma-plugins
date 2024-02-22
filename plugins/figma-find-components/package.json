@@ -6,8 +6,8 @@
     "watch": "bun run build:css && concurrently bun:watch:css bun:watch:js",
     "watch:css": "tailwindcss --input ./src/css/input.css --output ./src/css/output.css --watch",
     "watch:js": "build-figma-plugin --typecheck --watch",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint": "eslint . --ext .ts --fix",
+    "format": "prettier --write '*/**/*.{js,ts,tsx,json}'"
   },
   "figma-plugin": {
     "editorType": [
@@ -21,9 +21,9 @@
   "name": "figma-find-components",
   "type": "module",
   "devDependencies": {
-    "@repo/ui": "workspace:*",
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
-    "@repo/tailwind-config": "workspace:*"
+    "@repo/ui": "*",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@repo/tailwind-config": "*"
   }
 }

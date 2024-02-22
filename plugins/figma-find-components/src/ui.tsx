@@ -1,8 +1,13 @@
 import '!./css/output.css';
-import { h } from 'preact';
+
 import { render } from '@create-figma-plugin/ui';
-import { useEffect, useState } from 'preact/hooks';
 import { emit, on } from '@create-figma-plugin/utilities';
+import { h } from 'preact';
+import { useEffect, useState } from 'preact/hooks';
+
+import Layout from './components/Layout';
+import TabBar from './components/TabBar';
+import Tabs from './tabs';
 import {
   ETabs,
   GetLocalMissing,
@@ -13,11 +18,8 @@ import {
   UpdateRemoteComponents,
   UpdateUserLibraries,
 } from './types';
-import TabBar from './components/TabBar';
-import Tabs from './tabs';
-import Layout from './components/Layout';
 
-function Plugin() {
+function FindComponents(): h.JSX.Element {
   const [activeTab, setActiveTab] = useState(ETabs.LOCAL);
 
   const [localMissingInstances, setLocalMissingInstances] = useState<
@@ -82,4 +84,4 @@ function Plugin() {
   );
 }
 
-export default render(Plugin);
+export default render(FindComponents);

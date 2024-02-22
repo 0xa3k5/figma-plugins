@@ -1,4 +1,4 @@
-import { h, JSX } from 'preact';
+import { h } from 'preact';
 import { emit } from '@create-figma-plugin/utilities';
 import {
   ILocalInstance,
@@ -20,7 +20,7 @@ export default function ActionBar({
   checkedInstanceIds,
   data,
   dropdownOptions,
-}: Props): JSX.Element {
+}: Props): h.JSX.Element {
   const checkedComponentInstances = Object.keys(data).reduce(
     (acc, mainCompName) => {
       Object.keys(data[mainCompName]).forEach((pageName) => {

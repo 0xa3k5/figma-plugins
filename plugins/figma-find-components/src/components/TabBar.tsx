@@ -1,4 +1,4 @@
-import { h, JSX } from 'preact';
+import { h } from 'preact';
 import { StateUpdater } from 'preact/hooks';
 import { ETabs } from '../types';
 import { IconButton } from './button';
@@ -14,13 +14,13 @@ export default function TabBar({
   activeTab,
   setActiveTab,
   handleLocal,
-}: TabBarProps): JSX.Element {
+}: TabBarProps): h.JSX.Element {
   const handleRefresh = () => {
     handleLocal();
   };
 
   return (
-    <div className="bg-bg border-border fixed inset-x-0 top-0 z-10 flex items-center justify-between border border-b px-3 py-1">
+    <div className="bg-bg border-border fixed inset-x-0 top-0 z-10 flex items-center justify-between border px-3 py-1">
       <div className="flex items-center gap-4">
         {Object.values(ETabs).map((tab) => (
           <button

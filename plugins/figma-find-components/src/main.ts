@@ -1,21 +1,22 @@
 import { emit, on, showUI } from '@create-figma-plugin/utilities';
+
 import {
+  ClearLibraries,
+  DeleteInstances,
+  DetachInstances,
+  GetLibraries,
   GetLocalMissing,
+  GetRemoteMissing,
   IComponent,
   ILocalInstance,
-  TLibrary,
-  ResizeWindowHandler,
-  SelectNodes,
-  UpdateLocalMissing,
-  UpdateUserLibraries,
-  GetLibraries,
-  UpdateRemoteComponents,
-  DetachInstances,
-  DeleteInstances,
   ReplaceInstances,
-  GetRemoteMissing,
+  ResizeWindowHandler,
   ScanLibrary,
-  ClearLibraries,
+  SelectNodes,
+  TLibrary,
+  UpdateLocalMissing,
+  UpdateRemoteComponents,
+  UpdateUserLibraries,
 } from './types';
 import { compareWithLibrary } from './utils';
 
@@ -34,6 +35,7 @@ const nodeDelete = (node: InstanceNode) => {
     node.remove();
   } catch (err) {
     const detachedFrame = node.detachInstance();
+
     detachedFrame.remove();
   }
 };
@@ -55,21 +57,25 @@ const updateLocalMissingData = (updatedInstances: ILocalInstance[]) => {
 const getUserLibraries = async (): Promise<TLibrary[]> => {
   const userLibraries =
     (await figma.clientStorage.getAsync('userLibraries')) || {};
+
   console.log(userLibraries);
   const asdad: TLibrary[] = Object.keys(userLibraries).map(
     (libName) => userLibraries[libName]
   );
+
   return asdad;
 };
 
 const getNodesByType = (types: NodeType[]): SceneNode[] => {
   figma.skipInvisibleInstanceChildren = true;
   const nodes = figma.root.findAllWithCriteria({ types });
+
   return nodes.filter((node): node is SceneNode => node.type !== 'PAGE');
 };
 
 const getInstances = (): InstanceNode[] => {
   const instances = getNodesByType(['INSTANCE']);
+
   return instances.filter(
     (node): node is InstanceNode => node.type === 'INSTANCE'
   );
@@ -77,6 +83,7 @@ const getInstances = (): InstanceNode[] => {
 
 const getComponentSets = (): IComponent[] => {
   const componentSetNodes = getNodesByType(['COMPONENT_SET']);
+
   return componentSetNodes.map((componentSetNode) => ({
     id: componentSetNode.id,
     name: componentSetNode.name,
@@ -110,6 +117,7 @@ const figmaSelectNodes = (nodes: (BaseNode | null)[]) => {
     figma.notify('This instance was deleted');
   } else {
     const page = getPage(sceneNodes[0]);
+
     if (page !== null) {
       figma.currentPage = page;
       figma.currentPage.selection = sceneNodes;
@@ -123,6 +131,7 @@ export default function () {
     'RESIZE_WINDOW',
     (windowSize: { width: number; height: number }): void => {
       const { width, height } = windowSize;
+
       figma.ui.resize(width, height);
     }
   );
@@ -142,9 +151,11 @@ export default function () {
       const mainComp = components.find(
         (c) => c.id === instance.mainComponent?.id
       );
+
       if (!mainComp) {
         if (instance.mainComponent && !instance.mainComponent.remote) {
           const page = getPage(instance);
+
           if (page) {
             missingArr.push({
               id: instance.id,
@@ -188,6 +199,7 @@ export default function () {
     instances.forEach((instance) => {
       if (instance.mainComponent && instance.mainComponent.remote) {
         const page = getPage(instance);
+
         remoteInstances.push({
           id: instance.id,
           name: instance.name,
@@ -214,6 +226,7 @@ export default function () {
 
   on<GetLibraries>('GET_LIBRARIES', async () => {
     const userLibraries = await getUserLibraries();
+
     emit<UpdateUserLibraries>('UPDATE_USER_LIBRARIES', userLibraries);
   });
 
@@ -224,6 +237,7 @@ export default function () {
 
     componentSets.forEach((compSet) => {
       const isExisting = [...componentData].some((c) => c.id === compSet.id);
+
       if (!isExisting) {
         componentData.add({
           id: compSet.id,
@@ -241,6 +255,7 @@ export default function () {
         );
         // if (component.parent) {
         // if (component.parent.type === 'COMPONENT_SET' || component.parent.type === 'COMPONENT') {
+
         if (!isExisting) {
           componentData.add({
             id: component.id,
@@ -286,6 +301,7 @@ export default function () {
       (instance) => figma.getNodeById(instance.id) as SceneNode
     );
     const detachedFrames: FrameNode[] = [];
+
     instanceNodes.forEach((node) => {
       if (node && node.type === 'INSTANCE') {
         detachedFrames.push(node.detachInstance());

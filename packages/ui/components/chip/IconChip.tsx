@@ -42,7 +42,7 @@ export default function IconChip({ label, icon, onChange, tooltip }: Props) {
         onChange={handleInputChange}
       />
       <span
-        className={`flex items-center justify-center gap-1 overflow-clip rounded-md duration-150 
+        className={`flex items-center justify-center gap-1 text-clip rounded-md duration-150 
         ${
           checked
             ? 'bg-bg-inverse text-text-oninverse group-hover:bg-bg-inverse'

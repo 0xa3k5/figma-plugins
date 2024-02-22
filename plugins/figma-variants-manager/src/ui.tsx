@@ -1,37 +1,39 @@
 import '!./css/output.css';
 import '@repo/ui/styles.css';
+
 import {
   Button,
-  Stack,
   render,
+  Stack,
   useWindowResize,
 } from '@create-figma-plugin/ui';
-import { useEffect, useState } from 'preact/hooks';
-import { Fragment, h } from 'preact';
 import { emit, on } from '@create-figma-plugin/utilities';
 import {
-  FindComponents,
-  IComponent,
-  MatchingComponents,
-  ReplaceProperties,
-  ResizeWindowHandler,
-  ComponentTargetHandler,
-  ISearchSettings,
-} from './types';
-import IconButton from './components/button/IconButton';
-import HighlightedText from './components/highlighted-text/HighlightedText';
-import groupByParent from './utils';
-import {
-  TextInput,
   ChoiceChip,
-  IconChip,
   IconCaseSensitive,
+  IconChip,
   IconComponent,
   IconTarget,
   IconWholeWord,
+  TextInput,
 } from '@repo/ui';
+import { Fragment, h } from 'preact';
+import { useEffect, useState } from 'preact/hooks';
 
-function Plugin() {
+import IconButton from './components/button/IconButton';
+import HighlightedText from './components/highlighted-text/HighlightedText';
+import {
+  ComponentTargetHandler,
+  FindComponents,
+  IComponent,
+  ISearchSettings,
+  MatchingComponents,
+  ReplaceProperties,
+  ResizeWindowHandler,
+} from './types';
+import groupByParent from './utils';
+
+function VariantsManager() {
   const [searchKey, setSearchKey] = useState('');
   const [replace, setReplacement] = useState('');
 
@@ -59,15 +61,18 @@ function Plugin() {
         emit<FindComponents>('FIND_COMPONENTS', searchKey, searchSettings);
       }
     }, 300);
+
     return () => clearTimeout(timeoutId);
   }, [searchKey, searchSettings]);
 
   on<MatchingComponents>('MATCHING_COMPONENTS', (components) => {
     const groupedComponents = groupByParent(components);
+
     setMatchingComps(groupedComponents);
     setReplaceComps(groupedComponents[Object.keys(groupedComponents)[0]]);
 
     const firstGroup = Object.values(groupedComponents)[0];
+
     if (firstGroup && firstGroup.length > 0) {
       emit<ComponentTargetHandler>('TARGET_COMPONENT', firstGroup[0].id);
     }
@@ -200,6 +205,7 @@ function Plugin() {
             const uniqueProps = new Set(
               components.flatMap((comp) => comp.matchedProps)
             );
+
             return (
               <li key={parentId}>
                 <button
@@ -243,4 +249,4 @@ function Plugin() {
   );
 }
 
-export default render(Plugin);
+export default render(VariantsManager);

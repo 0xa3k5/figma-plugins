@@ -11,7 +11,7 @@ interface Props {
 export default function Select({
   options,
   checkedInstances,
-}: Props): JSX.Element {
+}: Props): h.JSX.Element {
   const [selectedOption, setSelectedOption] = useState<IComponent | null>(null);
 
   const handleSelect = (event: JSX.TargetedEvent<HTMLSelectElement, Event>) => {

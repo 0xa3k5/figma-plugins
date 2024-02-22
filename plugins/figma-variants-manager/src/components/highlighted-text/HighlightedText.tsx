@@ -1,5 +1,5 @@
-/* eslint-disable react/no-array-index-key */
-import { h, JSX } from 'preact';
+import { h } from 'preact';
+
 import { ISearchSettings } from '../../types';
 
 interface Props {
@@ -14,7 +14,7 @@ export default function HighlightedText({
   searchKey,
   replace,
   searchSettings,
-}: Props): JSX.Element {
+}: Props): h.JSX.Element {
   const regex = new RegExp(
     searchSettings.matchWholeWord ? `\\b${searchKey}\\b` : searchKey,
     searchSettings.caseSensitive ? '' : 'i'

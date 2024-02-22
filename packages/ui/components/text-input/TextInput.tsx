@@ -1,4 +1,4 @@
-import { h, JSX } from 'preact';
+import { h } from 'preact';
 import { PropsWithChildren, ReactNode } from 'preact/compat';
 
 interface Props {
@@ -16,7 +16,7 @@ export default function TextInput({
   value,
   onInput,
   children,
-}: PropsWithChildren<Props>): JSX.Element {
+}: PropsWithChildren<Props>): h.JSX.Element {
   return (
     <div className="border-border focus-within:border-border-brand-strong relative flex items-center gap-2 rounded-md border px-2">
       {icon && <span className="p-2">{icon}</span>}

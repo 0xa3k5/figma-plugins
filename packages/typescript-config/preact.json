@@ -8,6 +8,7 @@
     "target": "ES6",
     "jsx": "react",
     "jsxFactory": "h",
-    "noEmit": true
-  },
+    "noEmit": true,
+    "skipLibCheck": true
+  }
 }

@@ -20,9 +20,10 @@ module.exports = {
   plugins: ['simple-import-sort', 'prettier', '@typescript-eslint'],
   parser: '@typescript-eslint/parser',
   settings: {
-    next: {
-      rootDir: ['apps/*/', 'packages/*/'],
-    },
+    'tailwindcss/config': require.resolve(
+      '../tailwind-config/tailwind.config.ts'
+    ),
+    'tailwindcss/no-custom-classname': false,
     'import/resolver': {
       typescript: {
         project,
@@ -32,14 +33,18 @@ module.exports = {
       },
     },
   },
-  ignorePatterns: ['node_modules/', 'dist/'],
+  ignorePatterns: [
+    'node_modules/',
+    'dist/',
+    'build/',
+    '*.d.t.s',
+    '**/tailwind.config.ts',
+  ],
   rules: {
-    'object-curly-spacing': ['warn', 'always'],
-    '@next/next/no-html-link-for-pages': 'off',
+    // 'object-curly-spacing': ['warn', 'always'],
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
     'prettier/prettier': ['error'],
-    'no-unused-vars': 'error',
     'prefer-const': 'error',
     'no-irregular-whitespace': 'error',
     'no-trailing-spaces': 'error',
@@ -47,7 +52,12 @@ module.exports = {
     'no-empty-function': 'error',
     'no-duplicate-imports': 'error',
     'newline-after-var': 'error',
-    camelcase: 'warn',
-    'tailwindcss/migration-from-tailwind-2': 'off',
+    // 'tailwindcss/migration-from-tailwind-2': 'off',
+    // 'no-redeclare': 'off',
+    'no-undef': 'off',
+    'no-unused-vars': [
+      'warn',
+      { vars: 'all', args: 'after-used', ignoreRestSiblings: false },
+    ],
   },
 };

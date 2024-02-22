@@ -1,4 +1,4 @@
-import { h, JSX } from 'preact';
+import { h } from 'preact';
 import { Button } from '@create-figma-plugin/ui';
 import { useState } from 'preact/hooks';
 import { IComponent, ILocalInstance } from '../types';
@@ -17,7 +17,7 @@ export default function Local({
   localMissing,
   localMain,
   handleGetLocalMissing,
-}: Props): JSX.Element {
+}: Props): h.JSX.Element {
   const [checkedInstanceIds, setCheckedInstanceIds] = useState<{
     [key: string]: boolean;
   }>({});
@@ -29,7 +29,7 @@ export default function Local({
 
   if (localMissing.length === 0) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4 py-8">
+      <div className="flex size-full flex-col items-center justify-center gap-4 py-8">
         <h2 className="text-base">No Locally Missing</h2>
         <Button onClick={handleGetLocalMissing}>Find Local Missing</Button>
       </div>
@@ -37,7 +37,7 @@ export default function Local({
   }
 
   return (
-    <div className="flex h-full w-full flex-col gap-4">
+    <div className="flex size-full flex-col gap-4">
       {Object.keys(groupedLocalMissing).map((mainCompId) => (
         <div className="flex flex-col items-start" key={mainCompId}>
           <div className="flex items-center gap-2 px-3 py-2 text-sm">

@@ -1,12 +1,15 @@
 import { h } from 'preact';
-
 interface Props {
   value: string;
   checked: boolean;
   onChange: (opt: string) => void;
 }
 
-export default function ChoiceChip({ value, checked, onChange }: Props) {
+export default function ChoiceChip({
+  value,
+  checked,
+  onChange,
+}: Props): h.JSX.Element {
   return (
     <label
       htmlFor={value.replace(/[^a-zA-Z0-9-_]/g, '')}
@@ -20,7 +23,7 @@ export default function ChoiceChip({ value, checked, onChange }: Props) {
         onChange={() => onChange(value)}
       />
       <span
-        className={`border-border flex flex-grow-0 items-center gap-1 rounded-md border px-2 py-1 duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 ${
+        className={`border-border flex grow-0 items-center gap-1 rounded-md border px-2 py-1 duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 ${
           checked ? 'bg-bg-inverse text-text-oninverse' : 'text-text'
         }`}
       >

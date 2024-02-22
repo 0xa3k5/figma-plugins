@@ -1,4 +1,4 @@
-import { TLibrary, ILocalInstance, IComponent } from '../types';
+import { IComponent, ILocalInstance, TLibrary } from '../types';
 
 export default function compareWithLibrary(
   libraries: TLibrary[],
