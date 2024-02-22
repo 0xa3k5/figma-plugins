@@ -33,7 +33,7 @@ export default function HighlightedText({
       {text.map((t, index) => (
         <span key={index} className="mr-2 flex last:mr-0">
           {t === searchKey ? (
-            <span className="font-medium text-text">
+            <span className="text-text font-medium">
               <span className={replace ? 'line-through opacity-60' : ''}>
                 {searchKey}
               </span>
@@ -43,7 +43,7 @@ export default function HighlightedText({
             t.split(regex).map((part, partIndex) => (
               <span
                 key={partIndex}
-                className={part === '' ? 'font-medium text-text' : 'opacity-60'}
+                className={part === '' ? 'text-text font-medium' : 'opacity-60'}
               >
                 {part === '' ? (
                   <span>

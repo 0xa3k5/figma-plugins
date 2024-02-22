@@ -1,4 +1,4 @@
-import '!./output.css';
+import '!./css/output.css';
 import '@repo/ui/styles.css';
 import {
   Button,
@@ -192,27 +192,6 @@ function Plugin() {
               Replace All
             </Button>
           </div>
-
-          {/* <IconButton
-            // className={
-
-            //     ? 'bg-bg-secondary'
-            //     : ''
-            // }
-            onClick={() => setIsDropdownVisible(!isDropdownVisible)}
-          >
-            <IconMenu />
-          </IconButton> */}
-
-          {/* <div className="relative mt-8" ref={menuRef}>
-            {isDropdownVisible && (
-              <Menu
-                options={menuOptions}
-                selectedOption={selectedOption}
-                setSelectedOption={setSelectedOption}
-              />
-            )}
-          </div> */}
         </div>
       </div>
       {matchingComps && (

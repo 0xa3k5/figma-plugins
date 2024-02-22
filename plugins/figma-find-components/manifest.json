@@ -1,0 +1,10 @@
+{
+  "api": "1.0.0",
+  "editorType": [
+    "figma"
+  ],
+  "id": "1311320340932189692",
+  "name": "Find Components",
+  "main": "build/main.js",
+  "ui": "build/ui.js"
+}

@@ -1,5 +1,5 @@
 import { h, JSX } from 'preact';
-import { ReactNode, PropsWithChildren } from 'preact/compat';
+import { PropsWithChildren, ReactNode } from 'preact/compat';
 
 interface Props {
   label: string;

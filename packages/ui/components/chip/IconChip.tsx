@@ -1,6 +1,7 @@
-import { RefObject, h } from 'preact';
+import { h, RefObject } from 'preact';
 import { ReactNode } from 'preact/compat';
 import { useRef, useState } from 'preact/hooks';
+
 import { Tooltip } from '../tooltip';
 
 interface Props {
@@ -16,6 +17,7 @@ export default function IconChip({ label, icon, onChange, tooltip }: Props) {
 
   const handleInputChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
+
     setChecked(target.checked);
     if (onChange) {
       onChange(target.checked);

@@ -4,15 +4,11 @@ const project = resolve(process.cwd(), 'tsconfig.json');
 
 module.exports = {
   extends: [
-    'preact',
     'prettier',
     'plugin:prettier/recommended',
     'plugin:tailwindcss/recommended',
     'eslint:recommended',
     'eslint-config-turbo',
-    'airbnb-typescript',
-    'airbnb',
-    'airbnb/hooks',
   ],
   parserOptions: {
     project,

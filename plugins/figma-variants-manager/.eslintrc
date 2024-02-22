@@ -1,58 +1,61 @@
 {
-  "env": {
-    "es2021": true,
-    "node": true
-},
-"extends": ["airbnb-typescript", "airbnb", "airbnb/hooks", "plugin:tailwindcss/recommended",   "plugin:prettier/recommended"],
-"ignorePatterns": ["build/", "tailwind.config.js"],
-"plugins": ["import", "@typescript-eslint"],
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 2021,
-      "sourceType": "module",
-    "project": "./tsconfig.json"
-  },
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      }
-    }
-  },
-  "rules": {
-    "object-curly-spacing": ["warn", "always"],
-    "@typescript-eslint/semi": ["error", "always"],
-    "@typescript-eslint/no-unused-vars": [
-      "warn",
-      {
-        "vars": "all",
-        "args": "none"
-      }
-    ],
-    "@typescript-eslint/no-explicit-any": [
-      "warn",
-      {
-        "ignoreRestArgs": true
-      }
-    ],
-    "react/jsx-key": "error",
-    "@typescript-eslint/no-loop-func": "off",
-    "eol-last": "error",
-    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
-    "react/react-in-jsx-scope": "off",
-    "no-undef": "off",
-    "no-shadow": "off",
-    "react/require-default-props": "off",
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
-   ],
-   "tailwindcss/migration-from-tailwind-2": "off"
-  }
+  "extends": ["@repo/eslint-config/base.js"]
 }
+// {
+//   "env": {
+//     "es2021": true,
+//     "node": true
+// },
+// "extends": ["airbnb-typescript", "airbnb", "airbnb/hooks", "plugin:tailwindcss/recommended",   "plugin:prettier/recommended"],
+// "ignorePatterns": ["build/", "tailwind.config.js"],
+// "plugins": ["import", "@typescript-eslint"],
+//   "parser": "@typescript-eslint/parser",
+//   "parserOptions": {
+//     "ecmaVersion": 2021,
+//       "sourceType": "module",
+//     "project": "./tsconfig.json"
+//   },
+//   "settings": {
+//     "import/resolver": {
+//       "node": {
+//         "extensions": [".js", ".jsx", ".ts", ".tsx"]
+//       }
+//     }
+//   },
+//   "rules": {
+//     "object-curly-spacing": ["warn", "always"],
+//     "@typescript-eslint/semi": ["error", "always"],
+//     "@typescript-eslint/no-unused-vars": [
+//       "warn",
+//       {
+//         "vars": "all",
+//         "args": "none"
+//       }
+//     ],
+//     "@typescript-eslint/no-explicit-any": [
+//       "warn",
+//       {
+//         "ignoreRestArgs": true
+//       }
+//     ],
+//     "react/jsx-key": "error",
+//     "@typescript-eslint/no-loop-func": "off",
+//     "eol-last": "error",
+//     "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
+//     "react/react-in-jsx-scope": "off",
+//     "no-undef": "off",
+//     "no-shadow": "off",
+//     "react/require-default-props": "off",
+//     "import/extensions": [
+//       "error",
+//       "ignorePackages",
+//       {
+//         "js": "never",
+//         "jsx": "never",
+//         "ts": "never",
+//         "tsx": "never"
+//       }
+//    ],
+//    "tailwindcss/migration-from-tailwind-2": "off"
+//   }
+// }

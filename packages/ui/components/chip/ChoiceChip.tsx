@@ -20,7 +20,7 @@ export default function ChoiceChip({ value, checked, onChange }: Props) {
         onChange={() => onChange(value)}
       />
       <span
-        className={`flex flex-grow-0 items-center gap-1 rounded-md border border-border px-2 py-1 duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 ${
+        className={`border-border flex flex-grow-0 items-center gap-1 rounded-md border px-2 py-1 duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 ${
           checked ? 'bg-bg-inverse text-text-oninverse' : 'text-text'
         }`}
       >
