@@ -1,3 +1,5 @@
+![Figma Property Inspector Cover](https://raw.githubusercontent.com/0xA3K5/figma-plugins/main/plugins/figma-property-inspector/assets/cover.png)
+
 # Figma Property Inspector
 
 Inspect the properties of your design dimensions and make metric-minded modifications
