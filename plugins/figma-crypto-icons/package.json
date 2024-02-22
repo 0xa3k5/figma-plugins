@@ -6,20 +6,29 @@
     "watch": "bun run build:css && concurrently bun:watch:css bun:watch:js",
     "watch:css": "tailwindcss --input ./src/css/input.css --output ./src/css/output.css --watch",
     "watch:js": "build-figma-plugin --typecheck --watch",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "lint": "eslint . --ext .ts --fix",
     "format": "prettier --write '*/**/*.{js,ts,tsx,json}'"
   },
   "figma-plugin": {
     "editorType": [
       "figma"
     ],
-    "id": "1341787472715232173",
-    "name": "Variants Manager",
+    "id": "1170720285035693761",
+    "name": "Crypto Icons",
     "main": "src/main.ts",
     "ui": "src/ui.tsx"
   },
-  "name": "figma-variants-manager",
+  "dependencies": {
+    "cryptocurrency-icons": "^0.18.1",
+    "preact": "^10",
+    "prismjs": "^1.28.0",
+    "react-simple-code-editor": "^0.11.2"
+  },
+  "name": "figma-crypto-icons",
   "type": "module",
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
   "devDependencies": {
     "@repo/ui": "*",
     "@repo/eslint-config": "*",
