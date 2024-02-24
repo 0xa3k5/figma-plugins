@@ -52,12 +52,12 @@ module.exports = {
     'no-empty-function': 'error',
     'no-duplicate-imports': 'error',
     'newline-after-var': 'error',
-    // 'tailwindcss/migration-from-tailwind-2': 'off',
-    // 'no-redeclare': 'off',
+    'no-redeclare': 'off',
     'no-undef': 'off',
     'no-unused-vars': [
       'warn',
       { vars: 'all', args: 'after-used', ignoreRestSiblings: false },
     ],
+    'tailwindcss/migration-from-tailwind-2': 'off',
   },
 };
