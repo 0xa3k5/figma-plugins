@@ -1,11 +1,11 @@
 import { Button } from '@create-figma-plugin/ui';
+import { IconComponent } from '@repo/ui';
 import { groupComponentsByParent, IComponent, IInstance } from '@repo/utils';
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
 
 import ActionBar from '../components/ActionBar';
 import InstanceDisplayer from '../components/InstanceDisplayer';
-import { IconComponent } from '../icons';
 import { groupByPage } from '../utils';
 
 interface Props {
@@ -44,7 +44,7 @@ export default function Local({
       {Object.keys(groupedLocalMissing).map((mainCompId) => (
         <div className="flex flex-col items-start" key={mainCompId}>
           <div className="flex items-center gap-2 px-3 py-2 text-sm">
-            <IconComponent />
+            <IconComponent color="#9747FF" />
             <span>
               {
                 Object.values(groupedLocalMissing[mainCompId])[0][0]

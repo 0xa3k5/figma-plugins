@@ -1,9 +1,9 @@
 import { Button, IconButton, IconTarget16 } from '@create-figma-plugin/ui';
 import { emit } from '@create-figma-plugin/utilities';
+import { IconVariable } from '@repo/ui';
 import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
-import { VariableIcon } from '../../icons';
 import {
   GetSingleVariableHandler,
   InspectPageHandler,
@@ -292,7 +292,7 @@ function AutofixCard({ propertyKey, cardVariables }: ChildProps): h.JSX.Element 
                       handleAssignVariable(propertyKey, propertyType, variable, direction);
                     }}
                   >
-                    <VariableIcon />
+                    <IconVariable />
                   </IconButton>
                 </span>
               </div>

@@ -1,8 +1,8 @@
 import { emit } from '@create-figma-plugin/utilities';
+import { IconLinkBreak, IconTrash } from '@repo/ui';
+import { IComponent, IInstance } from '@repo/utils';
 import { h } from 'preact';
 
-import { IComponent, IInstance } from '../../../../packages/utils/src';
-import { IconLinkBreak, IconTrash } from '../icons';
 import { DeleteInstances, DetachInstances } from '../types';
 import { IconButton } from './button';
 import Select from './Select';
