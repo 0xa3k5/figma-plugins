@@ -1,12 +1,7 @@
 import { once, showUI } from '@create-figma-plugin/utilities';
+import { focusOnNodes } from '@repo/utils';
 
 import { CreateAll, CreateSvgFrame, ICryptoIcon } from './types';
-const FigmaSelectZoomClose = (frame: SceneNode, notification?: string) => {
-  figma.currentPage.selection = [frame];
-  figma.viewport.scrollAndZoomIntoView([frame]);
-  notification && figma.notify(`🎉 ${notification.toLowerCase()}`);
-  figma.closePlugin();
-};
 
 const CreateOneSvg = (
   icon: ICryptoIcon,
@@ -25,10 +20,18 @@ const CreateOneSvg = (
     svgComponent.primaryAxisSizingMode = 'AUTO';
     svgComponent.counterAxisSizingMode = 'AUTO';
     svgComponent.appendChild(svgNode);
-    FigmaSelectZoomClose(svgComponent, `${icon.name} is created`);
+
+    focusOnNodes({
+      nodeIds: [svgComponent.id],
+      notification: `${icon.name} is created`,
+    });
   } else {
-    FigmaSelectZoomClose(svgNode, `${icon.name} is created`);
+    focusOnNodes({
+      nodeIds: [svgNode.id],
+      notification: `${icon.name} is created`,
+    });
   }
+  figma.closePlugin();
 };
 
 const CreateAllSvg = (
@@ -103,10 +106,14 @@ const CreateAllSvg = (
 
     combinedComponents.name = 'Crypto Currency Icons';
 
-    FigmaSelectZoomClose(combinedComponents);
+    focusOnNodes({ nodeIds: [combinedComponents.id] });
   } else {
-    FigmaSelectZoomClose(parentFrame, 'all icons created');
+    focusOnNodes({
+      nodeIds: [parentFrame.id],
+      notification: 'all icons created',
+    });
   }
+  figma.closePlugin();
 };
 
 export default function () {

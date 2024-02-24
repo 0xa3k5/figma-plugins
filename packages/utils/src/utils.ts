@@ -30,23 +30,23 @@ export const getNodesByType = <T extends NodeTypes>({
   types: T[];
   context?: { fromRoot: true } | { inSelection: true } | { page: PageNode };
 }): ReturnTypeMap[T][] => {
-  let nodes: SceneNode[];
+  let rawNodes: Array<SceneNode | PageNode>;
 
   if ('fromRoot' in context && context.fromRoot) {
-    nodes = figma.root.findAllWithCriteria({ types });
+    rawNodes = figma.root.findAllWithCriteria({ types });
   } else if ('inSelection' in context && context.inSelection) {
-    nodes = figma.currentPage.selection.filter((node) =>
+    rawNodes = figma.currentPage.selection.filter((node) =>
       types.includes(node.type as T)
     );
   } else if ('page' in context) {
-    nodes = context.page.findAllWithCriteria({ types });
+    rawNodes = context.page.findAllWithCriteria({ types });
   } else {
     throw new Error('Invalid search context');
   }
 
-  // const nodes = fromRoot
-  //   ? figma.root.findAllWithCriteria({ types })
-  //   : page.findAllWithCriteria({ types });
+  const nodes = rawNodes.filter(
+    (node): node is SceneNode => node.type !== 'PAGE'
+  );
 
   return nodes.map((node: SceneNode): ReturnTypeMap[T] => {
     switch (node.type) {
@@ -65,7 +65,7 @@ export const getNodesByType = <T extends NodeTypes>({
       default:
         throw new Error(`Unsupported node type: ${node.type}`);
     }
-  });
+  }) as ReturnTypeMap[T][];
 };
 
 /**
@@ -105,13 +105,16 @@ export const deleteInstance = ({ node }: { node: InstanceNode }) => {
  * Optionally filters nodes by type.
  * @param nodeId ID of the node to focus on.
  * @param nodeTypes Optional array of node types to filter.
+ * @param notification Optional notification message.
  */
 export const focusOnNodes = ({
   nodeIds,
   nodeTypes,
+  notification,
 }: {
   nodeIds: string[];
   nodeTypes?: Array<SceneNode['type']>;
+  notification?: string;
 }) => {
   const nodes = nodeIds
     .map((id) => figma.getNodeById(id))
@@ -129,23 +132,26 @@ export const focusOnNodes = ({
     }
     figma.currentPage.selection = nodes;
     figma.viewport.scrollAndZoomIntoView(nodes);
+    notification && figma.notify(notification);
   }
 };
 
-export function groupComponentsByParent(
-  components: IComponent[]
-): Record<string, IComponent[]> {
-  return components.reduce(
-    (acc, component) => {
-      const parentId = component.parent?.id ?? component.id;
+export function groupComponentsByParent<T extends IComponent | IInstance>(
+  items: T[]
+): Record<string, T[]> {
+  return items.reduce(
+    (acc, item) => {
+      const key =
+        'mainComponent' in item
+          ? item.mainComponent.id
+          : item.parent?.id ?? item.id;
 
-      if (!acc[parentId]) {
-        acc[parentId] = [];
+      if (!acc[key]) {
+        acc[key] = [];
       }
-
-      acc[parentId].push(component);
+      acc[key].push(item);
       return acc;
     },
-    {} as Record<string, IComponent[]>
+    {} as Record<string, T[]>
   );
 }

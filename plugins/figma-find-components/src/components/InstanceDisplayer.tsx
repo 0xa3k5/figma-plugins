@@ -1,14 +1,16 @@
-import { JSX, h } from 'preact';
 import { emit } from '@create-figma-plugin/utilities';
+import { IInstance } from '@repo/utils';
+import { h } from 'preact';
 import { StateUpdater } from 'preact/hooks';
-import { ILocalInstance, SelectNodes } from '../types';
-import { IconButton } from './button';
+
 import { IconTarget } from '../icons';
 import { IconInstance } from '../icons/Icons';
+import { SelectNodes } from '../types';
+import { IconButton } from './button';
 import Checkbox from './Checkbox';
 
 interface Props {
-  instances: ILocalInstance[];
+  instances: IInstance[];
   pageName: string;
   checkedInstanceIds: { [key: string]: boolean };
   setCheckedInstanceIds: StateUpdater<{ [key: string]: boolean }>;

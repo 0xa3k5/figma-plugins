@@ -1,4 +1,12 @@
 import { emit, on, showUI } from '@create-figma-plugin/utilities';
+import {
+  deleteInstance,
+  focusOnNodes,
+  getNodesByType,
+  IComponent,
+  IComponentSet,
+  IInstance,
+} from '@repo/utils';
 
 import {
   ClearLibraries,
@@ -7,8 +15,6 @@ import {
   GetLibraries,
   GetLocalMissing,
   GetRemoteMissing,
-  IComponent,
-  ILocalInstance,
   ReplaceInstances,
   ResizeWindowHandler,
   ScanLibrary,
@@ -20,32 +26,12 @@ import {
 } from './types';
 import { compareWithLibrary } from './utils';
 
-const getPage = (node: BaseNode): PageNode | null => {
-  if (node.type === 'PAGE') {
-    return node;
-  }
-  if (node.parent) {
-    return getPage(node.parent);
-  }
-  return null;
-};
-
-const nodeDelete = (node: InstanceNode) => {
-  try {
-    node.remove();
-  } catch (err) {
-    const detachedFrame = node.detachInstance();
-
-    detachedFrame.remove();
-  }
-};
-
 let localMissingData: {
-  missingInstances: ILocalInstance[];
-  components: IComponent[];
+  missingInstances: IInstance[];
+  components: (IComponent | IComponentSet)[];
 } = { missingInstances: [], components: [] };
 
-const updateLocalMissingData = (updatedInstances: ILocalInstance[]) => {
+const updateLocalMissingData = (updatedInstances: IInstance[]) => {
   localMissingData.missingInstances = localMissingData.missingInstances.filter(
     (instance) =>
       !updatedInstances.some(
@@ -66,66 +52,6 @@ const getUserLibraries = async (): Promise<TLibrary[]> => {
   return asdad;
 };
 
-const getNodesByType = (types: NodeType[]): SceneNode[] => {
-  figma.skipInvisibleInstanceChildren = true;
-  const nodes = figma.root.findAllWithCriteria({ types });
-
-  return nodes.filter((node): node is SceneNode => node.type !== 'PAGE');
-};
-
-const getInstances = (): InstanceNode[] => {
-  const instances = getNodesByType(['INSTANCE']);
-
-  return instances.filter(
-    (node): node is InstanceNode => node.type === 'INSTANCE'
-  );
-};
-
-const getComponentSets = (): IComponent[] => {
-  const componentSetNodes = getNodesByType(['COMPONENT_SET']);
-
-  return componentSetNodes.map((componentSetNode) => ({
-    id: componentSetNode.id,
-    name: componentSetNode.name,
-  }));
-};
-
-const getComponents = (): IComponent[] => {
-  const componentNodes = getNodesByType(['COMPONENT']);
-
-  return componentNodes.map((componentNode) => {
-    const parentName =
-      componentNode.parent?.type === 'COMPONENT_SET'
-        ? componentNode.parent.name
-        : null;
-
-    return {
-      id: componentNode.id,
-      name: parentName || componentNode.name,
-    };
-  });
-};
-
-const figmaSelectNodes = (nodes: (BaseNode | null)[]) => {
-  const sceneNodes = nodes
-    .flatMap((node) => node || [])
-    .flatMap((node) =>
-      node.type !== 'DOCUMENT' && node.type !== 'PAGE' ? node : []
-    );
-
-  if (sceneNodes.length === 0) {
-    figma.notify('This instance was deleted');
-  } else {
-    const page = getPage(sceneNodes[0]);
-
-    if (page !== null) {
-      figma.currentPage = page;
-      figma.currentPage.selection = sceneNodes;
-      figma.viewport.scrollAndZoomIntoView(sceneNodes);
-    }
-  }
-};
-
 export default function () {
   on<ResizeWindowHandler>(
     'RESIZE_WINDOW',
@@ -136,40 +62,25 @@ export default function () {
     }
   );
 
-  on<SelectNodes>('SELECT_NODES', (component: ILocalInstance[]): void => {
-    const nodesArr = component.map((c) => figma.getNodeById(c.id) as SceneNode);
-
-    figmaSelectNodes(nodesArr);
+  on<SelectNodes>('SELECT_NODES', (component: IInstance[]): void => {
+    focusOnNodes({ nodeIds: component.map((comp) => comp.id) });
   });
 
   on<GetLocalMissing>('GET_LOCAL_MISSING', () => {
-    const components = [...getComponents(), ...getComponentSets()];
-    const instances = getInstances();
-    const missingArr: ILocalInstance[] = [];
+    const components = getNodesByType({
+      types: ['COMPONENT', 'COMPONENT_SET'],
+    });
+    const instances = getNodesByType({ types: ['INSTANCE'] });
+    const missingArr: IInstance[] = [];
 
-    instances.forEach((instance: InstanceNode) => {
+    instances.forEach((instance) => {
       const mainComp = components.find(
         (c) => c.id === instance.mainComponent?.id
       );
 
       if (!mainComp) {
         if (instance.mainComponent && !instance.mainComponent.remote) {
-          const page = getPage(instance);
-
-          if (page) {
-            missingArr.push({
-              id: instance.id,
-              name: instance.name,
-              mainComponent: {
-                id: instance.mainComponent?.id,
-                name: instance.mainComponent?.name,
-              },
-              page: {
-                id: page.id,
-                name: page.name,
-              },
-            });
-          }
+          missingArr.push(instance);
         }
       }
     });
@@ -191,31 +102,19 @@ export default function () {
   });
 
   on<GetRemoteMissing>('GET_REMOTE_MISSING', async () => {
-    const instances = getInstances();
+    const instances = getNodesByType({ types: ['INSTANCE'] });
     const userLibraries = await getUserLibraries();
 
-    const remoteInstances: ILocalInstance[] = [];
+    const remoteInstances: IInstance[] = [];
 
     instances.forEach((instance) => {
       if (instance.mainComponent && instance.mainComponent.remote) {
-        const page = getPage(instance);
-
-        remoteInstances.push({
-          id: instance.id,
-          name: instance.name,
-          page: {
-            id: page?.id ?? 'unknown',
-            name: page?.name ?? 'unknown',
-          },
-          mainComponent: {
-            id: instance.mainComponent.id,
-            name: instance.mainComponent.name,
-          },
-        });
+        remoteInstances.push(instance);
       }
     });
 
-    console.log('remote_INSTANCES', remoteInstances);
+    // todo
+    // console.log('remote_INSTANCES', remoteInstances);
     const remoteMissing = compareWithLibrary(userLibraries, remoteInstances);
 
     // const grouped = groupByMain(remoteInstances);
@@ -231,38 +130,20 @@ export default function () {
   });
 
   on<ScanLibrary>('SCAN_LIBRARY', async () => {
-    const componentData = new Set<IComponent>();
+    const componentData = new Set<IComponent | IComponentSet>();
 
-    const componentSets = getComponentSets();
-
-    componentSets.forEach((compSet) => {
-      const isExisting = [...componentData].some((c) => c.id === compSet.id);
-
-      if (!isExisting) {
-        componentData.add({
-          id: compSet.id,
-          name: compSet.name,
-        });
-      }
+    const components = getNodesByType({
+      types: ['COMPONENT', 'COMPONENT_SET'],
     });
-
-    const components = getComponents();
 
     if (components) {
       components.forEach((component) => {
         const isExisting = [...componentData].some(
           (c) => c.id === component.id
         );
-        // if (component.parent) {
-        // if (component.parent.type === 'COMPONENT_SET' || component.parent.type === 'COMPONENT') {
 
         if (!isExisting) {
-          componentData.add({
-            id: component.id,
-            name: component.name,
-          });
-          // }
-          // }
+          componentData.add(component);
         }
       });
     }
@@ -296,19 +177,15 @@ export default function () {
   //   const remoteMissingInstances = compareWithLibrary(userLibraries, instances);
   // });
 
-  on<DetachInstances>('DETACH_INSTANCES', (instances: ILocalInstance[]) => {
-    const instanceNodes = instances.map(
-      (instance) => figma.getNodeById(instance.id) as SceneNode
-    );
+  on<DetachInstances>('DETACH_INSTANCES', (instances: IInstance[]) => {
     const detachedFrames: FrameNode[] = [];
 
-    instanceNodes.forEach((node) => {
-      if (node && node.type === 'INSTANCE') {
-        detachedFrames.push(node.detachInstance());
-      }
+    instances.forEach((instance) => {
+      detachedFrames.push(instance.node.detachInstance());
     });
-    figma.notify(`🔗 Detached: ${instanceNodes.length} instances`);
-    figmaSelectNodes(detachedFrames);
+
+    figma.notify(`🔗 Detached: ${detachedFrames.length} instances`);
+    focusOnNodes({ nodeIds: detachedFrames.map((frame) => frame.id) });
     updateLocalMissingData(instances);
     emit<UpdateLocalMissing>('UPDATE_LOCAL_MISSING', {
       missing: localMissingData.missingInstances,
@@ -316,17 +193,11 @@ export default function () {
     });
   });
 
-  on<DeleteInstances>('DELETE_INSTANCES', (instances: ILocalInstance[]) => {
-    const instanceNodes = instances.map((instance) =>
-      figma.getNodeById(instance.id)
-    );
-
-    instanceNodes.forEach((node) => {
-      if (node && node.type === 'INSTANCE') {
-        nodeDelete(node);
-      }
+  on<DeleteInstances>('DELETE_INSTANCES', (instances: IInstance[]) => {
+    instances.forEach((instance) => {
+      deleteInstance(instance);
     });
-    figma.notify(`🗑️ Deleted: ${instanceNodes.length} instances`);
+    figma.notify(`🗑️ Deleted: ${instances.length} instances`);
     updateLocalMissingData(instances);
     emit<UpdateLocalMissing>('UPDATE_LOCAL_MISSING', {
       missing: localMissingData.missingInstances,
@@ -335,24 +206,19 @@ export default function () {
   });
 
   on<ReplaceInstances>('REPLACE_INSTANCES', ({ instances, replaceWith }) => {
-    const instanceNodes = instances.map((instance) =>
-      figma.getNodeById(instance.id)
-    );
     const componentNode = figma.getNodeById(replaceWith.id);
 
     if (componentNode && componentNode.type === 'COMPONENT') {
-      instanceNodes.forEach((instanceNode) => {
-        if (instanceNode && instanceNode.type === 'INSTANCE') {
-          // eslint-disable-next-line no-param-reassign
-          instanceNode.mainComponent = componentNode;
-        }
+      instances.forEach((instance) => {
+        // eslint-disable-next-line no-param-reassign
+        instance.node.mainComponent = componentNode;
       });
     }
 
     figma.notify(
-      `Replaced: ${instanceNodes.length} instances with ${componentNode?.name}`
+      `Replaced: ${instances.length} instances with ${componentNode?.name}`
     );
-    figmaSelectNodes(instanceNodes);
+    focusOnNodes({ nodeIds: instances.map((instance) => instance.id) });
     updateLocalMissingData(instances);
     emit<UpdateLocalMissing>('UPDATE_LOCAL_MISSING', {
       missing: localMissingData.missingInstances,

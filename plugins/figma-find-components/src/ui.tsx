@@ -2,6 +2,7 @@ import '!./css/output.css';
 
 import { render } from '@create-figma-plugin/ui';
 import { emit, on } from '@create-figma-plugin/utilities';
+import { IComponent, IInstance } from '@repo/utils';
 import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
@@ -11,8 +12,6 @@ import Tabs from './tabs';
 import {
   ETabs,
   GetLocalMissing,
-  IComponent,
-  ILocalInstance,
   TLibrary,
   UpdateLocalMissing,
   UpdateRemoteComponents,
@@ -23,28 +22,28 @@ function FindComponents(): h.JSX.Element {
   const [activeTab, setActiveTab] = useState(ETabs.LOCAL);
 
   const [localMissingInstances, setLocalMissingInstances] = useState<
-    ILocalInstance[]
+    IInstance[]
   >([]);
   const [localMainComponents, setLocalMainComponents] = useState<IComponent[]>(
     []
   );
 
   const [remoteMissingInstances, setRemoteMissingInstances] = useState<
-    ILocalInstance[]
+    IInstance[]
   >([]);
   const [userLibraries, setUserLibraries] = useState<TLibrary[]>([]);
 
   useEffect(() => {
     on<UpdateLocalMissing>(
       'UPDATE_LOCAL_MISSING',
-      (data: { missing: ILocalInstance[]; components: IComponent[] }) => {
+      (data: { missing: IInstance[]; components: IComponent[] }) => {
         setLocalMissingInstances(data.missing);
         setLocalMainComponents(data.components);
       }
     );
     on<UpdateRemoteComponents>(
       'UPDATE_REMOTE_COMPONENTS',
-      (data: ILocalInstance[]) => {
+      (data: IInstance[]) => {
         setRemoteMissingInstances(data);
       }
     );

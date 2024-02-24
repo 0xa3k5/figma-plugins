@@ -1,11 +1,13 @@
-import { JSX, h } from 'preact';
-import { useState } from 'preact/hooks';
 import { emit } from '@create-figma-plugin/utilities';
-import { IComponent, ILocalInstance, ReplaceInstances } from '../types';
+import { IComponent, IInstance } from '@repo/utils';
+import { h, JSX } from 'preact';
+import { useState } from 'preact/hooks';
+
+import { ReplaceInstances } from '../types';
 
 interface Props {
   options: Record<string, IComponent[]>;
-  checkedInstances: ILocalInstance[];
+  checkedInstances: IInstance[];
 }
 
 export default function Select({

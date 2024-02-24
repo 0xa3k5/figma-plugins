@@ -1,23 +1,24 @@
 import {
   Button,
   Container,
-  render,
-  Text,
-  VerticalSpace,
-  SearchTextbox,
   Divider,
-  Toggle,
+  render,
+  SearchTextbox,
   Tabs,
+  Text,
+  Toggle,
+  VerticalSpace,
 } from '@create-figma-plugin/ui';
 import { emit } from '@create-figma-plugin/utilities';
 import { h } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
-import styles from './css/input.css';
-import icons from '../icon-paths.json';
-import { CreateSvgFrame, ICryptoIcon, CreateAll } from './types';
-import IconContent from './components/IconContent';
 
-function CryptoIcons() {
+import icons from '../icon-paths.json';
+import IconContent from './components/IconContent';
+import styles from './css/input.css';
+import { CreateAll, CreateSvgFrame, ICryptoIcon } from './types';
+
+function CryptoIcons(): h.JSX.Element {
   const pageIconSize = 100;
   const [shownIcons, setShownIcons] = useState<ICryptoIcon[]>(
     icons.slice(0, pageIconSize)

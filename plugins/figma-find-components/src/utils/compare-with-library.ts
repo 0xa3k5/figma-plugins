@@ -1,9 +1,11 @@
-import { IComponent, ILocalInstance, TLibrary } from '../types';
+import { IComponent, IInstance } from '@repo/utils';
+
+import { TLibrary } from '../types';
 
 export default function compareWithLibrary(
   libraries: TLibrary[],
-  instances: ILocalInstance[]
-): ILocalInstance[] {
+  instances: IInstance[]
+): IInstance[] {
   const libraryComponentIds = new Set<string>();
   const libComps: IComponent[] = [];
 

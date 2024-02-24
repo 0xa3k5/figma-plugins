@@ -8,12 +8,12 @@
     ".": "./index.ts"
   },
   "scripts": {
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "lint": "eslint '*/**/*.{js,ts}' --quiet --fix",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "typescript": ">=4"
   }
 }
