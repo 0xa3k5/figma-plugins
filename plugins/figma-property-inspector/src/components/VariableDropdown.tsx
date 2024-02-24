@@ -1,8 +1,8 @@
 import { IconLayerFrame16 } from '@create-figma-plugin/ui';
+import { IconVariable } from '@repo/ui';
 import { FunctionalComponent, h } from 'preact';
 import { useState } from 'preact/hooks';
 
-import { VariableIcon } from '../icons';
 import { IVariable, IVariableCollection, PropertyType } from '../types';
 import { handleAssignVariable } from '../utils/event-handlers';
 
@@ -64,7 +64,7 @@ const VariableDropdown: FunctionalComponent<VariableDropdownProps> = ({
         class="inline-flex items-center rounded-md"
         onClick={() => setSelectedValue(selectedValue === null ? variables[0]?.name : null)}
       >
-        <VariableIcon />
+        <IconVariable />
       </button>
       {selectedValue !== null && (
         <div

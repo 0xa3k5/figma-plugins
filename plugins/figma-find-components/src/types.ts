@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
 import { EventHandler } from '@create-figma-plugin/utilities';
+import { IComponent, IInstance } from '@repo/utils';
 
 export enum ETabs {
   LOCAL = 'Local Missing',
@@ -9,19 +9,10 @@ export interface ResizeWindowHandler extends EventHandler {
   name: 'RESIZE_WINDOW';
   handler: (windowSize: { width: number; height: number }) => void;
 }
-export interface IComponent {
-  id: string;
-  name: string;
-}
-
-export interface ILocalInstance extends IComponent {
-  mainComponent: IComponent;
-  page: {
-    id: string;
-    name: string;
-  };
-}
-
+// export interface IComponent {
+//   id: string;
+//   name: string;
+// }
 export interface ILibrary {
   name: string;
   components: IComponent[];
@@ -35,12 +26,12 @@ export interface GetRemoteMissing extends EventHandler {
 }
 export interface UpdateRemoteComponents extends EventHandler {
   name: 'UPDATE_REMOTE_COMPONENTS';
-  handle: (remoteComponents: Record<string, ILocalInstance[]>) => void;
+  handle: (remoteComponents: Record<string, IInstance[]>) => void;
 }
 
 export interface FindRemoteMissingInstances extends EventHandler {
   name: 'FIND_REMOTE_MISSING';
-  handle: (remoteComponents: Record<string, ILocalInstance[]>) => void;
+  handle: (remoteComponents: Record<string, IInstance[]>) => void;
 }
 
 export interface GetLocalMissing extends EventHandler {
@@ -49,15 +40,12 @@ export interface GetLocalMissing extends EventHandler {
 }
 export interface UpdateLocalMissing extends EventHandler {
   name: 'UPDATE_LOCAL_MISSING';
-  handle: (local: {
-    missing: ILocalInstance[];
-    components: IComponent[];
-  }) => void;
+  handle: (local: { missing: IInstance[]; components: IComponent[] }) => void;
 }
 
 export interface SelectNodes extends EventHandler {
   name: 'SELECT_NODES';
-  handler: (components: ILocalInstance[]) => void;
+  handler: (components: IInstance[]) => void;
 }
 
 export interface ScanLibrary extends EventHandler {
@@ -77,19 +65,16 @@ export interface UpdateUserLibraries extends EventHandler {
 
 export interface DetachInstances extends EventHandler {
   name: 'DETACH_INSTANCES';
-  handler: (instances: ILocalInstance[]) => void;
+  handler: (instances: IInstance[]) => void;
 }
 export interface DeleteInstances extends EventHandler {
   name: 'DELETE_INSTANCES';
-  handler: (instances: ILocalInstance[]) => void;
+  handler: (instances: IInstance[]) => void;
 }
 
 export interface ReplaceInstances extends EventHandler {
   name: 'REPLACE_INSTANCES';
-  handler: (data: {
-    instances: ILocalInstance[];
-    replaceWith: IComponent;
-  }) => void;
+  handler: (data: { instances: IInstance[]; replaceWith: IComponent }) => void;
 }
 
 export interface ClearLibraries extends EventHandler {

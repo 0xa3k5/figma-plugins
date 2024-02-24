@@ -21,9 +21,10 @@
   "name": "figma-find-components",
   "type": "module",
   "devDependencies": {
-    "@repo/ui": "*",
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
-    "@repo/tailwind-config": "*"
+    "@repo/ui": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/tailwind-config": "workspace:*",
+    "@repo/utils": "workspace:*"
   }
 }

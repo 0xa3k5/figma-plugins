@@ -1,18 +1,15 @@
-import { h } from 'preact';
 import { emit } from '@create-figma-plugin/utilities';
-import {
-  ILocalInstance,
-  DetachInstances,
-  DeleteInstances,
-  IComponent,
-} from '../types';
+import { IconLinkBreak, IconTrash } from '@repo/ui';
+import { IComponent, IInstance } from '@repo/utils';
+import { h } from 'preact';
+
+import { DeleteInstances, DetachInstances } from '../types';
 import { IconButton } from './button';
-import { IconLinkBreak, IconTrash } from '../icons';
 import Select from './Select';
 
 interface Props {
   checkedInstanceIds: { [key: string]: boolean };
-  data: Record<string, Record<string, ILocalInstance[]>>;
+  data: Record<string, Record<string, IInstance[]>>;
   dropdownOptions: IComponent[];
 }
 
@@ -28,13 +25,14 @@ export default function ActionBar({
         const isAnyInstanceCheckedInGroup = instances.some(
           (instance) => checkedInstanceIds[instance.id]
         );
+
         if (isAnyInstanceCheckedInGroup) {
           acc.push(...instances);
         }
       });
       return acc;
     },
-    [] as ILocalInstance[]
+    [] as IInstance[]
   );
 
   const handleDetach = () => {

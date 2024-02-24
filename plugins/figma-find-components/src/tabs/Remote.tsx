@@ -1,22 +1,23 @@
+import { Button, IconLayerComponent16 } from '@create-figma-plugin/ui';
+import { emit, on } from '@create-figma-plugin/utilities';
+import { groupComponentsByParent, IInstance } from '@repo/utils';
 import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
-import { emit, on } from '@create-figma-plugin/utilities';
-import { Button, IconLayerComponent16 } from '@create-figma-plugin/ui';
-import {
-  TLibrary,
-  GetLibraries,
-  ILocalInstance,
-  UpdateUserLibraries,
-  ScanLibrary,
-  GetRemoteMissing,
-  ClearLibraries,
-} from '../types';
-import { groupByMain, groupByPage } from '../utils';
+
 import InstanceDisplayer from '../components/InstanceDisplayer';
+import {
+  ClearLibraries,
+  GetLibraries,
+  GetRemoteMissing,
+  ScanLibrary,
+  TLibrary,
+  UpdateUserLibraries,
+} from '../types';
+import { groupByPage } from '../utils';
 
 interface Props {
   libraries: TLibrary[];
-  instances: ILocalInstance[];
+  instances: IInstance[];
 }
 
 export default function Remote({ libraries, instances }: Props): h.JSX.Element {
@@ -60,7 +61,7 @@ export default function Remote({ libraries, instances }: Props): h.JSX.Element {
     );
   }
 
-  const grouped = groupByPage(groupByMain(instances));
+  const grouped = groupByPage(groupComponentsByParent(instances));
 
   console.log('instance', instances);
   console.log(grouped, 'grouped');
@@ -82,6 +83,7 @@ export default function Remote({ libraries, instances }: Props): h.JSX.Element {
           </div>
           {Object.keys(grouped[mainCompName]).map((pageName) => {
             const instancessss = grouped[mainCompName][pageName];
+
             return (
               <InstanceDisplayer
                 key={instancessss[0].id}

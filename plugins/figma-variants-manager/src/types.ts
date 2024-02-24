@@ -1,17 +1,5 @@
 import { EventHandler } from '@create-figma-plugin/utilities';
-
-export interface IComponent {
-  id: string;
-  name: string;
-  parent?: {
-    id: string;
-    name: string;
-  };
-  isSet?: boolean;
-  matchedProps: string[];
-  node: SceneNode;
-}
-
+import { IComponent } from '@repo/utils';
 export interface ISearchSettings {
   caseSensitive: boolean;
   matchWholeWord: boolean;
@@ -35,13 +23,4 @@ export interface MatchingComponents extends EventHandler {
 export interface FindComponents extends EventHandler {
   name: 'FIND_COMPONENTS';
   handler: (searchKey: string, searchSettings: ISearchSettings) => void;
-}
-export interface ResizeWindowHandler extends EventHandler {
-  name: 'RESIZE_WINDOW';
-  handler: (windowSize: { width: number; height: number }) => void;
-}
-
-export interface ComponentTargetHandler extends EventHandler {
-  name: 'TARGET_COMPONENT';
-  handler: (parentId: string) => void;
 }

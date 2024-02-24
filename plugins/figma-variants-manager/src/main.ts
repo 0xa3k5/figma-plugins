@@ -1,82 +1,61 @@
 import { emit, on, showUI } from '@create-figma-plugin/utilities';
-import SceneNode from '@figma/plugin-typings';
+import {
+  ComponentFocusHandler,
+  focusOnNodes,
+  getNodesByType,
+  IComponent,
+  ResizeWindowHandler,
+} from '@repo/utils';
 
 import {
-  ComponentTargetHandler,
   FindComponents,
-  IComponent,
   ISearchSettings,
   MatchingComponents,
   ReplaceProperties,
-  ResizeWindowHandler,
 } from './types';
-
-const searchPage = (): SceneNode[] => {
-  return figma.currentPage.findAll((node) => node.type === 'COMPONENT');
-};
-
-const searchAllPages = (): SceneNode[] => {
-  return figma.root.findAllWithCriteria({
-    types: ['COMPONENT_SET', 'COMPONENT'],
-  });
-};
-
-const getPage = (node: BaseNode): PageNode | null => {
-  if (node.type === 'PAGE') {
-    return node;
-  }
-  if (node.parent) {
-    return getPage(node.parent);
-  }
-  return null;
-};
 
 const findMatchingComponents = (
   searchKey: string,
   searchSettings: ISearchSettings
 ) => {
   const matchingComps: IComponent[] = [];
-  let nodes;
+  let components: IComponent[];
 
   switch (searchSettings.searchScope) {
     case 'Page':
-      nodes = searchPage();
+      components = getNodesByType({ types: ['COMPONENT'] });
       break;
     case 'All Pages':
-      nodes = searchAllPages();
+      components = getNodesByType({
+        types: ['COMPONENT'],
+        context: { fromRoot: true },
+      });
       break;
     default:
-      nodes = figma.currentPage.selection;
+      components = getNodesByType({
+        types: ['COMPONENT'],
+        context: { inSelection: true },
+      });
       break;
   }
 
-  nodes.forEach((node) => {
-    if (
-      node.parent &&
-      (node.parent.type === 'COMPONENT' || node.parent.type === 'COMPONENT_SET')
-    ) {
-      const properties = node.name.split(', ');
-      const searchRegex = new RegExp(
-        searchSettings.matchWholeWord ? `\\b${searchKey}\\b` : searchKey,
-        searchSettings.caseSensitive ? '' : 'i'
-      );
+  components.forEach((component) => {
+    const searchRegex = new RegExp(
+      searchSettings.matchWholeWord ? `\\b${searchKey}\\b` : searchKey,
+      searchSettings.caseSensitive ? '' : 'i'
+    );
 
-      const matchedProps = properties.filter((prop) => searchRegex.test(prop));
+    const matchedProps = component.properties.filter((prop) =>
+      searchRegex.test(prop)
+    );
 
-      if (matchedProps.length > 0) {
-        const component = {
-          name: node.name,
-          id: node.id,
-          matchedProps: matchedProps.map((prop) => prop.split('=')[0]),
-          node,
-          parent: {
-            id: node.parent.id,
-            name: node.parent.name,
-          },
-        };
+    if (matchedProps.length > 0) {
+      const comp: IComponent = {
+        ...component,
+        properties: matchedProps.map((prop) => prop.split('=')[0]),
+      };
 
-        matchingComps.push(component);
-      }
+      matchingComps.push(comp);
     }
   });
   return matchingComps;
@@ -125,16 +104,11 @@ export default function () {
     emit<MatchingComponents>('MATCHING_COMPONENTS', matchingComps);
   });
 
-  on<ComponentTargetHandler>('TARGET_COMPONENT', (parentId) => {
-    const node = figma.getNodeById(parentId);
-
-    if (node && (node.type === 'COMPONENT' || node.type === 'COMPONENT_SET')) {
-      const pageNode = getPage(node);
-
-      if (pageNode) figma.currentPage = pageNode;
-      figma.currentPage.selection = [node];
-      figma.viewport.scrollAndZoomIntoView([node]);
-    }
+  on<ComponentFocusHandler>('FOCUS_COMPONENT', (parentId) => {
+    focusOnNodes({
+      nodeIds: [parentId],
+      nodeTypes: ['COMPONENT', 'COMPONENT_SET'],
+    });
   });
 
   on<ResizeWindowHandler>(

@@ -1,14 +1,15 @@
-import { JSX, h } from 'preact';
 import { emit } from '@create-figma-plugin/utilities';
+import { IconInstance, IconTarget } from '@repo/ui';
+import { IInstance } from '@repo/utils';
+import { h } from 'preact';
 import { StateUpdater } from 'preact/hooks';
-import { ILocalInstance, SelectNodes } from '../types';
+
+import { SelectNodes } from '../types';
 import { IconButton } from './button';
-import { IconTarget } from '../icons';
-import { IconInstance } from '../icons/Icons';
 import Checkbox from './Checkbox';
 
 interface Props {
-  instances: ILocalInstance[];
+  instances: IInstance[];
   pageName: string;
   checkedInstanceIds: { [key: string]: boolean };
   setCheckedInstanceIds: StateUpdater<{ [key: string]: boolean }>;
@@ -50,7 +51,7 @@ export default function InstanceDisplayer({
         className="flex w-full items-center gap-1"
         onClick={() => handleGroupClick(instances[0].id)}
       >
-        <IconInstance />
+        <IconInstance color="#9747FF" />
         <p>{instances[0].name}</p>
         <span className="opacity-40">{'->'}</span>
         <span className="">{`${instances.length} instances`}</span>

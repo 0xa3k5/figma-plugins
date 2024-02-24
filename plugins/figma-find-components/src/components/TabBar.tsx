@@ -1,8 +1,9 @@
+import { IconRefresh } from '@repo/ui';
 import { h } from 'preact';
 import { StateUpdater } from 'preact/hooks';
+
 import { ETabs } from '../types';
 import { IconButton } from './button';
-import { IconRefresh } from '../icons';
 
 interface TabBarProps {
   activeTab: ETabs;

@@ -1,9 +1,8 @@
-import { ILocalInstance } from '../types';
-
+import { IInstance } from '@repo/utils';
 export default function groupByPage(
-  components: Record<string, ILocalInstance[]>
-): Record<string, Record<string, ILocalInstance[]>> {
-  const grouped: Record<string, Record<string, ILocalInstance[]>> = {};
+  components: Record<string, IInstance[]>
+): Record<string, Record<string, IInstance[]>> {
+  const grouped: Record<string, Record<string, IInstance[]>> = {};
 
   Object.keys(components).forEach((mainCompName) => {
     const groupedByPageName = components[mainCompName].reduce(
@@ -14,7 +13,7 @@ export default function groupByPage(
         acc[pageName].push(componentInstance);
         return acc;
       },
-      {} as Record<string, ILocalInstance[]>
+      {} as Record<string, IInstance[]>
     );
 
     grouped[mainCompName] = groupedByPageName;

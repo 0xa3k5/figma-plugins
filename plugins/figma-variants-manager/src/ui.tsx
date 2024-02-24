@@ -17,23 +17,25 @@ import {
   IconWholeWord,
   TextInput,
 } from '@repo/ui';
+import {
+  ComponentFocusHandler,
+  groupComponentsByParent,
+  IComponent,
+  ResizeWindowHandler,
+} from '@repo/utils';
 import { Fragment, h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
 import IconButton from './components/button/IconButton';
 import HighlightedText from './components/highlighted-text/HighlightedText';
 import {
-  ComponentTargetHandler,
   FindComponents,
-  IComponent,
   ISearchSettings,
   MatchingComponents,
   ReplaceProperties,
-  ResizeWindowHandler,
 } from './types';
-import groupByParent from './utils';
 
-function VariantsManager() {
+function VariantsManager(): h.JSX.Element {
   const [searchKey, setSearchKey] = useState('');
   const [replace, setReplacement] = useState('');
 
@@ -66,7 +68,7 @@ function VariantsManager() {
   }, [searchKey, searchSettings]);
 
   on<MatchingComponents>('MATCHING_COMPONENTS', (components) => {
-    const groupedComponents = groupByParent(components);
+    const groupedComponents = groupComponentsByParent(components);
 
     setMatchingComps(groupedComponents);
     setReplaceComps(groupedComponents[Object.keys(groupedComponents)[0]]);
@@ -74,7 +76,7 @@ function VariantsManager() {
     const firstGroup = Object.values(groupedComponents)[0];
 
     if (firstGroup && firstGroup.length > 0) {
-      emit<ComponentTargetHandler>('TARGET_COMPONENT', firstGroup[0].id);
+      emit<ComponentFocusHandler>('FOCUS_COMPONENT', firstGroup[0].id);
     }
   });
 
@@ -93,7 +95,7 @@ function VariantsManager() {
   };
 
   const handleComponentTarget = (parentId: string) => {
-    emit<ComponentTargetHandler>('TARGET_COMPONENT', parentId);
+    emit<ComponentFocusHandler>('FOCUS_COMPONENT', parentId);
   };
 
   const handleComponentSelect = (
@@ -102,7 +104,7 @@ function VariantsManager() {
   ) => {
     setReplaceComps(components);
     if (components.length > 0) {
-      emit<ComponentTargetHandler>('TARGET_COMPONENT', parentId);
+      emit<ComponentFocusHandler>('FOCUS_COMPONENT', parentId);
     }
   };
 
@@ -202,8 +204,10 @@ function VariantsManager() {
       {matchingComps && (
         <ul className="flex flex-col pt-4">
           {Object.entries(matchingComps).map(([parentId, components]) => {
-            const uniqueProps = new Set(
-              components.flatMap((comp) => comp.matchedProps)
+            const uniqueProps = new Set<string>(
+              components
+                .flatMap((comp) => comp.properties ?? [])
+                .filter(Boolean)
             );
 
             return (
@@ -222,6 +226,7 @@ function VariantsManager() {
                         {components[0].parent?.name ?? components[0].name}
                       </span>
                       {searchKey.length > 0 &&
+                        uniqueProps.size > 0 &&
                         Array.from(uniqueProps).map((prop) => (
                           <HighlightedText
                             key={prop}

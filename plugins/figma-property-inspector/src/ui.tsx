@@ -2,6 +2,7 @@ import '!./css/output.css';
 
 import { Container, render, useWindowResize } from '@create-figma-plugin/ui';
 import { emit, on } from '@create-figma-plugin/utilities';
+import { ResizeWindowHandler } from '@repo/utils';
 import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
@@ -17,7 +18,6 @@ import {
   IVariableCollection,
   PropertyType,
   PropertyTypeValues,
-  ResizeWindowHandler,
   UpdatePageDataHandler,
 } from './types';
 

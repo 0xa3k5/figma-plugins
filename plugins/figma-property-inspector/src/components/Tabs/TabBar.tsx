@@ -1,8 +1,8 @@
 import { IconButton } from '@create-figma-plugin/ui';
+import { IconRefresh } from '@repo/ui';
 import { h } from 'preact';
 import { StateUpdater } from 'preact/hooks';
 
-import { RefreshIcon } from '../../icons';
 import { ETabs } from '../../types';
 import { handleInspectPage } from '../../utils/event-handlers';
 
@@ -37,7 +37,7 @@ export default function TabBar({ activeTab, setActiveTab }: TabBarProps): h.JSX.
         ))}
       </div>
       <IconButton onClick={handleInspectPage}>
-        <RefreshIcon />
+        <IconRefresh />
       </IconButton>
     </div>
   );

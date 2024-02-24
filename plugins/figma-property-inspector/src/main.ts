@@ -1,6 +1,6 @@
 import { emit, on, showUI } from '@create-figma-plugin/utilities';
+import { focusOnNodes, ResizeWindowHandler } from '@repo/utils';
 
-// import { SceneNode, VariableBindableNodeField } from '@figma/plugin-typings';
 import {
   AssignVariableHandler,
   GetVariableCollectionsHandler,
@@ -10,7 +10,6 @@ import {
   IVariableCollection,
   PropertyType,
   PropertyTypeValues,
-  ResizeWindowHandler,
   UpdatePageDataHandler,
   ValueSelectHandler,
 } from './types';
@@ -345,14 +344,9 @@ export default function (): void {
   });
 
   on<ValueSelectHandler>('VALUE_SELECT', (data): void => {
-    const nodesArray = properties[data.key][data.type][data.direction].nodes
-      .map((node) => {
-        return figma.getNodeById(node.id);
-      })
-      .filter(Boolean) as SceneNode[];
+    const nodeIds = properties[data.key][data.type][data.direction].nodes.map((node) => node.id);
 
-    figma.currentPage.selection = nodesArray;
-    figma.viewport.scrollAndZoomIntoView(nodesArray);
+    focusOnNodes({ nodeIds });
   });
 
   figma.on('run', () => {
