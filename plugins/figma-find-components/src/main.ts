@@ -181,7 +181,9 @@ export default function () {
     const detachedFrames: FrameNode[] = [];
 
     instances.forEach((instance) => {
-      detachedFrames.push(instance.node.detachInstance());
+      const instanceNode = figma.getNodeById(instance.nodeId) as InstanceNode;
+
+      detachedFrames.push(instanceNode.detachInstance());
     });
 
     figma.notify(`🔗 Detached: ${detachedFrames.length} instances`);
@@ -195,7 +197,9 @@ export default function () {
 
   on<DeleteInstances>('DELETE_INSTANCES', (instances: IInstance[]) => {
     instances.forEach((instance) => {
-      deleteInstance(instance);
+      deleteInstance({
+        node: figma.getNodeById(instance.nodeId) as InstanceNode,
+      });
     });
     figma.notify(`🗑️ Deleted: ${instances.length} instances`);
     updateLocalMissingData(instances);
@@ -210,8 +214,8 @@ export default function () {
 
     if (componentNode && componentNode.type === 'COMPONENT') {
       instances.forEach((instance) => {
-        // eslint-disable-next-line no-param-reassign
-        instance.node.mainComponent = componentNode;
+        (figma.getNodeById(instance.nodeId) as InstanceNode).mainComponent =
+          componentNode;
       });
     }
 

@@ -1,15 +1,11 @@
 import { EventHandler } from '@create-figma-plugin/utilities';
-
 export interface IComponent {
   id: string;
   name: string;
-  parent?: {
-    id: string;
-    name: string;
-  };
+  parent?: IComponentSet;
   isSet?: boolean;
-  properties: string[];
-  node: ComponentNode;
+  properties?: string[];
+  nodeId: string;
   page: PageNode;
   remote: boolean;
 }
@@ -17,7 +13,7 @@ export interface IComponent {
 export interface IInstance {
   id: string;
   name: string;
-  node: InstanceNode;
+  nodeId: string;
   mainComponent: IComponent;
   page: PageNode;
 }
@@ -25,11 +21,18 @@ export interface IInstance {
 export interface IComponentSet {
   id: string;
   name: string;
-  node: ComponentSetNode;
+  nodeId: string;
   page: PageNode;
   remote: boolean;
-  properties: string[];
+  properties?: string[];
 }
+
+export type NamingConvention =
+  | 'camelCase'
+  | 'PascalCase'
+  | 'kebab-case'
+  | 'snake_case'
+  | 'Title Case';
 
 export interface ResizeWindowHandler extends EventHandler {
   name: 'RESIZE_WINDOW';

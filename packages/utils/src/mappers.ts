@@ -3,22 +3,25 @@ import { getNodePage } from './utils';
 
 export const mapComponentNodeToIComponent = (
   node: ComponentNode
-): IComponent => ({
-  id: node.id,
-  name: node.name,
-  node: node,
-  parent: node.parent
-    ? { id: node.parent.id, name: node.parent.name }
-    : undefined,
-  remote: node.remote,
-  page: getNodePage(node),
-  properties: node.name.split(', '),
-});
+): IComponent => {
+  return {
+    id: node.id,
+    name: node.name,
+    nodeId: node.id,
+    parent:
+      node.parent && node.parent.type === 'COMPONENT_SET'
+        ? mapComponentSetNodeToIComponentSet(node.parent)
+        : undefined,
+    remote: node.remote,
+    page: getNodePage(node),
+    properties: node.parent ? node.name.split(', ') : undefined,
+  };
+};
 
 export const mapInstanceNodeToIInstance = (node: InstanceNode): IInstance => ({
   id: node.id,
   name: node.name,
-  node: node,
+  nodeId: node.id,
   mainComponent: mapComponentNodeToIComponent(
     node.mainComponent as ComponentNode
   ),
@@ -30,8 +33,8 @@ export const mapComponentSetNodeToIComponentSet = (
 ): IComponentSet => ({
   id: node.id,
   name: node.name,
-  node: node,
+  nodeId: node.id,
   page: getNodePage(node),
   remote: node.remote,
-  properties: node.name.split(', '),
+  properties: undefined, // todo
 });
