@@ -10,7 +10,7 @@ const BaseIcon = ({ size = 24, color = 'currentColor', paths }: IconProps) => (
   <svg
     width={size}
     height={size}
-    viewBox="0 0 32 32"
+    viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
   >
     {paths.map((path, index) => (
@@ -322,6 +322,19 @@ export const IconInstance = (
     paths={[
       {
         d: 'M6 12L12 6L18 12L12 18L6 12ZM12 16.6935L16.6935 12L12 7.30655L7.30655 12L12 16.6935Z',
+      },
+    ]}
+    {...props}
+  />
+);
+
+export const IconSettings = (
+  props: Omit<IconProps, 'paths'>
+): h.JSX.Element => (
+  <BaseIcon
+    paths={[
+      {
+        d: 'M8 12.05V5h1v7.05c1.141.232 2 1.24 2 2.45 0 1.21-.859 2.218-2 2.45V19H8v-2.05c-1.141-.232-2-1.24-2-2.45 0-1.21.859-2.218 2-2.45Zm2 2.45c0 .828-.672 1.5-1.5 1.5S7 15.328 7 14.5 7.672 13 8.5 13s1.5.672 1.5 1.5Zm5 4.5h1v-7.05c1.141-.232 2-1.24 2-2.45 0-1.21-.859-2.218-2-2.45V5h-1v2.05c-1.141.232-2 1.24-2 2.45 0 1.21.859 2.218 2 2.45V19Zm2-9.5c0-.828-.672-1.5-1.5-1.5S14 8.672 14 9.5s.672 1.5 1.5 1.5 1.5-.672 1.5-1.5Z',
       },
     ]}
     {...props}
