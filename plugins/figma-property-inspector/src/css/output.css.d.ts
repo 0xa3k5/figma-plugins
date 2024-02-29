@@ -1,6 +1,5 @@
 declare const styles: {
   readonly "-rotate-90": string;
-  readonly "-translate-x-full": string;
   readonly "absolute": string;
   readonly "active:scale-95": string;
   readonly "aspect-square": string;
@@ -8,7 +7,6 @@ declare const styles: {
   readonly "bg-bg-brand": string;
   readonly "bg-bg-disabled": string;
   readonly "bg-bg-inverse": string;
-  readonly "bg-bg-selected": string;
   readonly "bg-black": string;
   readonly "bg-blue-500": string;
   readonly "bg-opacity-20": string;
@@ -16,6 +14,7 @@ declare const styles: {
   readonly "bg-violet-500": string;
   readonly "bg-white": string;
   readonly "bg-yellow-500": string;
+  readonly "block": string;
   readonly "blur": string;
   readonly "border": string;
   readonly "border-border": string;
@@ -24,10 +23,10 @@ declare const styles: {
   readonly "col-span-3": string;
   readonly "col-span-6": string;
   readonly "col-span-full": string;
-  readonly "cursor-default": string;
   readonly "duration-100": string;
   readonly "duration-150": string;
   readonly "duration-200": string;
+  readonly "duration-300": string;
   readonly "ease-in-out": string;
   readonly "filter": string;
   readonly "fixed": string;
@@ -63,9 +62,9 @@ declare const styles: {
   readonly "group-hover:inline-block": string;
   readonly "group-hover:opacity-100": string;
   readonly "group-hover:text-text": string;
-  readonly "h-10": string;
   readonly "h-4": string;
   readonly "h-8": string;
+  readonly "h-full": string;
   readonly "hidden": string;
   readonly "hover:cursor-default": string;
   readonly "hover:cursor-pointer": string;
@@ -88,6 +87,7 @@ declare const styles: {
   readonly "opacity-100": string;
   readonly "opacity-40": string;
   readonly "opacity-60": string;
+  readonly "overflow-auto": string;
   readonly "p-2": string;
   readonly "p-3": string;
   readonly "p-4": string;
@@ -100,9 +100,7 @@ declare const styles: {
   readonly "pr-1": string;
   readonly "pr-2": string;
   readonly "pt-2": string;
-  readonly "pt-4": string;
   readonly "px-2": string;
-  readonly "px-4": string;
   readonly "py-1": string;
   readonly "py-2": string;
   readonly "py-4": string;
@@ -113,6 +111,7 @@ declare const styles: {
   readonly "rounded-sm": string;
   readonly "rounded-xl": string;
   readonly "shadow": string;
+  readonly "shadow-md": string;
   readonly "size-10": string;
   readonly "size-20": string;
   readonly "size-4": string;
@@ -127,7 +126,6 @@ declare const styles: {
   readonly "text-lg": string;
   readonly "text-sm": string;
   readonly "text-text": string;
-  readonly "text-text-component": string;
   readonly "text-text-oninverse": string;
   readonly "text-text-secondary": string;
   readonly "text-text-tertiary": string;
@@ -141,8 +139,10 @@ declare const styles: {
   readonly "transition-transform": string;
   readonly "translate-x-0": string;
   readonly "translate-x-4": string;
+  readonly "translate-x-full": string;
   readonly "uppercase": string;
   readonly "w-48": string;
+  readonly "w-64": string;
   readonly "w-7": string;
   readonly "w-fit": string;
   readonly "w-full": string;

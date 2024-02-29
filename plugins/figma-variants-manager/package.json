@@ -16,7 +16,8 @@
     "id": "1341787472715232173",
     "name": "Variants Manager",
     "main": "src/main.ts",
-    "ui": "src/ui.tsx"
+    "ui": "src/ui.tsx",
+    "documentAccess": "dynamic-page"
   },
   "name": "figma-variants-manager",
   "type": "module",

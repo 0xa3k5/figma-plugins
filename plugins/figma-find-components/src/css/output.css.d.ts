@@ -1,5 +1,4 @@
 declare const styles: {
-  readonly "-translate-x-full": string;
   readonly "absolute": string;
   readonly "active:scale-95": string;
   readonly "appearance-none": string;
@@ -8,11 +7,10 @@ declare const styles: {
   readonly "bg-bg-brand": string;
   readonly "bg-bg-disabled": string;
   readonly "bg-bg-inverse": string;
-  readonly "bg-bg-selected": string;
   readonly "bg-black": string;
-  readonly "bg-opacity-20": string;
   readonly "bg-opacity-40": string;
   readonly "bg-white": string;
+  readonly "block": string;
   readonly "blur": string;
   readonly "border": string;
   readonly "border-black": string;
@@ -22,7 +20,6 @@ declare const styles: {
   readonly "checked:bg-blue-500": string;
   readonly "checked:bg-opacity-100": string;
   readonly "checked:border-transparent": string;
-  readonly "cursor-default": string;
   readonly "dark:bg-black": string;
   readonly "dark:border-opacity-10": string;
   readonly "dark:border-opacity-20": string;
@@ -31,9 +28,9 @@ declare const styles: {
   readonly "dark:text-white": string;
   readonly "duration-150": string;
   readonly "duration-200": string;
+  readonly "duration-300": string;
   readonly "ease-in-out": string;
   readonly "figma-dark": string;
-  readonly "filter": string;
   readonly "fixed": string;
   readonly "flex": string;
   readonly "flex-col": string;
@@ -59,9 +56,9 @@ declare const styles: {
   readonly "group-hover:inline-block": string;
   readonly "group-hover:opacity-100": string;
   readonly "group-hover:text-text": string;
-  readonly "h-10": string;
   readonly "h-4": string;
   readonly "h-8": string;
+  readonly "h-full": string;
   readonly "hidden": string;
   readonly "hover:bg-black": string;
   readonly "hover:bg-blue-500": string;
@@ -88,12 +85,11 @@ declare const styles: {
   readonly "opacity-100": string;
   readonly "opacity-40": string;
   readonly "opacity-60": string;
+  readonly "overflow-auto": string;
   readonly "p-1": string;
   readonly "p-2": string;
-  readonly "p-4": string;
   readonly "pl-4": string;
   readonly "placeholder:text-text-tertiary": string;
-  readonly "pt-4": string;
   readonly "px-2": string;
   readonly "px-3": string;
   readonly "px-4": string;
@@ -101,12 +97,14 @@ declare const styles: {
   readonly "py-2": string;
   readonly "py-8": string;
   readonly "relative": string;
+  readonly "right-0": string;
   readonly "rounded-full": string;
   readonly "rounded-lg": string;
   readonly "rounded-md": string;
   readonly "rounded-sm": string;
   readonly "rounded-xl": string;
   readonly "shadow": string;
+  readonly "shadow-md": string;
   readonly "shrink-0": string;
   readonly "size-4": string;
   readonly "size-full": string;
@@ -116,18 +114,17 @@ declare const styles: {
   readonly "text-clip": string;
   readonly "text-sm": string;
   readonly "text-text": string;
-  readonly "text-text-component": string;
   readonly "text-text-oninverse": string;
   readonly "text-text-secondary": string;
   readonly "text-text-tertiary": string;
   readonly "text-white": string;
-  readonly "text-xs": string;
   readonly "top-0": string;
   readonly "transform": string;
   readonly "transition-all": string;
   readonly "transition-transform": string;
   readonly "translate-x-0": string;
   readonly "translate-x-4": string;
+  readonly "translate-x-full": string;
   readonly "w-64": string;
   readonly "w-7": string;
   readonly "w-full": string;

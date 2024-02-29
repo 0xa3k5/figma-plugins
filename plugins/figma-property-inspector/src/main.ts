@@ -184,8 +184,8 @@ const updateSizingData = (nodeSizingData: PropertyTypeValues, sizingData: Proper
   });
 };
 
-const getSingleVariable = (variableId: string): IVariable | null => {
-  const res = figma.variables.getVariableById(variableId);
+const getSingleVariable = async (variableId: string): Promise<IVariable | null> => {
+  const res = await figma.variables.getVariableByIdAsync(variableId);
 
   if (res) {
     return {
@@ -204,8 +204,8 @@ const getSingleVariable = (variableId: string): IVariable | null => {
   return null;
 };
 
-const getFloatVariables = (): IVariable[] => {
-  return figma.variables.getLocalVariables('FLOAT').map((v) => {
+const getFloatVariables = async (): Promise<IVariable[]> => {
+  return (await figma.variables.getLocalVariablesAsync('FLOAT')).map((v) => {
     return {
       id: v.id,
       name: v.name,
@@ -221,8 +221,8 @@ const getFloatVariables = (): IVariable[] => {
   });
 };
 
-const getVariableCollections = (): IVariableCollection[] => {
-  return figma.variables.getLocalVariableCollections().map((col) => {
+const getVariableCollections = async (): Promise<IVariableCollection[]> => {
+  return (await figma.variables.getLocalVariableCollectionsAsync()).map((col) => {
     return {
       id: col.id,
       defaultModeId: col.defaultModeId,
@@ -250,7 +250,7 @@ const inspectNode = (node: SceneNode, sizingData: PropertyTypeValues) => {
 
 let properties: PropertyTypeValues = {};
 
-const inspectPage = () => {
+const inspectPage = async () => {
   properties = {};
   const nodeData = figma.currentPage.children;
 
@@ -261,14 +261,14 @@ const inspectPage = () => {
   figma.notify(
     `${nodeData.length === 0 ? 'there is no inspectable nodes' : `Inspected: ${figma.currentPage.name}`}`
   );
-  emit<GetVariableCollectionsHandler>('GET_VARIABLE_COLLECTIONS', getVariableCollections());
-  emit<GetVariablesHandler>('GET_VARIABLES', getFloatVariables());
+  emit<GetVariableCollectionsHandler>('GET_VARIABLE_COLLECTIONS', await getVariableCollections());
+  emit<GetVariablesHandler>('GET_VARIABLES', await getFloatVariables());
   emit<UpdatePageDataHandler>('UPDATE_PAGE_DATA', properties);
 };
 
-const getVariables = () => {
-  emit<GetVariableCollectionsHandler>('GET_VARIABLE_COLLECTIONS', getVariableCollections());
-  emit<GetVariablesHandler>('GET_VARIABLES', getFloatVariables());
+const getVariables = async () => {
+  emit<GetVariableCollectionsHandler>('GET_VARIABLE_COLLECTIONS', await getVariableCollections());
+  emit<GetVariablesHandler>('GET_VARIABLES', await getFloatVariables());
 };
 
 const inspectSelection = () => {
@@ -296,7 +296,7 @@ export default function (): void {
     }
   );
 
-  on<InspectPageHandler>('INSPECT_PAGE', (): void => {
+  on<InspectPageHandler>('INSPECT_PAGE', async (): Promise<void> => {
     properties = {};
     const nodeData = figma.currentPage.children;
 
@@ -304,8 +304,8 @@ export default function (): void {
       inspectNode(node, properties);
     });
 
-    emit<GetVariableCollectionsHandler>('GET_VARIABLE_COLLECTIONS', getVariableCollections());
-    emit<GetVariablesHandler>('GET_VARIABLES', getFloatVariables());
+    emit<GetVariableCollectionsHandler>('GET_VARIABLE_COLLECTIONS', await getVariableCollections());
+    emit<GetVariablesHandler>('GET_VARIABLES', await getFloatVariables());
     emit<UpdatePageDataHandler>('UPDATE_PAGE_DATA', properties);
   });
 
@@ -317,15 +317,18 @@ export default function (): void {
     const assignVariable = (dir: string) => {
       const nodesForDirection = properties[data.key][data.type][dir]?.nodes || [];
 
-      nodesForDirection.forEach((nodeData) => {
-        const node = figma.getNodeById(nodeData.id) as SceneNode;
+      nodesForDirection.forEach(async (nodeData) => {
+        const node = (await figma.getNodeByIdAsync(nodeData.id)) as SceneNode;
 
         if (node) {
           nodesArray.push(node);
           const fields = propertyToBindableNodeField[data.type][dir];
 
-          fields.map((field) => {
-            node.setBoundVariable(field, data.variableId);
+          fields.map(async (field) => {
+            node.setBoundVariable(
+              field,
+              await figma.variables.getVariableByIdAsync(data.variableId)
+            );
           });
         }
         figma.currentPage.selection = nodesArray;

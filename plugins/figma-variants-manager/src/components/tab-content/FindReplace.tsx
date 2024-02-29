@@ -19,6 +19,7 @@ import { useEffect, useState } from 'preact/hooks';
 
 import {
   FindComponents,
+  IScope,
   ISearchSettings,
   MatchingComponents,
   ReplaceProperties,
@@ -35,16 +36,12 @@ export default function FindReplace(): h.JSX.Element {
     IComponent[]
   > | null>();
 
-  const searchScopeOpts: ISearchSettings['searchScope'][] = [
-    'Selection',
-    'Page',
-    'All Pages',
-  ];
+  const searchscope: IScope[] = ['selection', 'page', 'all pages'];
 
   const [searchSettings, setSearchSettings] = useState<ISearchSettings>({
     caseSensitive: false,
     matchWholeWord: false,
-    searchScope: searchScopeOpts[1],
+    scope: searchscope[1],
   });
 
   useEffect(() => {
@@ -104,16 +101,16 @@ export default function FindReplace(): h.JSX.Element {
         <Stack space="small">
           <div className="flex items-center gap-1">
             <span className="text-text-secondary mr-2">Search in</span>
-            {searchScopeOpts.map((opt) => (
+            {searchscope.map((opt) => (
               <ChoiceChip
                 id={opt}
                 key={opt}
                 value={opt}
-                checked={opt === searchSettings.searchScope}
+                checked={opt === searchSettings.scope}
                 onChange={() =>
                   setSearchSettings({
                     ...searchSettings,
-                    searchScope: opt,
+                    scope: opt,
                   })
                 }
               />

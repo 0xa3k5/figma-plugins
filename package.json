@@ -1,19 +1,12 @@
 {
   "name": "figma-plugins",
-  "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
   "dependencies": {
     "@create-figma-plugin/ui": "^3.1.0",
     "@create-figma-plugin/utilities": "^3.1.0"
   },
   "devDependencies": {
     "@create-figma-plugin/build": "^3.1.0",
-    "@figma/plugin-typings": "1.82.0",
+    "@figma/plugin-typings": "1.87.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
@@ -35,12 +28,22 @@
     "turbo": "latest",
     "typescript": ">=4"
   },
+  "overrides": {
+    "@figma/plugin-typings": "1.87.0"
+  },
   "engines": {
     "node": ">=18"
   },
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "type": "module",
   "workspaces": [
     "plugins/*",
     "packages/*"
-  ],
-  "type": "module"
+  ]
 }

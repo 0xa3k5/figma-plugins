@@ -18,15 +18,19 @@ export const mapComponentNodeToIComponent = (
   };
 };
 
-export const mapInstanceNodeToIInstance = (node: InstanceNode): IInstance => ({
-  id: node.id,
-  name: node.name,
-  nodeId: node.id,
-  mainComponent: mapComponentNodeToIComponent(
-    node.mainComponent as ComponentNode
-  ),
-  page: getNodePage(node),
-});
+export const mapInstanceNodeToIInstance = async (
+  node: InstanceNode
+): Promise<IInstance> => {
+  return {
+    id: node.id,
+    name: node.name,
+    nodeId: node.id,
+    mainComponent: mapComponentNodeToIComponent(
+      (await node.getMainComponentAsync()) as ComponentNode
+    ), // instances must have a main component
+    page: getNodePage(node),
+  };
+};
 
 export const mapComponentSetNodeToIComponentSet = (
   node: ComponentSetNode

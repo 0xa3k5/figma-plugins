@@ -9,6 +9,7 @@ module.exports = {
     'plugin:tailwindcss/recommended',
     'eslint:recommended',
     'eslint-config-turbo',
+    'plugin:@figma/figma-plugins/recommended',
   ],
   parserOptions: {
     project,

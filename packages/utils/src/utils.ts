@@ -23,13 +23,13 @@ type ReturnTypeMap = {
  * @param fromRoot If true, searches the entire document. Overrides 'page' parameter.
  * @returns Array of SceneNodes of specified types.
  */
-export const getNodesByType = <T extends NodeTypes>({
+export const getNodesByType = async <T extends NodeTypes>({
   types,
   context = { page: figma.currentPage },
 }: {
   types: T[];
   context?: { fromRoot: true } | { inSelection: true } | { page: PageNode };
-}): ReturnTypeMap[T][] => {
+}): Promise<ReturnTypeMap[T][]> => {
   let rawNodes: Array<SceneNode | PageNode>;
 
   if ('fromRoot' in context && context.fromRoot) {
@@ -44,28 +44,30 @@ export const getNodesByType = <T extends NodeTypes>({
     throw new Error('Invalid search context');
   }
 
-  const nodes = rawNodes.filter(
-    (node): node is SceneNode => node.type !== 'PAGE'
-  );
+  const nodes = (await Promise.all(
+    rawNodes
+      .filter((node): node is SceneNode => node.type !== 'PAGE')
+      .map(async (node: SceneNode): Promise<ReturnTypeMap[T]> => {
+        switch (node.type) {
+          case 'COMPONENT':
+            return mapComponentNodeToIComponent(
+              node as ComponentNode
+            ) as ReturnTypeMap[T];
+          case 'COMPONENT_SET':
+            return mapComponentSetNodeToIComponentSet(
+              node as ComponentSetNode
+            ) as ReturnTypeMap[T];
+          case 'INSTANCE':
+            return (await mapInstanceNodeToIInstance(
+              node as InstanceNode
+            )) as ReturnTypeMap[T];
+          default:
+            throw new Error(`Unsupported node type: ${node.type}`);
+        }
+      })
+  )) as ReturnTypeMap[T][];
 
-  return nodes.map((node: SceneNode): ReturnTypeMap[T] => {
-    switch (node.type) {
-      case 'COMPONENT':
-        return mapComponentNodeToIComponent(
-          node as ComponentNode
-        ) as ReturnTypeMap[T];
-      case 'COMPONENT_SET':
-        return mapComponentSetNodeToIComponentSet(
-          node as ComponentSetNode
-        ) as ReturnTypeMap[T];
-      case 'INSTANCE':
-        return mapInstanceNodeToIInstance(
-          node as InstanceNode
-        ) as ReturnTypeMap[T];
-      default:
-        throw new Error(`Unsupported node type: ${node.type}`);
-    }
-  }) as ReturnTypeMap[T][];
+  return nodes;
 };
 
 /**
@@ -107,7 +109,7 @@ export const deleteInstance = ({ node }: { node: InstanceNode }) => {
  * @param nodeTypes Optional array of node types to filter.
  * @param notification Optional notification message.
  */
-export const focusOnNodes = ({
+export const focusOnNodes = async ({
   nodeIds,
   nodeTypes,
   notification,
@@ -116,8 +118,9 @@ export const focusOnNodes = ({
   nodeTypes?: Array<SceneNode['type']>;
   notification?: string;
 }) => {
-  const nodes = nodeIds
-    .map((id) => figma.getNodeById(id))
+  const nodes = (
+    await Promise.all(nodeIds.map((id) => figma.getNodeByIdAsync(id)))
+  )
     .filter(
       (node): node is SceneNode =>
         node !== null && node.type !== 'DOCUMENT' && node.type !== 'PAGE'
@@ -128,7 +131,7 @@ export const focusOnNodes = ({
     const pageNode = getNodePage(nodes[0]);
 
     if (pageNode) {
-      figma.currentPage = pageNode;
+      await figma.setCurrentPageAsync(pageNode);
     }
     figma.currentPage.selection = nodes;
     figma.viewport.scrollAndZoomIntoView(nodes);

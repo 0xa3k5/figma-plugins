@@ -66,14 +66,14 @@ export default function () {
     focusOnNodes({ nodeIds: component.map((comp) => comp.id) });
   });
 
-  on<GetLocalMissing>('GET_LOCAL_MISSING', () => {
-    const components = getNodesByType({
+  on<GetLocalMissing>('GET_LOCAL_MISSING', async () => {
+    const components = await getNodesByType({
       types: ['COMPONENT', 'COMPONENT_SET'],
     });
     const instances = getNodesByType({ types: ['INSTANCE'] });
     const missingArr: IInstance[] = [];
 
-    instances.forEach((instance) => {
+    (await instances).forEach(async (instance) => {
       const mainComp = components.find(
         (c) => c.id === instance.mainComponent?.id
       );
@@ -107,7 +107,7 @@ export default function () {
 
     const remoteInstances: IInstance[] = [];
 
-    instances.forEach((instance) => {
+    (await instances).forEach((instance) => {
       if (instance.mainComponent && instance.mainComponent.remote) {
         remoteInstances.push(instance);
       }
@@ -137,7 +137,7 @@ export default function () {
     });
 
     if (components) {
-      components.forEach((component) => {
+      (await components).forEach((component) => {
         const isExisting = [...componentData].some(
           (c) => c.id === component.id
         );
@@ -180,8 +180,10 @@ export default function () {
   on<DetachInstances>('DETACH_INSTANCES', (instances: IInstance[]) => {
     const detachedFrames: FrameNode[] = [];
 
-    instances.forEach((instance) => {
-      const instanceNode = figma.getNodeById(instance.nodeId) as InstanceNode;
+    instances.forEach(async (instance) => {
+      const instanceNode = (await figma.getNodeByIdAsync(
+        instance.nodeId
+      )) as InstanceNode;
 
       detachedFrames.push(instanceNode.detachInstance());
     });
@@ -196,9 +198,9 @@ export default function () {
   });
 
   on<DeleteInstances>('DELETE_INSTANCES', (instances: IInstance[]) => {
-    instances.forEach((instance) => {
+    instances.forEach(async (instance) => {
       deleteInstance({
-        node: figma.getNodeById(instance.nodeId) as InstanceNode,
+        node: (await figma.getNodeByIdAsync(instance.nodeId)) as InstanceNode,
       });
     });
     figma.notify(`🗑️ Deleted: ${instances.length} instances`);
@@ -209,26 +211,30 @@ export default function () {
     });
   });
 
-  on<ReplaceInstances>('REPLACE_INSTANCES', ({ instances, replaceWith }) => {
-    const componentNode = figma.getNodeById(replaceWith.id);
+  on<ReplaceInstances>(
+    'REPLACE_INSTANCES',
+    async ({ instances, replaceWith }) => {
+      const componentNode = await figma.getNodeByIdAsync(replaceWith.id);
 
-    if (componentNode && componentNode.type === 'COMPONENT') {
-      instances.forEach((instance) => {
-        (figma.getNodeById(instance.nodeId) as InstanceNode).mainComponent =
-          componentNode;
+      if (componentNode && componentNode.type === 'COMPONENT') {
+        instances.forEach(async (instance) => {
+          (
+            (await figma.getNodeByIdAsync(instance.nodeId)) as InstanceNode
+          ).mainComponent = componentNode;
+        });
+      }
+
+      figma.notify(
+        `Replaced: ${instances.length} instances with ${componentNode?.name}`
+      );
+      focusOnNodes({ nodeIds: instances.map((instance) => instance.id) });
+      updateLocalMissingData(instances);
+      emit<UpdateLocalMissing>('UPDATE_LOCAL_MISSING', {
+        missing: localMissingData.missingInstances,
+        components: localMissingData.components,
       });
     }
-
-    figma.notify(
-      `Replaced: ${instances.length} instances with ${componentNode?.name}`
-    );
-    focusOnNodes({ nodeIds: instances.map((instance) => instance.id) });
-    updateLocalMissingData(instances);
-    emit<UpdateLocalMissing>('UPDATE_LOCAL_MISSING', {
-      missing: localMissingData.missingInstances,
-      components: localMissingData.components,
-    });
-  });
+  );
 
   showUI({
     height: 512,
