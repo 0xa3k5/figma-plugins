@@ -1,50 +1,32 @@
 import { Button } from '@create-figma-plugin/ui';
 import { emit, on } from '@create-figma-plugin/utilities';
-import {
-  ChoiceChip,
-  Drawer,
-  IconComponent,
-  IconSettings,
-  IconTarget,
-  Toggle,
-} from '@repo/ui';
+import { ChoiceChip, IconComponent, IconSettings, IconTarget } from '@repo/ui';
 import {
   ComponentFocusHandler,
   convertString,
   IComponent,
   IComponentSet,
-  NamingConvention,
 } from '@repo/utils';
 import { h } from 'preact';
 import { useState } from 'preact/hooks';
 
 import {
-  ApplyScope,
   FindLintErrors,
   FixLintErrors,
-  HandleSelect,
+  HandleSelectionChange,
   ILintError,
   ILintSettings,
   LintSettingsChange,
   LintType,
 } from '../../../types';
-import ButtonDock from '../../button/ButtonDock';
-import IconButton from '../../button/IconButton';
-import LiveView from './live-view/LiveView';
-
-const conventions: NamingConvention[] = [
-  'camelCase',
-  'PascalCase',
-  'kebab-case',
-  'snake_case',
-];
+import { ButtonDock, IconButton } from '../../button';
+import LintDisplay from './LintDisplay';
+import LintSettingsDrawer from './LintSettingsDrawer';
 
 const categories: LintType[] = ['componentName', 'propName', 'propValue'];
 
-const applyScope: ApplyScope[] = ['selection', 'page', 'all pages'];
-
 export default function Lint(): h.JSX.Element {
-  const [userSettings, setUserSettings] = useState<ILintSettings>({
+  const [lintSettings, setLintSettings] = useState<ILintSettings>({
     conventions: {
       componentName: 'camelCase',
       propName: 'camelCase',
@@ -57,51 +39,23 @@ export default function Lint(): h.JSX.Element {
     },
     applyScope: 'page',
   });
-  const [lintErrors, setLintErrors] = useState<
-    Record<string, Record<LintType, ILintError[]>>
-  >({});
-
-  const [selectedErrors, setSelectedErrors] = useState<ILintError[]>([]);
-
-  const handleConventionChange = (
-    category: LintType,
-    value: NamingConvention | null
-  ) => {
-    setUserSettings((prev) => ({
-      ...prev,
-      conventions: {
-        ...prev.conventions,
-        [category]: value,
-      },
-    }));
-    emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', userSettings);
-  };
+  const [lintErrors, setLintErrors] = useState<Record<string, ILintError[]>>(
+    {}
+  );
+  const [selectedComponents, setSelectedComponents] = useState<
+    (IComponent | IComponentSet)[]
+  >([]);
 
   const handleToggleChange = (category: LintType) => {
-    setUserSettings((prev) => ({
+    setLintSettings((prev) => ({
       ...prev,
       toggles: {
         ...prev.toggles,
         [category]: !prev.toggles[category],
       },
     }));
-    emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', userSettings);
+    emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', lintSettings);
   };
-  const handleApplyScopeChange = (scope: ApplyScope) => {
-    setUserSettings((prev) => ({
-      ...prev,
-      applyScope: scope,
-    }));
-    emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', userSettings);
-  };
-
-  const [selectedComponents, setSelectedComponents] = useState<
-    (IComponent | IComponentSet)[]
-  >([]);
-
-  on<HandleSelect>('HANDLE_SELECT', (components) => {
-    setSelectedComponents(components);
-  });
 
   on<FindLintErrors>('FIND_LINT_ERRORS', (lintErrors) => {
     setLintErrors(lintErrors);
@@ -109,215 +63,106 @@ export default function Lint(): h.JSX.Element {
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 
-  const replaceLogic = ({
-    userSettings,
-    error,
-  }: {
-    userSettings: ILintSettings;
-    error: {
-      type: LintType;
-      value: string;
-    };
-  }) => {
-    const { conventions } = userSettings;
-
-    if (error.type === 'componentName') {
-      return convertString({
-        str: error.value,
-        convention: conventions.componentName!,
-      });
-    }
-
-    if (error.type === 'propName') {
-      return convertString({
-        str: error.value,
-        convention: conventions.propName!,
-      });
-    }
-    if (error.type === 'propValue') {
-      return convertString({
-        str: error.value,
-        convention: conventions.propValue!,
-      });
-    }
-
-    return 'fuck this shit';
-  };
-
   const handleFocusComponents = (parentId: string) => {
     emit<ComponentFocusHandler>('FOCUS_COMPONENT', parentId);
   };
 
-  const handleSelectError = (error: ILintError) => {
-    console.log(error);
-    setSelectedErrors((prev) => [...prev, error]);
-    console.log('selectedErr', error);
-    emit<FixLintErrors>('FIX_LINT_ERRORS', selectedErrors);
-  };
+  on<HandleSelectionChange>('HANDLE_SELECTION_CHANGE', (components) => {
+    setSelectedComponents(components);
+  });
 
   return (
     <div className="flex h-full flex-col">
-      <ul className="flex h-full flex-col px-2 py-4">
-        {Object.entries(lintErrors).map(([parentId, errorTypes]) => (
-          <span
-            key={parentId}
-            className="border-border group flex w-full flex-col gap-2 border-b"
-          >
-            <span className="flex w-full justify-between">
-              <span className="text-text-component flex items-center gap-1">
-                <IconComponent />
-                <span className={`text-xs font-semibold capitalize`}>
-                  {errorTypes.componentName[0]?.parent?.name ||
-                    errorTypes.componentName[0]?.name}
+      <div className="flex flex-col p-4">
+        <div className="flex w-full justify-between">
+          <div className="flex w-fit gap-1">
+            {categories.map((category) => (
+              <ChoiceChip
+                key={`${category}_${'ak'}`}
+                id={`${category}_${'ak'}`}
+                value={convertString({
+                  str: category,
+                  convention: 'Title Case',
+                })}
+                checked={lintSettings['toggles'][category]}
+                onChange={() => handleToggleChange(category)}
+              />
+            ))}
+          </div>
+          <IconButton onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
+            <IconSettings />
+          </IconButton>
+        </div>
+        <ul className="flex h-full flex-col py-4">
+          {Object.entries(lintErrors).map(([parentId, errors]) => (
+            <li
+              key={parentId}
+              className="border-border group flex w-full flex-col gap-2 border-b pb-4"
+            >
+              <span className="flex w-full justify-between">
+                <span className="text-text-component flex items-center gap-1">
+                  <IconComponent />
+                  <span className={`text-xs font-semibold capitalize`}>
+                    {errors[0]?.parent?.name ?? errors[0]?.name}
+                  </span>
                 </span>
+                <IconButton
+                  onClick={() => handleFocusComponents(parentId)}
+                  className="opacity-0 group-hover:opacity-100"
+                >
+                  <IconTarget />
+                </IconButton>
               </span>
-              <IconButton
-                onClick={() => handleFocusComponents(parentId)}
-                className="opacity-0 group-hover:opacity-100"
-              >
-                <IconTarget />
-              </IconButton>
-            </span>
-            <span className="flex flex-col gap-2 pl-7">
-              {Object.entries(errorTypes).map(([errorType, errors]) => (
-                <span key={errorType}>
-                  {userSettings['toggles'][errorType as LintType] && (
+              <span className="flex flex-col gap-2 pl-7">
+                {['componentName', 'propName', 'propValue'].map((errorType) => (
+                  <div key={errorType}>
                     <span className="text-text-danger font-semibold">
                       {convertString({
                         str: errorType,
                         convention: 'Title Case',
                       })}
                     </span>
-                  )}
-                  {errors.map((error, index) => (
-                    <LintDisplay
-                      key={`${errorType}-${index}`}
-                      currentName={error.errors[0]?.value}
-                      correctedName={replaceLogic({
-                        userSettings,
-                        error: error.errors[0],
-                      })}
-                      onClick={() => handleSelectError(error)}
-                    />
-                  ))}
-                </span>
-              ))}
-            </span>
-          </span>
-        ))}
-      </ul>
-      <div className="relative w-full">
-        <Drawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen}>
-          <LiveView
-            conventions={userSettings['conventions']}
-            selectedComponents={selectedComponents}
-            categoryToggle={userSettings['toggles']}
-          />
-          <div className="mb-24 flex h-full flex-col">
-            {categories.map((category) => {
-              return (
-                <div
-                  key={category}
-                  className="border-border flex flex-col gap-4 border-b p-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <span
-                      className={`text-xs capitalize ${userSettings['toggles'][category] ? 'text-text font-semibold' : 'text-text-secondary'}`}
-                    >
-                      {category}
-                    </span>
-                    <Toggle
-                      isOn={userSettings['toggles'][category]}
-                      onToggle={() => handleToggleChange(category)}
-                    />
-                  </div>
-                  {userSettings['toggles'][category] && (
-                    <div className="no-scrollbar flex gap-1 overflow-x-scroll">
-                      {conventions.map((convention) => {
+                    {errors
+                      .filter((error) =>
+                        error.errors.some((e) => e.type === errorType)
+                      )
+                      .map((error, index) => {
                         return (
-                          <ChoiceChip
-                            id={`${convention}_${category}`}
-                            checked={
-                              userSettings['conventions'][category] ===
-                              convention
-                            }
-                            onChange={() =>
-                              handleConventionChange(category, convention)
-                            }
-                            value={convention}
+                          <LintDisplay
+                            key={`${errorType}-${index}`}
+                            error={error}
+                            lintSettings={lintSettings}
                           />
                         );
                       })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            <div className="border-border flex flex-col gap-4 border-b p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs">Ignore Local Components</span>
-                <Toggle
-                  isOn={false}
-                  onToggle={() => {
-                    console.log('toglge');
-                  }}
-                />
-              </div>
-            </div>
-            <div className="border-border flex flex-col gap-4 border-b p-4">
-              <span className="text-xs">Apply to</span>
-              <div className="flex w-fit gap-1">
-                {applyScope.map((opt) => {
-                  return (
-                    <ChoiceChip
-                      id={opt}
-                      key={opt}
-                      value={opt}
-                      checked={userSettings['applyScope'] === opt}
-                      onChange={() => handleApplyScopeChange(opt)}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </Drawer>
+                  </div>
+                ))}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
-
+      <LintSettingsDrawer
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+        lintSettings={lintSettings}
+        setLintSettings={setLintSettings}
+        lintCategories={categories}
+        selectedComponents={selectedComponents}
+        handleToggleChange={handleToggleChange}
+      />
       <ButtonDock className="">
         <Button
-          onClick={() => {
-            emit<FixLintErrors>('FIX_LINT_ERRORS', selectedErrors);
-          }}
+          onClick={() =>
+            emit<FixLintErrors>(
+              'FIX_LINT_ERRORS',
+              Object.values(lintErrors).flat()
+            )
+          }
         >
-          Fix
+          {`Fix All ${Object.values(lintErrors).flat().length}`}
         </Button>
-        <IconButton onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
-          <IconSettings />
-        </IconButton>
       </ButtonDock>
     </div>
-  );
-}
-
-interface LintDisplayProps {
-  currentName: string;
-  correctedName: string;
-  onClick: () => void;
-}
-
-export function LintDisplay({
-  currentName,
-  correctedName,
-  onClick,
-}: LintDisplayProps): h.JSX.Element {
-  return (
-    <button className="flex flex-col gap-2" onClick={onClick}>
-      <div className="flex gap-1">
-        <span className="text-text-secondary line-through">{currentName}</span>
-        <span className="text-text">-&gt; {correctedName}</span>
-      </div>
-    </button>
   );
 }

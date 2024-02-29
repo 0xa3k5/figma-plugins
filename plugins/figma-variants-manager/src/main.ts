@@ -5,7 +5,6 @@ import {
   focusOnNodes,
   getNodesByType,
   IComponent,
-  IComponentSet,
   NamingConvention,
   ResizeWindowHandler,
 } from '@repo/utils';
@@ -14,7 +13,7 @@ import {
   FindComponents,
   FindLintErrors,
   FixLintErrors,
-  HandleSelect,
+  HandleSelectionChange,
   ILintError,
   ILintSettings,
   ISearchSettings,
@@ -26,25 +25,25 @@ import {
 
 let lintSettings: ILintSettings;
 
-const findMatchingComponents = (
+const findMatchingComponents = async (
   searchKey: string,
   searchSettings: ISearchSettings
 ) => {
   const matchingComps: IComponent[] = [];
   let components: IComponent[];
 
-  switch (searchSettings.searchScope) {
-    case 'Page':
-      components = getNodesByType({ types: ['COMPONENT'] });
+  switch (searchSettings.scope) {
+    case 'page':
+      components = await getNodesByType({ types: ['COMPONENT'] });
       break;
-    case 'All Pages':
-      components = getNodesByType({
+    case 'all pages':
+      components = await getNodesByType({
         types: ['COMPONENT'],
         context: { fromRoot: true },
       });
       break;
     default:
-      components = getNodesByType({
+      components = await getNodesByType({
         types: ['COMPONENT'],
         context: { inSelection: true },
       });
@@ -78,7 +77,7 @@ const handleReplace = (
   replacement: string,
   components: IComponent[]
 ) => {
-  components.forEach((comp) => {
+  components.forEach(async (comp) => {
     const properties = comp.name.split(', ');
 
     const newProperties = properties.map((prop) => {
@@ -93,7 +92,7 @@ const handleReplace = (
       return prop;
     });
 
-    const node = figma.getNodeById(comp.nodeId);
+    const node = await figma.getNodeByIdAsync(comp.nodeId);
 
     if (node) node.name = newProperties.join(', ');
   });
@@ -101,36 +100,62 @@ const handleReplace = (
   figma.notify('Replacement complete');
 };
 
-const fixLintErrors = (lintErrors: ILintError[]) => {
-  lintErrors.forEach((error) => {
-    error.errors.forEach((err) => {
-      const node = error.parent
-        ? figma.getNodeById(error.parent.id)
-        : figma.getNodeById(error.id);
+const fixLintErrors = async (lintErrors: ILintError[]) => {
+  lintErrors.forEach(async (error) => {
+    const node = await figma.getNodeByIdAsync(error.id);
 
-      if (node) {
+    if (node) {
+      for (const err of error.errors) {
+        // Split the node name into property-value pairs
+        const props = node.name.split(', ');
+
         switch (err.type) {
           case 'componentName':
-            node.name = convertString({
-              str: err.value,
-              convention: lintSettings.conventions.componentName!,
-            });
+            if (node.parent) {
+              node.parent.name = convertString({
+                str: err.value,
+                convention: lintSettings.conventions.componentName!,
+              });
+            } else {
+              node.name = convertString({
+                str: err.value,
+                convention: lintSettings.conventions.componentName!,
+              });
+            }
             break;
           case 'propName':
-            node.name = convertString({
-              str: err.value,
-              convention: lintSettings.conventions.propName!,
-            });
+            // Update only the matching property names across all components
+            node.name = props
+              .map((prop) => {
+                const [key, value] = prop.split('=');
+
+                return err.value === key
+                  ? `${convertString({
+                      str: key,
+                      convention: lintSettings.conventions.propName!,
+                    })}=${value}`
+                  : prop;
+              })
+              .join(', ');
             break;
           case 'propValue':
-            node.name = convertString({
-              str: err.value,
-              convention: lintSettings.conventions.propValue!,
-            });
+            // Update only the matching property values across all components
+            node.name = props
+              .map((prop) => {
+                const [key, value] = prop.split('=');
+
+                return err.value === value
+                  ? `${key}=${convertString({
+                      str: value,
+                      convention: lintSettings.conventions.propValue!,
+                    })}`
+                  : prop;
+              })
+              .join(', ');
             break;
         }
       }
-    });
+    }
   });
 };
 
@@ -169,96 +194,50 @@ const checkConventions = (
   return false;
 };
 
-const groupAndCategorizeErrors = (
-  components: IComponent[]
-): Record<string, Record<LintType, ILintError[]>> => {
-  const groupedErrors: Record<string, Record<LintType, ILintError[]>> = {};
+function findErrorsInComponent(component: IComponent): ILintError {
+  const errors: { type: LintType; value: string }[] = [];
 
-  components.forEach((component) => {
-    const parentId = component.parent?.id ?? component.id;
+  if (lintSettings.toggles.componentName && component.parent) {
+    if (
+      checkConventions(
+        component.parent.name,
+        lintSettings.conventions.componentName
+      )
+    ) {
+      errors.push({ type: 'componentName', value: component.parent.name });
+    }
+  }
 
-    if (!groupedErrors[parentId]) {
-      groupedErrors[parentId] = {
-        componentName: [],
-        propName: [],
-        propValue: [],
-      };
+  const properties = component.name.split(',').map((prop) => prop.trim());
+
+  properties.forEach((prop) => {
+    const [propName, propValue] = prop.split('=').map((p) => p.trim());
+
+    if (
+      lintSettings.toggles.propName &&
+      checkConventions(propName, lintSettings.conventions.propName)
+    ) {
+      errors.push({ type: 'propName', value: propName });
     }
 
-    const lintError = findErrorsInComponent(component);
-
-    lintError.errors.forEach((error) => {
-      groupedErrors[parentId][error.type].push({
-        ...lintError,
-        errors: [error],
-      });
-    });
+    if (
+      lintSettings.toggles.propValue &&
+      checkConventions(propValue, lintSettings.conventions.propValue)
+    ) {
+      errors.push({ type: 'propValue', value: propValue });
+    }
   });
 
-  return groupedErrors;
-};
-
-const processedComponentSets = new Set<string>();
-const processedProperties = new Set<string>();
-
-function findErrorsInComponent(component: IComponent): ILintError {
-  const lintError: ILintError = { ...component, errors: [] };
-
-  const { toggles, conventions } = lintSettings;
-
-  if (toggles.componentName && conventions.componentName) {
-    // Check for parent component name error
-    if (component.parent) {
-      if (checkConventions(component.parent.name, conventions.componentName)) {
-        // Add error if it's the first component of the set being processed
-        if (!processedComponentSets.has(component.parent.id)) {
-          lintError.errors.push({
-            type: 'componentName',
-            value: component.parent.name,
-          });
-          processedComponentSets.add(component.parent.id);
-        }
-      }
-    } else if (checkConventions(component.name, conventions.componentName)) {
-      lintError.errors.push({ type: 'componentName', value: component.name });
-    }
-  }
-
-  // Check for property name errors
-  if (component.properties) {
-    component.properties.forEach((prop) => {
-      const [propName, propValue] = prop.split('=');
-
-      // Check for property name errors
-      if (toggles.propName && conventions.propName) {
-        if (
-          checkConventions(propName, conventions.propName) &&
-          !processedProperties.has(propName)
-        ) {
-          lintError.errors.push({ type: 'propName', value: propName });
-          processedProperties.add(propName);
-        }
-      }
-
-      // Check for property value errors
-      if (toggles.propValue && conventions.propValue) {
-        if (
-          checkConventions(propValue, conventions.propValue) &&
-          !processedProperties.has(propValue)
-        ) {
-          lintError.errors.push({ type: 'propValue', value: propValue });
-          processedProperties.add(propValue);
-        }
-      }
-    });
-  }
+  const lintError: ILintError = {
+    ...component,
+    properties: properties,
+    errors: errors,
+  };
 
   return lintError;
 }
 
-const findLintErrors = (): Record<string, Record<LintType, ILintError[]>> => {
-  processedComponentSets.clear();
-  processedProperties.clear();
+const findLintErrors = async (): Promise<Record<string, ILintError[]>> => {
   let context: any;
 
   switch (lintSettings.applyScope) {
@@ -273,9 +252,26 @@ const findLintErrors = (): Record<string, Record<LintType, ILintError[]>> => {
       break;
   }
 
-  const components = getNodesByType({ types: ['COMPONENT'], context });
+  const components = await getNodesByType({ types: ['COMPONENT'], context });
+  const groupedErrors: Record<string, ILintError[]> = {};
 
-  return groupAndCategorizeErrors(components);
+  components.forEach((component) => {
+    const parentId = component.parent?.id ?? component.id;
+    const errors = findErrorsInComponent(component);
+
+    if (!groupedErrors[parentId]) {
+      groupedErrors[parentId] = [];
+    }
+
+    if (errors.errors.length > 0) {
+      groupedErrors[parentId].push({
+        ...component,
+        errors: [...errors.errors],
+      });
+    }
+  });
+
+  return groupedErrors;
 };
 
 export default function () {
@@ -287,10 +283,10 @@ export default function () {
     }
   );
 
-  on<FindComponents>('FIND_COMPONENTS', (searchKey, searchSettings) => {
+  on<FindComponents>('FIND_COMPONENTS', async (searchKey, searchSettings) => {
     const matchingComps = findMatchingComponents(searchKey, searchSettings);
 
-    emit<MatchingComponents>('MATCHING_COMPONENTS', matchingComps);
+    emit<MatchingComponents>('MATCHING_COMPONENTS', await matchingComps);
   });
 
   on<ComponentFocusHandler>('FOCUS_COMPONENT', (parentId) => {
@@ -309,25 +305,27 @@ export default function () {
     }
   );
 
-  on<LintSettingsChange>('LINT_SETTINGS_CHANGE', (settings) => {
+  on<LintSettingsChange>('LINT_SETTINGS_CHANGE', async (settings) => {
     lintSettings = settings;
-    console.log('lintSettings', lintSettings);
     const linterr = findLintErrors();
 
-    console.log('linterr', linterr);
-
-    emit<FindLintErrors>('FIND_LINT_ERRORS', linterr);
+    emit<FindLintErrors>('FIND_LINT_ERRORS', await linterr);
   });
 
-  on<FixLintErrors>('FIX_LINT_ERRORS', (lintErrors: ILintError[]) => {
-    console.log('lintErrrs', lintErrors);
+  on<FixLintErrors>('FIX_LINT_ERRORS', async (lintErrors: ILintError[]) => {
+    // const lintableErrors: Record<string, ILintError[]> = await findLintErrors();
+
+    // iterate over the lintable errors and pass to fixLintErrors
+    // Object.entries(lintableErrors).forEach(async ([_, errors]) => {
+    //   await fixLintErrors(errors);
+    // });
     fixLintErrors(lintErrors);
   });
 
-  figma.on('selectionchange', () => {
-    emit<HandleSelect>(
-      'HANDLE_SELECT',
-      getNodesByType({
+  figma.on('selectionchange', async () => {
+    emit<HandleSelectionChange>(
+      'HANDLE_SELECTION_CHANGE',
+      await getNodesByType({
         types: ['COMPONENT', 'COMPONENT_SET'],
         context: { inSelection: true },
       })

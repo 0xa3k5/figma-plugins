@@ -7,7 +7,7 @@ import {
 } from '@repo/utils';
 import { h } from 'preact';
 
-import { LintType } from '../../../../types';
+import { LintType } from '../../../types';
 
 interface LiveViewProps {
   conventions: Record<LintType, NamingConvention | null>;

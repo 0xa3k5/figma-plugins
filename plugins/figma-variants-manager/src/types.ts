@@ -3,17 +3,17 @@ import { IComponent, IComponentSet, NamingConvention } from '@repo/utils';
 export interface ISearchSettings {
   caseSensitive: boolean;
   matchWholeWord: boolean;
-  searchScope: 'Selection' | 'Page' | 'All Pages';
+  scope: IScope;
 }
 
 export type LintType = 'componentName' | 'propName' | 'propValue';
 
-export type ApplyScope = 'selection' | 'page' | 'all pages';
+export type IScope = 'selection' | 'page' | 'all pages';
 
 export interface ILintSettings {
   conventions: Record<LintType, NamingConvention>;
   toggles: Record<LintType, boolean>;
-  applyScope: ApplyScope;
+  applyScope: IScope;
 }
 export interface ILintError extends IComponent {
   errors: {
@@ -41,8 +41,8 @@ export interface FindComponents extends EventHandler {
   handler: (searchKey: string, searchSettings: ISearchSettings) => void;
 }
 
-export interface HandleSelect extends EventHandler {
-  name: 'HANDLE_SELECT';
+export interface HandleSelectionChange extends EventHandler {
+  name: 'HANDLE_SELECTION_CHANGE';
   handler: (components: (IComponent | IComponentSet)[]) => void;
 }
 
@@ -53,7 +53,7 @@ export interface LintSettingsChange extends EventHandler {
 
 export interface FindLintErrors extends EventHandler {
   name: 'FIND_LINT_ERRORS';
-  handler: (lintErrors: Record<string, Record<LintType, ILintError[]>>) => void;
+  handler: (lintErrors: Record<string, ILintError[]>) => void;
 }
 
 export interface FixLintErrors extends EventHandler {
