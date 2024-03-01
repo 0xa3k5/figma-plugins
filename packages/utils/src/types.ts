@@ -1,10 +1,14 @@
 import { EventHandler } from '@create-figma-plugin/utilities';
+
+interface VariantProperty {
+  [property: string]: string;
+}
 export interface IComponent {
   id: string;
   name: string;
   parent?: IComponentSet;
   isSet?: boolean;
-  properties?: string[];
+  properties: VariantProperty | null;
   nodeId: string;
   page: PageNode;
   remote: boolean;
@@ -24,7 +28,11 @@ export interface IComponentSet {
   nodeId: string;
   page: PageNode;
   remote: boolean;
-  properties?: string[];
+  properties: {
+    [property: string]: {
+      values: string[];
+    };
+  };
 }
 
 export type NamingConvention =

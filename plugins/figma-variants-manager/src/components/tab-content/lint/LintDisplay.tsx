@@ -1,59 +1,62 @@
-import { convertString } from '@repo/utils';
+import { convertString, NamingConvention } from '@repo/utils';
 import { h } from 'preact';
 
-import { ILintError, ILintSettings, LintType } from '../../../types';
+import { ILintError, LintType } from '../../../types';
 
 interface LintDisplayProps {
   error: ILintError;
-  lintSettings: ILintSettings;
+  onToggleErrorSelection: (error: ILintError, isSelected: boolean) => void;
+  isSelected: boolean;
 }
 
 export default function LintDisplay({
   error,
-  lintSettings,
+  onToggleErrorSelection,
+  isSelected,
 }: LintDisplayProps): h.JSX.Element {
-  const correctedName = replaceLogic({
-    lintSettings,
-    error: error.errors[0],
-  });
+  const handleCheckboxChange = (
+    event: h.JSX.TargetedEvent<HTMLInputElement>
+  ) => {
+    onToggleErrorSelection(error, event.currentTarget.checked);
+  };
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex gap-1">
-        <span className="text-text-secondary line-through">
-          {error.errors[0].value}
-        </span>
-        <span className="text-text">-&gt; {correctedName}</span>
-      </div>
+    <div className="flex w-full flex-col gap-1 whitespace-nowrap">
+      {error.errors.map((err, index) => (
+        <div key={index} className="flex items-center gap-1">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={handleCheckboxChange}
+          />
+          <span className="text-text-secondary line-through">{err.value}</span>
+          <span className="text-text">-&gt; {replaceLogic(err)}</span>
+        </div>
+      ))}
     </div>
   );
 }
 
-const replaceLogic = ({
-  lintSettings,
-  error,
-}: {
-  lintSettings: ILintSettings;
-  error: {
-    type: LintType;
-    value: string;
-  };
+const replaceLogic = (error: {
+  type: LintType;
+  value: string;
+  convention: NamingConvention;
 }) => {
   switch (error.type) {
     case 'componentName':
       return convertString({
         str: error.value,
-        convention: lintSettings.conventions.componentName,
+        convention: error.convention,
       });
     case 'propName':
       return convertString({
         str: error.value,
-        convention: lintSettings.conventions.propName,
+        convention: error.convention,
       });
     case 'propValue':
       return convertString({
         str: error.value,
-        convention: lintSettings.conventions.propValue,
+        convention: error.convention,
       });
   }
 };

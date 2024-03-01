@@ -1,5 +1,5 @@
 import '!./css/output.css';
-import '@repo/ui/styles.css';
+import '@repo/ui/css/output.css';
 
 import {
   render,
@@ -31,7 +31,7 @@ function VariantsManager(): h.JSX.Element {
     { value: 'Find & Replace', children: <TabContent.FindReplace /> },
     { value: 'Lint', children: <TabContent.Lint /> },
   ];
-  const [activeTab, setActiveTab] = useState(tabs[1].value);
+  const [activeTab, setActiveTab] = useState(tabs[0].value);
 
   return (
     <Tabs

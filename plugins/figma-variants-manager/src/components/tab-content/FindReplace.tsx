@@ -99,7 +99,7 @@ export default function FindReplace(): h.JSX.Element {
     <Fragment>
       <div className="border-border bg-bg sticky inset-0 z-10 flex w-full flex-col gap-4 border-b p-4">
         <Stack space="small">
-          <div className="flex items-center gap-1">
+          <div className="flex w-fit items-center gap-1">
             <span className="text-text-secondary mr-2">Search in</span>
             {searchscope.map((opt) => (
               <ChoiceChip
@@ -180,10 +180,10 @@ export default function FindReplace(): h.JSX.Element {
       {matchingComps && (
         <ul className="flex flex-col pt-4">
           {Object.entries(matchingComps).map(([parentId, components]) => {
-            const uniqueProps = new Set<string>(
-              components
-                .flatMap((comp) => comp.properties ?? [])
-                .filter(Boolean)
+            const uniquePropNames = new Set(
+              components.flatMap((comp) =>
+                comp.properties ? Object.keys(comp.properties) : []
+              )
             );
 
             return (
@@ -202,12 +202,12 @@ export default function FindReplace(): h.JSX.Element {
                         {components[0].parent?.name ?? components[0].name}
                       </span>
                       {searchKey.length > 0 &&
-                        uniqueProps.size > 0 &&
-                        Array.from(uniqueProps).map((prop) => (
+                        uniquePropNames.size > 0 &&
+                        Array.from(uniquePropNames).map((propName) => (
                           <HighlightedText
-                            key={prop}
+                            key={propName}
                             highlightedPart={searchKey}
-                            fullText={prop}
+                            fullText={propName}
                             replace={replace}
                           />
                         ))}

@@ -19,6 +19,7 @@ export interface ILintError extends IComponent {
   errors: {
     type: LintType;
     value: string;
+    convention: NamingConvention;
   }[];
 }
 

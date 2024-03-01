@@ -11,7 +11,12 @@ interface Props {
   tooltip?: string;
 }
 
-export default function IconChip({ label, icon, onChange, tooltip }: Props) {
+export default function IconChip({
+  label,
+  icon,
+  onChange,
+  tooltip,
+}: Props): h.JSX.Element {
   const [checked, setChecked] = useState(false);
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
 
@@ -31,7 +36,7 @@ export default function IconChip({ label, icon, onChange, tooltip }: Props) {
   return (
     <label
       htmlFor={label.replace(/[^a-zA-Z0-9-_]/g, '')}
-      className="focus-within:bg-bg-secondary group relative aspect-square duration-150"
+      className="focus-within:bg-bg-secondary group relative flex aspect-square items-center justify-center duration-150"
     >
       <input
         id={label.replace(/[^a-zA-Z0-9-_]/g, '')}
@@ -42,13 +47,11 @@ export default function IconChip({ label, icon, onChange, tooltip }: Props) {
         onChange={handleInputChange}
       />
       <span
-        className={`flex items-center justify-center gap-1 text-clip rounded-md duration-150 
-        ${
+        className={`${
           checked
             ? 'bg-bg-inverse text-text-oninverse group-hover:bg-bg-inverse'
             : 'text-text-tertiary group-hover:bg-bg-secondary group-hover:text-text'
-        }
-            `}
+        }`}
       >
         {icon}
       </span>

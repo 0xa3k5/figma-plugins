@@ -14,7 +14,7 @@ export const mapComponentNodeToIComponent = (
         : undefined,
     remote: node.remote,
     page: getNodePage(node),
-    properties: node.parent ? node.name.split(', ') : undefined,
+    properties: node.variantProperties,
   };
 };
 
@@ -40,5 +40,5 @@ export const mapComponentSetNodeToIComponentSet = (
   nodeId: node.id,
   page: getNodePage(node),
   remote: node.remote,
-  properties: undefined, // todo
+  properties: node.variantGroupProperties,
 });

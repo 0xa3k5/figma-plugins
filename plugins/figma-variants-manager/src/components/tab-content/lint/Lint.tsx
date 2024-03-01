@@ -1,14 +1,9 @@
 import { Button } from '@create-figma-plugin/ui';
 import { emit, on } from '@create-figma-plugin/utilities';
-import { ChoiceChip, IconComponent, IconSettings, IconTarget } from '@repo/ui';
-import {
-  ComponentFocusHandler,
-  convertString,
-  IComponent,
-  IComponentSet,
-} from '@repo/utils';
+import { ChoiceChip, IconSettings } from '@repo/ui';
+import { convertString, IComponent, IComponentSet } from '@repo/utils';
 import { h } from 'preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 import {
   FindLintErrors,
@@ -20,10 +15,32 @@ import {
   LintType,
 } from '../../../types';
 import { ButtonDock, IconButton } from '../../button';
+import LintComponentHeader from './LintComponentHeader';
 import LintDisplay from './LintDisplay';
 import LintSettingsDrawer from './LintSettingsDrawer';
 
 const categories: LintType[] = ['componentName', 'propName', 'propValue'];
+
+const getUniqueErrorsByType = (
+  errors: ILintError[],
+  type: LintType
+): ILintError[] => {
+  const uniqueErrors = new Map<string, ILintError>();
+
+  errors.forEach((error) => {
+    error.errors
+      .filter((err) => err.type === type)
+      .forEach((err) => {
+        const key = `${type}-${err.value}`;
+
+        if (!uniqueErrors.has(key)) {
+          uniqueErrors.set(key, { ...error, errors: [err] });
+        }
+      });
+  });
+
+  return Array.from(uniqueErrors.values());
+};
 
 export default function Lint(): h.JSX.Element {
   const [lintSettings, setLintSettings] = useState<ILintSettings>({
@@ -45,26 +62,56 @@ export default function Lint(): h.JSX.Element {
   const [selectedComponents, setSelectedComponents] = useState<
     (IComponent | IComponentSet)[]
   >([]);
+  const [selectedErrors, setSelectedErrors] = useState<ILintError[]>([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState<Record<string, boolean>>({});
 
   const handleToggleChange = (category: LintType) => {
-    setLintSettings((prev) => ({
-      ...prev,
+    const newSettings = {
+      ...lintSettings,
       toggles: {
-        ...prev.toggles,
-        [category]: !prev.toggles[category],
+        ...lintSettings.toggles,
+        [category]: !lintSettings.toggles[category],
       },
-    }));
-    emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', lintSettings);
+    };
+
+    setLintSettings(newSettings);
+    emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', newSettings);
   };
 
   on<FindLintErrors>('FIND_LINT_ERRORS', (lintErrors) => {
     setLintErrors(lintErrors);
   });
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  useEffect(() => {
+    const newIsExpanded = Object.keys(lintErrors).reduce(
+      (acc, key) => {
+        acc[key] = true;
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
 
-  const handleFocusComponents = (parentId: string) => {
-    emit<ComponentFocusHandler>('FOCUS_COMPONENT', parentId);
+    setIsExpanded(newIsExpanded);
+  }, [lintErrors]);
+
+  const handleSelectError = (error: ILintError, isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedErrors((prev) => [...prev, error]);
+    } else {
+      setSelectedErrors((prev) => prev.filter((e) => e.id !== error.id));
+    }
+  };
+
+  const handleExpandToggle = (parentId: string) => {
+    setIsExpanded((prev) => ({
+      ...prev,
+      [parentId]: !prev[parentId],
+    }));
+  };
+
+  const handleFixSelected = () => {
+    emit<FixLintErrors>('FIX_LINT_ERRORS', selectedErrors);
   };
 
   on<HandleSelectionChange>('HANDLE_SELECTION_CHANGE', (components) => {
@@ -78,13 +125,13 @@ export default function Lint(): h.JSX.Element {
           <div className="flex w-fit gap-1">
             {categories.map((category) => (
               <ChoiceChip
-                key={`${category}_${'ak'}`}
-                id={`${category}_${'ak'}`}
+                key={`${category}`}
+                id={`${category}`}
                 value={convertString({
                   str: category,
                   convention: 'Title Case',
                 })}
-                checked={lintSettings['toggles'][category]}
+                checked={lintSettings.toggles[category]}
                 onChange={() => handleToggleChange(category)}
               />
             ))}
@@ -93,54 +140,55 @@ export default function Lint(): h.JSX.Element {
             <IconSettings />
           </IconButton>
         </div>
-        <ul className="flex h-full flex-col py-4">
-          {Object.entries(lintErrors).map(([parentId, errors]) => (
-            <li
-              key={parentId}
-              className="border-border group flex w-full flex-col gap-2 border-b pb-4"
-            >
-              <span className="flex w-full justify-between">
-                <span className="text-text-component flex items-center gap-1">
-                  <IconComponent />
-                  <span className={`text-xs font-semibold capitalize`}>
-                    {errors[0]?.parent?.name ?? errors[0]?.name}
-                  </span>
-                </span>
-                <IconButton
-                  onClick={() => handleFocusComponents(parentId)}
-                  className="opacity-0 group-hover:opacity-100"
-                >
-                  <IconTarget />
-                </IconButton>
-              </span>
-              <span className="flex flex-col gap-2 pl-7">
-                {['componentName', 'propName', 'propValue'].map((errorType) => (
-                  <div key={errorType}>
-                    <span className="text-text-danger font-semibold">
-                      {convertString({
-                        str: errorType,
-                        convention: 'Title Case',
-                      })}
-                    </span>
-                    {errors
-                      .filter((error) =>
-                        error.errors.some((e) => e.type === errorType)
-                      )
-                      .map((error, index) => {
-                        return (
-                          <LintDisplay
-                            key={`${errorType}-${index}`}
-                            error={error}
-                            lintSettings={lintSettings}
-                          />
-                        );
-                      })}
+        <div className="flex h-full flex-col">
+          {Object.entries(lintErrors).map(([parentId, errors]) => {
+            return (
+              <div
+                key={parentId}
+                className="border-border group flex w-full flex-col gap-2 border-b py-4"
+              >
+                <LintComponentHeader
+                  errors={errors}
+                  parentId={parentId}
+                  isExpanded={isExpanded[parentId]}
+                  setIsExpanded={handleExpandToggle}
+                />
+                {isExpanded[parentId] && (
+                  <div className="no-scrollbar ml-6 flex w-full flex-col overflow-x-scroll">
+                    {categories.map((category) => {
+                      const uniqueErrors = getUniqueErrorsByType(
+                        Object.values(lintErrors).flat(),
+                        category
+                      );
+
+                      return uniqueErrors.length > 0 ? (
+                        <div
+                          key={category}
+                          className="flex w-full flex-col gap-2 pb-4"
+                        >
+                          <span className="text-text-danger font-semibold">
+                            {convertString({
+                              str: category,
+                              convention: 'Title Case',
+                            })}
+                          </span>
+                          {uniqueErrors.map((error, index) => (
+                            <LintDisplay
+                              key={`${category}-${error.nodeId}-${index}`}
+                              error={error}
+                              isSelected={selectedErrors.includes(error)}
+                              onToggleErrorSelection={handleSelectError}
+                            />
+                          ))}
+                        </div>
+                      ) : null;
+                    })}
                   </div>
-                ))}
-              </span>
-            </li>
-          ))}
-        </ul>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
       <LintSettingsDrawer
         isDrawerOpen={isDrawerOpen}
@@ -152,6 +200,9 @@ export default function Lint(): h.JSX.Element {
         handleToggleChange={handleToggleChange}
       />
       <ButtonDock className="">
+        <Button onClick={handleFixSelected}>
+          {`Fix Selected (${selectedErrors.length})`}
+        </Button>
         <Button
           onClick={() =>
             emit<FixLintErrors>(
