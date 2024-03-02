@@ -31,7 +31,7 @@ function VariantsManager(): h.JSX.Element {
     { value: 'Find & Replace', children: <TabContent.FindReplace /> },
     { value: 'Lint', children: <TabContent.Lint /> },
   ];
-  const [activeTab, setActiveTab] = useState(tabs[0].value);
+  const [activeTab, setActiveTab] = useState(tabs[1].value);
 
   return (
     <Tabs

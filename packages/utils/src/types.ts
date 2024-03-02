@@ -9,7 +9,6 @@ export interface IComponent {
   parent?: IComponentSet;
   isSet?: boolean;
   properties: VariantProperty | null;
-  nodeId: string;
   page: PageNode;
   remote: boolean;
 }
@@ -25,7 +24,6 @@ export interface IInstance {
 export interface IComponentSet {
   id: string;
   name: string;
-  nodeId: string;
   page: PageNode;
   remote: boolean;
   properties: {

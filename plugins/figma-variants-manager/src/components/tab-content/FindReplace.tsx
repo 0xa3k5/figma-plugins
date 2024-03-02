@@ -1,11 +1,8 @@
-import { Button, IconButton, Stack } from '@create-figma-plugin/ui';
+import { Button } from '@create-figma-plugin/ui';
 import { emit, on } from '@create-figma-plugin/utilities';
 import {
-  ChoiceChip,
   IconCaseSensitive,
   IconChip,
-  IconComponent,
-  IconTarget,
   IconWholeWord,
   TextInput,
 } from '@repo/ui';
@@ -24,24 +21,25 @@ import {
   MatchingComponents,
   ReplaceProperties,
 } from '../../types';
-import HighlightedText from '../highlighted-text/HighlightedText';
+import { ButtonDock } from '../button';
+import { Layout } from '../Layout';
+import ScopeSelector from '../scope-selector/ScopeSelector';
+import FindReplaceGroupCard from './FindReplaceGroupCard';
 
 export default function FindReplace(): h.JSX.Element {
   const [searchKey, setSearchKey] = useState('');
   const [replace, setReplacement] = useState('');
 
-  const [replaceComps, setReplaceComps] = useState<IComponent[]>([]);
+  const [replaceQue, setReplaceQue] = useState<IComponent[]>([]);
   const [matchingComps, setMatchingComps] = useState<Record<
     string,
     IComponent[]
   > | null>();
 
-  const searchscope: IScope[] = ['selection', 'page', 'all pages'];
-
   const [searchSettings, setSearchSettings] = useState<ISearchSettings>({
     caseSensitive: false,
     matchWholeWord: false,
-    scope: searchscope[1],
+    scope: 'page',
   });
 
   useEffect(() => {
@@ -58,12 +56,15 @@ export default function FindReplace(): h.JSX.Element {
     const groupedComponents = groupComponentsByParent(components);
 
     setMatchingComps(groupedComponents);
-    setReplaceComps(groupedComponents[Object.keys(groupedComponents)[0]]);
+    setReplaceQue(groupedComponents[Object.keys(groupedComponents)[0]]);
 
     const firstGroup = Object.values(groupedComponents)[0];
 
     if (firstGroup && firstGroup.length > 0) {
-      emit<ComponentFocusHandler>('FOCUS_COMPONENT', firstGroup[0].id);
+      emit<ComponentFocusHandler>(
+        'FOCUS_COMPONENT',
+        firstGroup[0].parent?.id ?? firstGroup[0].id
+      );
     }
   });
 
@@ -81,150 +82,101 @@ export default function FindReplace(): h.JSX.Element {
     handleReplace(Object.values(matchingComps ?? {}).flat());
   };
 
-  const handleComponentTarget = (parentId: string) => {
-    emit<ComponentFocusHandler>('FOCUS_COMPONENT', parentId);
-  };
-
   const handleComponentSelect = (
     parentId: string,
     components: IComponent[]
   ) => {
-    setReplaceComps(components);
-    if (components.length > 0) {
-      emit<ComponentFocusHandler>('FOCUS_COMPONENT', parentId);
-    }
+    setReplaceQue(components);
+    emit<ComponentFocusHandler>('FOCUS_COMPONENT', parentId);
+  };
+
+  const handleScopeChange = (opt: IScope) => {
+    setSearchSettings({
+      ...searchSettings,
+      scope: opt,
+    });
   };
 
   return (
     <Fragment>
-      <div className="border-border bg-bg sticky inset-0 z-10 flex w-full flex-col gap-4 border-b p-4">
-        <Stack space="small">
-          <div className="flex w-fit items-center gap-1">
-            <span className="text-text-secondary mr-2">Search in</span>
-            {searchscope.map((opt) => (
-              <ChoiceChip
-                id={opt}
-                key={opt}
-                value={opt}
-                checked={opt === searchSettings.scope}
-                onChange={() =>
-                  setSearchSettings({
-                    ...searchSettings,
-                    scope: opt,
-                  })
-                }
-              />
-            ))}
-          </div>
-          <div className="flex items-center gap-1">
-            <div className="w-full">
-              <TextInput
-                label="search"
-                placeholder="Search variants"
-                value={searchKey}
-                onInput={(e) => setSearchKey(e.currentTarget.value)}
-              >
-                <div className="flex gap-1">
-                  <IconChip
-                    icon={<IconCaseSensitive />}
-                    label="Case Sensitive"
-                    tooltip="Case Sensitive"
-                    onChange={() =>
-                      setSearchSettings({
-                        ...searchSettings,
-                        caseSensitive: !searchSettings.caseSensitive,
-                      })
-                    }
-                  />
-                  <IconChip
-                    icon={<IconWholeWord />}
-                    label="Match Whole Word"
-                    tooltip="Match Whole Word"
-                    onChange={() =>
-                      setSearchSettings({
-                        ...searchSettings,
-                        matchWholeWord: !searchSettings.matchWholeWord,
-                      })
-                    }
-                  />
-                </div>
-              </TextInput>
-            </div>
-          </div>
-          <TextInput
-            label="replace with"
-            placeholder="Replace with..."
-            value={replace}
-            onInput={(e) => setReplacement(e.currentTarget.value)}
-          />
-        </Stack>
-        <div className="flex items-center justify-between">
-          <div className="flex w-full gap-2">
-            <Button
-              disabled={replace.trim() === ''}
-              onClick={() => handleReplace(replaceComps)}
-              secondary
+      <Layout>
+        <div className="border-border bg-bg sticky inset-0 z-10 flex flex-col gap-4 border-b p-4 -mx-4">
+          <div className="flex flex-col gap-2">
+            <ScopeSelector
+              label="Search in"
+              currentScope={searchSettings.scope}
+              onChange={handleScopeChange}
+            />
+            <TextInput
+              label="search"
+              placeholder="Search variants"
+              value={searchKey}
+              onInput={(e) => setSearchKey(e.currentTarget.value)}
             >
-              Replace
-            </Button>
-            <Button
-              disabled={replace.trim() === ''}
-              onClick={handleReplaceAll}
-              secondary
-            >
-              Replace All
-            </Button>
+              <div className="flex gap-1">
+                <IconChip
+                  icon={<IconCaseSensitive />}
+                  label="Case Sensitive"
+                  tooltip="Case Sensitive"
+                  onChange={() =>
+                    setSearchSettings({
+                      ...searchSettings,
+                      caseSensitive: !searchSettings.caseSensitive,
+                    })
+                  }
+                />
+                <IconChip
+                  icon={<IconWholeWord />}
+                  label="Match Whole Word"
+                  tooltip="Match Whole Word"
+                  onChange={() =>
+                    setSearchSettings({
+                      ...searchSettings,
+                      matchWholeWord: !searchSettings.matchWholeWord,
+                    })
+                  }
+                />
+              </div>
+            </TextInput>
+            <TextInput
+              label="replace with"
+              placeholder="Replace with..."
+              value={replace}
+              onInput={(e) => setReplacement(e.currentTarget.value)}
+            />
           </div>
         </div>
-      </div>
-      {matchingComps && (
-        <ul className="flex flex-col pt-4">
-          {Object.entries(matchingComps).map(([parentId, components]) => {
-            const uniquePropNames = new Set(
-              components.flatMap((comp) =>
-                comp.properties ? Object.keys(comp.properties) : []
-              )
-            );
-
-            return (
-              <li key={parentId}>
-                <button
-                  type="button"
-                  className={`group ${replaceComps.includes(components[0]) ? 'bg-bg-selected bg-opacity-20' : ''} flex w-full cursor-default justify-between gap-3 px-4 py-1 text-sm`}
-                  onClick={() => handleComponentSelect(parentId, components)}
-                >
-                  <span className="flex items-start">
-                    <span className="text-text-component">
-                      <IconComponent />
-                    </span>
-                    <span className="flex flex-col items-start gap-1 py-1">
-                      <span className="text-text-component text-xs">
-                        {components[0].parent?.name ?? components[0].name}
-                      </span>
-                      {searchKey.length > 0 &&
-                        uniquePropNames.size > 0 &&
-                        Array.from(uniquePropNames).map((propName) => (
-                          <HighlightedText
-                            key={propName}
-                            highlightedPart={searchKey}
-                            fullText={propName}
-                            replace={replace}
-                          />
-                        ))}
-                    </span>
-                  </span>
-                  <IconButton
-                    onClick={() => handleComponentTarget(parentId)}
-                    className="opacity-0 group-hover:opacity-100"
-                  >
-                    <IconTarget />
-                  </IconButton>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+        {matchingComps && (
+          <div className="-mx-4 flex h-full flex-col gap-1 pt-4">
+            {Object.entries(matchingComps).map((comps) => {
+              return (
+                <FindReplaceGroupCard
+                  replace={replace}
+                  searchKey={searchKey}
+                  key={comps[0]}
+                  matchingComps={comps}
+                  replaceQue={replaceQue}
+                  handleCompSelect={handleComponentSelect}
+                />
+              );
+            })}
+          </div>
+        )}
+      </Layout>
+      <ButtonDock>
+        <div className="flex w-full gap-2">
+          <Button
+            disabled={replace.trim() === ''}
+            onClick={() => handleReplace(replaceQue)}
+            secondary
+          >
+            Replace
+          </Button>
+          <Button disabled={replace.trim() === ''} onClick={handleReplaceAll}>
+            Replace All
+          </Button>
+        </div>
+      </ButtonDock>
     </Fragment>
   );
 }

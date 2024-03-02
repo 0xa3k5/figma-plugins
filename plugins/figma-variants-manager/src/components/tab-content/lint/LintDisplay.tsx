@@ -5,32 +5,36 @@ import { ILintError, LintType } from '../../../types';
 
 interface LintDisplayProps {
   error: ILintError;
-  onToggleErrorSelection: (error: ILintError, isSelected: boolean) => void;
-  isSelected: boolean;
+  // onToggleErrorSelection: (error: ILintError, isSelected: boolean) => void;
+  // isSelected: boolean;
 }
 
 export default function LintDisplay({
   error,
-  onToggleErrorSelection,
-  isSelected,
+  // onToggleErrorSelection,
+  // isSelected,
 }: LintDisplayProps): h.JSX.Element {
-  const handleCheckboxChange = (
-    event: h.JSX.TargetedEvent<HTMLInputElement>
-  ) => {
-    onToggleErrorSelection(error, event.currentTarget.checked);
-  };
+  // const handleCheckboxChange = (
+  //   event: h.JSX.TargetedEvent<HTMLInputElement>
+  // ) => {
+  //   onToggleErrorSelection(error, event.currentTarget.checked);
+  // };
 
   return (
-    <div className="flex w-full flex-col gap-1 whitespace-nowrap">
+    <div className="ml-4 flex w-full flex-col gap-2">
       {error.errors.map((err, index) => (
-        <div key={index} className="flex items-center gap-1">
+        <div key={index} className="flex w-full items-center gap-1">
           <input
             type="checkbox"
-            checked={isSelected}
-            onChange={handleCheckboxChange}
+            // checked={isSelected}
+            // onChange={handleCheckboxChange}
           />
-          <span className="text-text-secondary line-through">{err.value}</span>
-          <span className="text-text">-&gt; {replaceLogic(err)}</span>
+          <span className="flex flex-nowrap">
+            <span className="text-text-secondary line-through">
+              {err.value}
+            </span>
+            <span className="text-text">-&gt; {replaceLogic(err)}</span>
+          </span>
         </div>
       ))}
     </div>

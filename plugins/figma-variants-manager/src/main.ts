@@ -340,6 +340,6 @@ export default function initializePlugin() {
       context: { inSelection: true },
     });
 
-    emit<HandleSelectionChange>('HANDLE_SELECTION_CHANGE', selectedNodes);
+    // emit<HandleSelectionChange>('HANDLE_SELECTION_CHANGE', selectedNodes);
   });
 }

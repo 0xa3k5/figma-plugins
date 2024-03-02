@@ -1,3 +1,4 @@
+import { IconArrowRight16 } from '@create-figma-plugin/ui';
 import { emit } from '@create-figma-plugin/utilities';
 import { ChoiceChip, Drawer, Toggle } from '@repo/ui';
 import {
@@ -79,6 +80,11 @@ export default function LintSettingsDrawer(props: Props): h.JSX.Element {
 
   return (
     <Drawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen}>
+      <div className="border-border flex w-full border-b py-4 font-semibold">
+        <div className="flex w-full px-4">
+          <span className="text-sm">Lint Settings</span>
+        </div>
+      </div>
       {/* <LiveView
         conventions={lintSettings['conventions']}
         selectedComponents={selectedComponents}

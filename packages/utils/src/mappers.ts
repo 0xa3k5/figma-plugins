@@ -7,7 +7,6 @@ export const mapComponentNodeToIComponent = (
   return {
     id: node.id,
     name: node.name,
-    nodeId: node.id,
     parent:
       node.parent && node.parent.type === 'COMPONENT_SET'
         ? mapComponentSetNodeToIComponentSet(node.parent)
@@ -37,7 +36,6 @@ export const mapComponentSetNodeToIComponentSet = (
 ): IComponentSet => ({
   id: node.id,
   name: node.name,
-  nodeId: node.id,
   page: getNodePage(node),
   remote: node.remote,
   properties: node.variantGroupProperties,

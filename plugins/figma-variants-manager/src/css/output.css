@@ -596,8 +596,17 @@ video {
   z-index: 50;
 }
 
+.-mx-4 {
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
 .-mr-1 {
   margin-right: -0.25rem;
+}
+
+.mb-16 {
+  margin-bottom: 4rem;
 }
 
 .mb-24 {
@@ -616,8 +625,20 @@ video {
   margin-top: 0.25rem;
 }
 
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
 .mt-4 {
   margin-top: 1rem;
+}
+
+.ml-4 {
+  margin-left: 1rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
 }
 
 .block {
@@ -652,6 +673,11 @@ video {
 .size-8 {
   width: 2rem;
   height: 2rem;
+}
+
+.size-full {
+  width: 100%;
+  height: 100%;
 }
 
 .h-32 {
@@ -768,10 +794,6 @@ video {
   gap: 0.5rem;
 }
 
-.gap-3 {
-  gap: 0.75rem;
-}
-
 .gap-4 {
   gap: 1rem;
 }
@@ -782,6 +804,10 @@ video {
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.overflow-clip {
+  overflow: clip;
 }
 
 .overflow-x-scroll {
@@ -800,6 +826,10 @@ video {
   border-radius: 9999px;
 }
 
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
 .rounded-md {
   border-radius: 0.375rem;
 }
@@ -812,6 +842,11 @@ video {
   border-width: 1px;
 }
 
+.border-y {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
+
 .border-b {
   border-bottom-width: 1px;
 }
@@ -822,6 +857,15 @@ video {
 
 .border-border {
   border-color: var(--figma-color-border);
+}
+
+.border-border-brand {
+  border-color: var(--figma-color-border-brand);
+}
+
+.border-white {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .bg-bg {
@@ -840,8 +884,12 @@ video {
   background-color: var(--figma-color-bg-inverse);
 }
 
-.bg-bg-selected {
-  background-color: var(--figma-color-bg-selected);
+.bg-bg-secondary {
+  background-color: var(--figma-color-bg-secondary);
+}
+
+.bg-bg-selected-tertiary {
+  background-color: var(--figma-color-bg-selected-tertiary);
 }
 
 .bg-black {
@@ -854,8 +902,20 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-opacity-20 {
-  --tw-bg-opacity: 0.2;
+.bg-black\/40 {
+  background-color: rgb(0 0 0 / 0.4);
+}
+
+.bg-bg-selected {
+  background-color: var(--figma-color-bg-selected);
+}
+
+.bg-bg-selected-strong {
+  background-color: var(--figma-color-bg-selected-strong);
+}
+
+.bg-bg-selected-secondary {
+  background-color: var(--figma-color-bg-selected-secondary);
 }
 
 .p-2 {
@@ -885,6 +945,11 @@ video {
   padding-bottom: 0.25rem;
 }
 
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -900,6 +965,10 @@ video {
 
 .pt-4 {
   padding-top: 1rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
 }
 
 .text-sm {
@@ -918,6 +987,10 @@ video {
 
 .font-semibold {
   font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
 }
 
 .capitalize {
@@ -951,6 +1024,10 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-text-onbrand {
+  color: var(--figma-color-text-onbrand);
 }
 
 .line-through {
@@ -1040,6 +1117,23 @@ video {
   color: var(--figma-color-text-tertiary);
 }
 
+.last-of-type\:mb-2:last-of-type {
+  margin-bottom: 0.5rem;
+}
+
+.last-of-type\:border:last-of-type {
+  border-width: 1px;
+}
+
+.last-of-type\:border-y:last-of-type {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.last-of-type\:pb-4:last-of-type {
+  padding-bottom: 1rem;
+}
+
 .focus-within\:border-border-brand-strong:focus-within {
   border-color: var(--figma-color-border-brand-strong);
 }
@@ -1071,6 +1165,18 @@ video {
   background-color: var(--figma-color-bg-hover);
 }
 
+.hover\:bg-bg-brand-hover:hover {
+  background-color: var(--figma-color-bg-brand-hover);
+}
+
+.hover\:bg-opacity-80:hover {
+  --tw-bg-opacity: 0.8;
+}
+
+.hover\:bg-opacity-40:hover {
+  --tw-bg-opacity: 0.4;
+}
+
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -1080,6 +1186,10 @@ video {
   --tw-scale-x: .95;
   --tw-scale-y: .95;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.active\:bg-bg-brand-pressed:active {
+  background-color: var(--figma-color-bg-brand-pressed);
 }
 
 .group:focus-within .group-focus-within\:inline-block {
@@ -1117,4 +1227,34 @@ video {
 .group:active .group-active\:translate-x-3 {
   --tw-translate-x: 0.75rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+:is(.figma-dark .dark\:bg-white) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+:is(.figma-dark .dark\:bg-white\/40) {
+  background-color: rgb(255 255 255 / 0.4);
+}
+
+:is(.figma-dark .dark\:bg-bg-selected-tertiary) {
+  background-color: var(--figma-color-bg-selected-tertiary);
+}
+
+:is(.figma-dark .dark\:bg-bg-selected-strong) {
+  background-color: var(--figma-color-bg-selected-strong);
+}
+
+:is(.figma-dark .dark\:bg-bg) {
+  background-color: var(--figma-color-bg);
+}
+
+:is(.figma-dark .dark\:bg-bg-inverse) {
+  background-color: var(--figma-color-bg-inverse);
+}
+
+:is(.figma-dark .dark\:text-black) {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
 }
