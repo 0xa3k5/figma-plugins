@@ -49,7 +49,7 @@ export default function LintErrorGroupCard({
   return (
     <div
       key={parentId}
-      className={`${className} ${isSelected ? 'bg-bg-selected-secondary' : 'bg-bg'} border-border group flex w-full flex-col gap-2 overflow-clip border-t p-2 shadow-md`}
+      className={`${className} ${isSelected ? 'bg-bg-selected-secondary' : 'bg-bg'} border-border group flex w-full flex-col gap-2 overflow-clip border-t p-2`}
     >
       <LintComponentHeader
         errors={errors}

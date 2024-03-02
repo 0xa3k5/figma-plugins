@@ -292,6 +292,9 @@ const fixLintErrors = async (lintErrors: ILintError[]): Promise<void> => {
       }
     }
   }
+  const updatedLintErrors = await findLintErrors();
+
+  emit<FindLintErrors>('FIND_LINT_ERRORS', updatedLintErrors);
 };
 
 export default async function () {
