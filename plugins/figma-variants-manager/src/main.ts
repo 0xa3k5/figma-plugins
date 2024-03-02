@@ -284,8 +284,10 @@ const fixLintErrors = async (lintErrors: ILintError[]): Promise<void> => {
   }
 };
 
-export default function () {
+export default async function () {
   showUI({ width: 320, height: 480 });
+
+  await figma.loadAllPagesAsync();
 
   on<ComponentFocusHandler>('FOCUS_COMPONENT', (parentId) => {
     focusOnNodes({

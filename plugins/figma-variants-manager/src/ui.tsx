@@ -1,16 +1,11 @@
 import '!./css/output.css';
 import '@repo/ui/css/output.css';
 
-import {
-  render,
-  Tabs,
-  TabsOption,
-  useWindowResize,
-} from '@create-figma-plugin/ui';
+import { render, useWindowResize } from '@create-figma-plugin/ui';
 import { emit } from '@create-figma-plugin/utilities';
+import { TabBar, TabItem } from '@repo/ui';
 import { ResizeWindowHandler } from '@repo/utils';
 import { h } from 'preact';
-import { useState } from 'preact/hooks';
 
 import TabContent from './components/tab-content';
 
@@ -27,21 +22,12 @@ function VariantsManager(): h.JSX.Element {
     resizeBehaviorOnDoubleClick: 'minimize',
   });
 
-  const tabs: TabsOption[] = [
-    { value: 'Find & Replace', children: <TabContent.FindReplace /> },
-    { value: 'Lint', children: <TabContent.Lint /> },
+  const tabs: TabItem[] = [
+    { label: 'Find & Replace', content: <TabContent.FindReplace /> },
+    { label: 'Lint', content: <TabContent.Lint /> },
   ];
-  const [activeTab, setActiveTab] = useState(tabs[0].value);
 
-  return (
-    <Tabs
-      options={tabs}
-      value={activeTab}
-      onChange={(e: any) => {
-        setActiveTab(e.target.value);
-      }}
-    />
-  );
+  return <TabBar tabs={tabs} />;
 }
 
 export default render(VariantsManager);
