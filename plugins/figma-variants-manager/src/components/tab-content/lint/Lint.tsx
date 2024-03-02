@@ -137,7 +137,7 @@ export default function Lint(): h.JSX.Element {
           onClick={() =>
             emit<FixLintErrors>(
               'FIX_LINT_ERRORS',
-              Object.values(selectedErrors).flat()
+              Object.values(lintErrors).flat()
             )
           }
           disabled={Object.values(lintErrors).flat().length === 0}
