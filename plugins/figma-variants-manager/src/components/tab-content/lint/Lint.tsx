@@ -1,7 +1,7 @@
 import { Button } from '@create-figma-plugin/ui';
 import { emit, on } from '@create-figma-plugin/utilities';
-import { IconSettings } from '@repo/ui';
-import { IComponent, IComponentSet } from '@repo/utils';
+import { ChoiceChip, IconSettings } from '@repo/ui';
+import { convertString } from '@repo/utils';
 import { Fragment, h } from 'preact';
 import { useState } from 'preact/hooks';
 
@@ -75,15 +75,32 @@ export default function Lint(): h.JSX.Element {
     <Fragment>
       <Layout>
         <div className="flex size-full flex-col">
-          <div className="flex w-full justify-between py-4">
-            <ScopeSelector
-              label="Lint in"
-              currentScope={lintSettings.applyScope}
-              onChange={handleScopeChange}
-            />
-            <IconButton onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
-              <IconSettings />
-            </IconButton>
+          <div className="flex flex-col gap-4 py-4">
+            <div className="flex w-full justify-between">
+              <ScopeSelector
+                label="Lint in"
+                currentScope={lintSettings.applyScope}
+                onChange={handleScopeChange}
+              />
+              <IconButton onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
+                <IconSettings />
+              </IconButton>
+            </div>
+            <div className="no-scrollbar flex w-fit gap-1 overflow-x-scroll">
+              {categories.map((category) => {
+                return (
+                  <ChoiceChip
+                    id={`${category}_${category}`}
+                    checked={lintSettings.toggles[category]}
+                    onChange={() => handleToggleChange(category as LintType)}
+                    value={convertString({
+                      str: category,
+                      convention: 'Title Case',
+                    })}
+                  />
+                );
+              })}
+            </div>
           </div>
           <div className="-mx-4 flex h-full flex-col">
             {Object.entries(lintErrors).map((lintErr) => {

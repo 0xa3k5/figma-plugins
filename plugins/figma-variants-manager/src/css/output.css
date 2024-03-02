@@ -613,8 +613,8 @@ video {
   margin-bottom: 6rem;
 }
 
-.ml-6 {
-  margin-left: 1.5rem;
+.ml-4 {
+  margin-left: 1rem;
 }
 
 .mr-2 {
@@ -625,20 +625,8 @@ video {
   margin-top: 0.25rem;
 }
 
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
 .mt-4 {
   margin-top: 1rem;
-}
-
-.ml-4 {
-  margin-left: 1rem;
-}
-
-.ml-2 {
-  margin-left: 0.5rem;
 }
 
 .block {
@@ -678,6 +666,10 @@ video {
 .size-full {
   width: 100%;
   height: 100%;
+}
+
+.h-1 {
+  height: 0.25rem;
 }
 
 .h-32 {
@@ -826,10 +818,6 @@ video {
   border-radius: 9999px;
 }
 
-.rounded-lg {
-  border-radius: 0.5rem;
-}
-
 .rounded-md {
   border-radius: 0.375rem;
 }
@@ -842,11 +830,6 @@ video {
   border-width: 1px;
 }
 
-.border-y {
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-}
-
 .border-b {
   border-bottom-width: 1px;
 }
@@ -855,17 +838,37 @@ video {
   border-top-width: 1px;
 }
 
+.border-none {
+  border-style: none;
+}
+
+.border-bg-brand {
+  border-color: var(--figma-color-bg-brand);
+}
+
 .border-border {
   border-color: var(--figma-color-border);
+}
+
+.border-white {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .border-border-brand {
   border-color: var(--figma-color-border-brand);
 }
 
-.border-white {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity));
+.border-border-selected-strong {
+  border-color: var(--figma-color-border-selected-strong);
+}
+
+.border-border-selected {
+  border-color: var(--figma-color-border-selected);
+}
+
+.border-transparent {
+  border-color: transparent;
 }
 
 .bg-bg {
@@ -888,6 +891,10 @@ video {
   background-color: var(--figma-color-bg-secondary);
 }
 
+.bg-bg-selected-secondary {
+  background-color: var(--figma-color-bg-selected-secondary);
+}
+
 .bg-bg-selected-tertiary {
   background-color: var(--figma-color-bg-selected-tertiary);
 }
@@ -902,20 +909,12 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-black\/40 {
-  background-color: rgb(0 0 0 / 0.4);
+.bg-bg-brand-secondary {
+  background-color: var(--figma-color-bg-brand-secondary);
 }
 
 .bg-bg-selected {
   background-color: var(--figma-color-bg-selected);
-}
-
-.bg-bg-selected-strong {
-  background-color: var(--figma-color-bg-selected-strong);
-}
-
-.bg-bg-selected-secondary {
-  background-color: var(--figma-color-bg-selected-secondary);
 }
 
 .p-2 {
@@ -955,8 +954,13 @@ video {
   padding-bottom: 1rem;
 }
 
-.pb-4 {
-  padding-bottom: 1rem;
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.pl-2 {
+  padding-left: 0.5rem;
 }
 
 .pl-6 {
@@ -965,10 +969,6 @@ video {
 
 .pt-4 {
   padding-top: 1rem;
-}
-
-.pl-2 {
-  padding-left: 0.5rem;
 }
 
 .text-sm {
@@ -989,10 +989,6 @@ video {
   font-weight: 600;
 }
 
-.font-bold {
-  font-weight: 700;
-}
-
 .capitalize {
   text-transform: capitalize;
 }
@@ -1007,6 +1003,10 @@ video {
 
 .text-text-danger {
   color: var(--figma-color-text-danger);
+}
+
+.text-text-onbrand {
+  color: var(--figma-color-text-onbrand);
 }
 
 .text-text-oninverse {
@@ -1024,10 +1024,6 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.text-text-onbrand {
-  color: var(--figma-color-text-onbrand);
 }
 
 .line-through {
@@ -1121,17 +1117,9 @@ video {
   margin-bottom: 0.5rem;
 }
 
-.last-of-type\:border:last-of-type {
-  border-width: 1px;
-}
-
 .last-of-type\:border-y:last-of-type {
   border-top-width: 1px;
   border-bottom-width: 1px;
-}
-
-.last-of-type\:pb-4:last-of-type {
-  padding-bottom: 1rem;
 }
 
 .focus-within\:border-border-brand-strong:focus-within {
@@ -1142,15 +1130,49 @@ video {
   background-color: var(--figma-color-bg-secondary);
 }
 
+.focus-within\:bg-bg-brand:focus-within {
+  background-color: var(--figma-color-bg-brand);
+}
+
+.focus-within\:bg-bg-hover:focus-within {
+  background-color: var(--figma-color-bg-hover);
+}
+
+.focus-within\:text-text:focus-within {
+  color: var(--figma-color-text);
+}
+
+.focus-within\:text-text-onbrand:focus-within {
+  color: var(--figma-color-text-onbrand);
+}
+
+.focus-within\:outline:focus-within {
+  outline-style: solid;
+}
+
+.focus-within\:outline-bg-brand:focus-within {
+  outline-color: var(--figma-color-bg-brand);
+}
+
 .focus-within\:ring-2:focus-within {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
+.focus-within\:ring:focus-within {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
 .focus-within\:ring-blue-500:focus-within {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
+}
+
+.focus-within\:ring-bg-brand:focus-within {
+  --tw-ring-color: var(--figma-color-bg-brand);
 }
 
 .focus-within\:ring-offset-2:focus-within {
@@ -1161,25 +1183,32 @@ video {
   cursor: default;
 }
 
-.hover\:bg-bg-hover:hover {
-  background-color: var(--figma-color-bg-hover);
-}
-
 .hover\:bg-bg-brand-hover:hover {
   background-color: var(--figma-color-bg-brand-hover);
 }
 
-.hover\:bg-opacity-80:hover {
-  --tw-bg-opacity: 0.8;
-}
-
-.hover\:bg-opacity-40:hover {
-  --tw-bg-opacity: 0.4;
+.hover\:bg-bg-hover:hover {
+  background-color: var(--figma-color-bg-hover);
 }
 
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+.focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus\:ring-blue-500:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
+}
+
+.focus\:ring-offset-2:focus {
+  --tw-ring-offset-width: 2px;
 }
 
 .active\:scale-95:active {
@@ -1227,34 +1256,4 @@ video {
 .group:active .group-active\:translate-x-3 {
   --tw-translate-x: 0.75rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-:is(.figma-dark .dark\:bg-white) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-:is(.figma-dark .dark\:bg-white\/40) {
-  background-color: rgb(255 255 255 / 0.4);
-}
-
-:is(.figma-dark .dark\:bg-bg-selected-tertiary) {
-  background-color: var(--figma-color-bg-selected-tertiary);
-}
-
-:is(.figma-dark .dark\:bg-bg-selected-strong) {
-  background-color: var(--figma-color-bg-selected-strong);
-}
-
-:is(.figma-dark .dark\:bg-bg) {
-  background-color: var(--figma-color-bg);
-}
-
-:is(.figma-dark .dark\:bg-bg-inverse) {
-  background-color: var(--figma-color-bg-inverse);
-}
-
-:is(.figma-dark .dark\:text-black) {
-  --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity));
 }

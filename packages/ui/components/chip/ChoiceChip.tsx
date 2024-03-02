@@ -17,7 +17,10 @@ export default function ChoiceChip({
   return (
     <label
       htmlFor={id}
-      className={`${className} group relative inline-flex flex-grow flex-nowrap items-center duration-200 active:scale-95`}
+      className={`border-border group relative flex flex-grow flex-nowrap items-center 
+        gap-1 whitespace-nowrap rounded-full border px-3 py-1 duration-200 active:scale-95
+        ${checked ? 'bg-bg-inverse text-text-oninverse border-transparent' : 'text-text-secondary'}
+        ${className} `}
     >
       <input
         id={id}
@@ -26,13 +29,7 @@ export default function ChoiceChip({
         checked={checked}
         onChange={() => onChange()}
       />
-      <span
-        className={`border-border flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-1 duration-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 ${
-          checked ? 'bg-bg-inverse text-text-oninverse' : 'text-text-secondary'
-        }`}
-      >
-        {value}
-      </span>
+      {value}
     </label>
   );
 }

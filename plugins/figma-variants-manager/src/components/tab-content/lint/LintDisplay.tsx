@@ -5,36 +5,17 @@ import { ILintError, LintType } from '../../../types';
 
 interface LintDisplayProps {
   error: ILintError;
-  // onToggleErrorSelection: (error: ILintError, isSelected: boolean) => void;
-  // isSelected: boolean;
 }
 
 export default function LintDisplay({
   error,
-  // onToggleErrorSelection,
-  // isSelected,
 }: LintDisplayProps): h.JSX.Element {
-  // const handleCheckboxChange = (
-  //   event: h.JSX.TargetedEvent<HTMLInputElement>
-  // ) => {
-  //   onToggleErrorSelection(error, event.currentTarget.checked);
-  // };
-
   return (
-    <div className="ml-4 flex w-full flex-col gap-2">
+    <div className="ml-4 flex w-full flex-col gap-2 whitespace-nowrap">
       {error.errors.map((err, index) => (
         <div key={index} className="flex w-full items-center gap-1">
-          <input
-            type="checkbox"
-            // checked={isSelected}
-            // onChange={handleCheckboxChange}
-          />
-          <span className="flex flex-nowrap">
-            <span className="text-text-secondary line-through">
-              {err.value}
-            </span>
-            <span className="text-text">-&gt; {replaceLogic(err)}</span>
-          </span>
+          <span className="text-text-secondary line-through">{err.value}</span>
+          <span className="text-text">-&gt; {replaceLogic(err)}</span>
         </div>
       ))}
     </div>

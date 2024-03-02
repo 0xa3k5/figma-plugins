@@ -22,7 +22,7 @@ export default function LintErrorGroupDisplay({
   return (
     <button
       key={category}
-      className={`${className} flex w-full cursor-default flex-col gap-2`}
+      className={`${className} flex w-fit cursor-default flex-col gap-2`}
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <span className="flex items-center gap-1">
@@ -40,12 +40,7 @@ export default function LintErrorGroupDisplay({
       </span>
       {isExpanded &&
         uniqueErrors.map((error, index) => (
-          <LintDisplay
-            key={`${category}-${error.id}-${index}`}
-            error={error}
-            // isSelected={selectedErrors.includes(error)}
-            // onToggleErrorSelection={handleSelectError}
-          />
+          <LintDisplay key={`${category}-${error.id}-${index}`} error={error} />
         ))}
     </button>
   );
