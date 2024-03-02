@@ -11,7 +11,7 @@ export default function LintDisplay({
   error,
 }: LintDisplayProps): h.JSX.Element {
   return (
-    <div className="ml-4 flex w-full flex-col gap-2 whitespace-nowrap">
+    <div className="ml-5 flex w-full flex-col gap-2 whitespace-nowrap">
       {error.errors.map((err, index) => (
         <div key={index} className="flex w-full items-center gap-1">
           <span className="text-text-secondary line-through">{err.value}</span>

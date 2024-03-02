@@ -202,9 +202,19 @@ const findLintErrors = async (): Promise<Record<string, ILintError[]>> => {
   }
 
   const components = await getNodesByType({ types: ['COMPONENT'], context });
+
   const groupedErrors: Record<string, ILintError[]> = {};
 
   for (const component of components) {
+    const isLocal =
+      component.parent?.name.startsWith('_') ||
+      component.parent?.name.startsWith('_') ||
+      component.name.startsWith('.') ||
+      component.name.startsWith('_');
+
+    if (lintSettings.ignoreLocalComponents && isLocal) {
+      continue;
+    }
     const parentId = component.parent?.id ?? component.id;
     const errors = await findErrorsInComponent(component);
 

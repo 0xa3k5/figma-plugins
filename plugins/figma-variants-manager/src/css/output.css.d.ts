@@ -75,7 +75,7 @@ declare const styles: {
   readonly "max-w-sm": string;
   readonly "mb-16": string;
   readonly "mb-24": string;
-  readonly "ml-4": string;
+  readonly "ml-5": string;
   readonly "mr-2": string;
   readonly "mt-1": string;
   readonly "mt-4": string;

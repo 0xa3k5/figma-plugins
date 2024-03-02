@@ -109,12 +109,20 @@ export default function LintSettingsDrawer(props: Props): h.JSX.Element {
           <div className="flex items-center justify-between">
             <span className="text-xs">Ignore Local Components</span>
             <Toggle
-              isOn={false}
+              isOn={lintSettings['ignoreLocalComponents']}
               onToggle={() => {
-                console.log('toglge'); // todo
+                setLintSettings((prev) => ({
+                  ...prev,
+                  ignoreLocalComponents: !prev.ignoreLocalComponents,
+                }));
               }}
             />
           </div>
+          {lintSettings['ignoreLocalComponents'] && (
+            <span className="text-text-secondary">
+              Components that start with underscore (_) or dot (.) are ignored.
+            </span>
+          )}
         </div>
       </div>
     </Drawer>

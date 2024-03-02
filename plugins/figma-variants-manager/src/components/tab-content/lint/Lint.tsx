@@ -35,6 +35,7 @@ export default function Lint(): h.JSX.Element {
       propValue: true,
     },
     applyScope: 'page',
+    ignoreLocalComponents: true,
   });
   const [lintErrors, setLintErrors] = useState<Record<string, ILintError[]>>(
     {}

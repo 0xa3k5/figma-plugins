@@ -14,6 +14,7 @@ export interface ILintSettings {
   conventions: Record<LintType, NamingConvention>;
   toggles: Record<LintType, boolean>;
   applyScope: IScope;
+  ignoreLocalComponents: boolean;
 }
 export interface ILintError extends IComponent {
   errors: {
