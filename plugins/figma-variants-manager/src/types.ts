@@ -1,5 +1,7 @@
 import { EventHandler } from '@create-figma-plugin/utilities';
 import { IComponent, NamingConvention } from '@repo/utils';
+
+import FindReplace from './components/tab-content/find-replace/FindReplace';
 export interface ISearchSettings {
   caseSensitive: boolean;
   matchWholeWord: boolean;
@@ -40,7 +42,7 @@ export interface MatchingComponents extends EventHandler {
 
 export interface FindComponents extends EventHandler {
   name: 'FIND_COMPONENTS';
-  handler: (searchKey: string, searchSettings: ISearchSettings) => void;
+  handler: (searchKey: string) => void;
 }
 
 export interface LintSettingsChange extends EventHandler {
@@ -56,4 +58,9 @@ export interface FindLintErrors extends EventHandler {
 export interface FixLintErrors extends EventHandler {
   name: 'FIX_LINT_ERRORS';
   handler: (lintErrors: ILintError[]) => void;
+}
+
+export interface FindReplaceSettingsChange extends EventHandler {
+  name: 'FIND_REPLACE_SETTINGS_CHANGE';
+  handler: (settings: ISearchSettings) => void;
 }

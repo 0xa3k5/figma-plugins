@@ -23,8 +23,8 @@ function VariantsManager(): h.JSX.Element {
   });
 
   const tabs: TabItem[] = [
-    { label: 'Find & Replace', content: <TabContent.FindReplace /> },
     { label: 'Lint', content: <TabContent.Lint /> },
+    { label: 'Find & Replace', content: <TabContent.FindReplace /> },
   ];
 
   return <TabBar tabs={tabs} />;

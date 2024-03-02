@@ -1,9 +1,9 @@
 import { Button } from '@create-figma-plugin/ui';
 import { emit, on } from '@create-figma-plugin/utilities';
 import { ChoiceChip, IconSettings } from '@repo/ui';
-import { convertString } from '@repo/utils';
+import { ComponentFocusHandler, convertString } from '@repo/utils';
 import { Fragment, h } from 'preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 import {
   FindLintErrors,
@@ -54,7 +54,6 @@ export default function Lint(): h.JSX.Element {
     };
 
     setLintSettings(newSettings);
-    emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', newSettings);
   };
 
   on<FindLintErrors>('FIND_LINT_ERRORS', (lintErrors) => {
@@ -71,6 +70,19 @@ export default function Lint(): h.JSX.Element {
       applyScope: opt,
     });
   };
+
+  useEffect(() => {
+    emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', lintSettings);
+  }, [lintSettings]);
+
+  useEffect(() => {
+    if (selectedErrors.length > 0) {
+      emit<ComponentFocusHandler>(
+        'FOCUS_COMPONENT',
+        selectedErrors[0]?.parent?.id ?? selectedErrors[0]?.id
+      );
+    }
+  }, [selectedErrors]);
 
   return (
     <Fragment>

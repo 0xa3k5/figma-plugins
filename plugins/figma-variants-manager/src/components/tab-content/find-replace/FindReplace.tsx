@@ -16,6 +16,7 @@ import { useEffect, useState } from 'preact/hooks';
 
 import {
   FindComponents,
+  FindReplaceSettingsChange,
   IScope,
   ISearchSettings,
   MatchingComponents,
@@ -46,7 +47,7 @@ export default function FindReplace(): h.JSX.Element {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchKey) {
-        emit<FindComponents>('FIND_COMPONENTS', searchKey, searchSettings);
+        emit<FindComponents>('FIND_COMPONENTS', searchKey);
       }
     }, 300);
 
@@ -76,7 +77,6 @@ export default function FindReplace(): h.JSX.Element {
       replace,
       components
     );
-    emit<FindComponents>('FIND_COMPONENTS', searchKey, searchSettings);
   };
 
   const handleReplaceAll = () => {
@@ -97,6 +97,13 @@ export default function FindReplace(): h.JSX.Element {
       scope: opt,
     });
   };
+
+  useEffect(() => {
+    emit<FindReplaceSettingsChange>(
+      'FIND_REPLACE_SETTINGS_CHANGE',
+      searchSettings
+    );
+  }, [searchSettings]);
 
   const renderEmptyState = () => {
     if (searchKey) {
