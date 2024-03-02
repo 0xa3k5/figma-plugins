@@ -3,8 +3,8 @@ import { IconComponent, IconTarget } from '@repo/ui';
 import { ComponentFocusHandler, IComponent } from '@repo/utils';
 import { h } from 'preact';
 
-import { IconButton } from '../button';
-import HighlightedText from '../highlighted-text/HighlightedText';
+import { IconButton } from '../../button';
+import HighlightedText from '../../highlighted-text/HighlightedText';
 
 interface Props {
   searchKey: string;

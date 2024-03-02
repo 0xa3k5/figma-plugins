@@ -1,5 +1,5 @@
 import { EventHandler } from '@create-figma-plugin/utilities';
-import { IComponent, IComponentSet, NamingConvention } from '@repo/utils';
+import { IComponent, NamingConvention } from '@repo/utils';
 export interface ISearchSettings {
   caseSensitive: boolean;
   matchWholeWord: boolean;
@@ -8,7 +8,7 @@ export interface ISearchSettings {
 
 export type LintType = 'componentName' | 'propName' | 'propValue';
 
-export type IScope = 'selection' | 'page' | 'all pages';
+export type IScope = 'page' | 'all pages';
 
 export interface ILintSettings {
   conventions: Record<LintType, NamingConvention>;
@@ -40,11 +40,6 @@ export interface MatchingComponents extends EventHandler {
 export interface FindComponents extends EventHandler {
   name: 'FIND_COMPONENTS';
   handler: (searchKey: string, searchSettings: ISearchSettings) => void;
-}
-
-export interface HandleSelectionChange extends EventHandler {
-  name: 'HANDLE_SELECTION_CHANGE';
-  handler: (components: (IComponent | IComponentSet)[]) => void;
 }
 
 export interface LintSettingsChange extends EventHandler {

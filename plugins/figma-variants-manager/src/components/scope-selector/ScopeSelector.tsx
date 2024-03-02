@@ -9,7 +9,7 @@ interface Props {
   onChange: (opt: IScope) => void;
 }
 
-const scope: IScope[] = ['selection', 'page', 'all pages'];
+const scope: IScope[] = ['page', 'all pages'];
 
 export default function ScopeSelector({
   label,

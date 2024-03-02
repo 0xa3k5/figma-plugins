@@ -13,7 +13,6 @@ import {
   FindComponents,
   FindLintErrors,
   FixLintErrors,
-  HandleSelectionChange,
   ILintError,
   ILintSettings,
   ISearchSettings,
@@ -48,9 +47,6 @@ const findMatchingComponents = async (
   let context: any;
 
   switch (searchSettings.scope) {
-    case 'selection':
-      context = { inSelection: true };
-      break;
     case 'page':
       context = { page: figma.currentPage };
       break;
@@ -197,9 +193,6 @@ const findLintErrors = async (): Promise<Record<string, ILintError[]>> => {
   let context: any;
 
   switch (lintSettings.applyScope) {
-    case 'selection':
-      context = { inSelection: true };
-      break;
     case 'page':
       context = { page: figma.currentPage };
       break;
@@ -291,7 +284,7 @@ const fixLintErrors = async (lintErrors: ILintError[]): Promise<void> => {
   }
 };
 
-export default function initializePlugin() {
+export default function () {
   showUI({ width: 320, height: 480 });
 
   on<ComponentFocusHandler>('FOCUS_COMPONENT', (parentId) => {
@@ -332,14 +325,5 @@ export default function initializePlugin() {
 
   on<FixLintErrors>('FIX_LINT_ERRORS', async (lintErrors) => {
     await fixLintErrors(lintErrors);
-  });
-
-  figma.on('selectionchange', async () => {
-    const selectedNodes = await getNodesByType({
-      types: ['COMPONENT', 'COMPONENT_SET'],
-      context: { inSelection: true },
-    });
-
-    // emit<HandleSelectionChange>('HANDLE_SELECTION_CHANGE', selectedNodes);
   });
 }

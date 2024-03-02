@@ -8,7 +8,6 @@ import { useState } from 'preact/hooks';
 import {
   FindLintErrors,
   FixLintErrors,
-  HandleSelectionChange,
   ILintError,
   ILintSettings,
   IScope,
@@ -40,9 +39,7 @@ export default function Lint(): h.JSX.Element {
   const [lintErrors, setLintErrors] = useState<Record<string, ILintError[]>>(
     {}
   );
-  const [selectedComponents, setSelectedComponents] = useState<
-    (IComponent | IComponentSet)[]
-  >([]);
+
   const [selectedErrors, setSelectedErrors] = useState<ILintError[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -66,10 +63,6 @@ export default function Lint(): h.JSX.Element {
   const handleFixSelected = () => {
     emit<FixLintErrors>('FIX_LINT_ERRORS', selectedErrors);
   };
-
-  on<HandleSelectionChange>('HANDLE_SELECTION_CHANGE', (components) => {
-    setSelectedComponents(components);
-  });
 
   const handleScopeChange = (opt: IScope) => {
     setLintSettings({
@@ -111,7 +104,6 @@ export default function Lint(): h.JSX.Element {
             lintSettings={lintSettings}
             setLintSettings={setLintSettings}
             lintCategories={categories}
-            selectedComponents={selectedComponents}
             handleToggleChange={handleToggleChange}
           />
         </div>

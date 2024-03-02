@@ -1,22 +1,10 @@
-import { IconArrowRight16 } from '@create-figma-plugin/ui';
 import { emit } from '@create-figma-plugin/utilities';
 import { ChoiceChip, Drawer, Toggle } from '@repo/ui';
-import {
-  convertString,
-  IComponent,
-  IComponentSet,
-  NamingConvention,
-} from '@repo/utils';
+import { convertString, NamingConvention } from '@repo/utils';
 import { h } from 'preact';
 import { StateUpdater } from 'preact/hooks';
 
-import {
-  ILintSettings,
-  IScope,
-  LintSettingsChange,
-  LintType,
-} from '../../../types';
-import LiveView from './LiveView';
+import { ILintSettings, LintSettingsChange, LintType } from '../../../types';
 
 interface Props {
   isDrawerOpen: boolean;
@@ -24,7 +12,6 @@ interface Props {
   lintSettings: ILintSettings;
   setLintSettings: StateUpdater<ILintSettings>;
   lintCategories: LintType[];
-  selectedComponents: (IComponent | IComponentSet)[];
   handleToggleChange: (category: LintType) => void;
 }
 
@@ -35,15 +22,12 @@ const conventions: NamingConvention[] = [
   'snake_case',
 ];
 
-const applyScope: IScope[] = ['selection', 'page', 'all pages'];
-
 export default function LintSettingsDrawer(props: Props): h.JSX.Element {
   const {
     isDrawerOpen,
     setIsDrawerOpen,
     lintSettings,
     lintCategories,
-    selectedComponents,
     handleToggleChange,
     setLintSettings,
   } = props;
@@ -59,18 +43,6 @@ export default function LintSettingsDrawer(props: Props): h.JSX.Element {
           ...prev.conventions,
           [category]: value,
         },
-      };
-
-      emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', updatedSettings);
-      return updatedSettings;
-    });
-  };
-
-  const handleApplyScopeChange = (scope: IScope) => {
-    setLintSettings((prev) => {
-      const updatedSettings = {
-        ...prev,
-        applyScope: scope,
       };
 
       emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', updatedSettings);
@@ -142,22 +114,6 @@ export default function LintSettingsDrawer(props: Props): h.JSX.Element {
                 console.log('toglge'); // todo
               }}
             />
-          </div>
-        </div>
-        <div className="border-border flex flex-col gap-4 border-b p-4">
-          <span className="text-xs">Apply to</span>
-          <div className="flex w-fit gap-1">
-            {applyScope.map((opt) => {
-              return (
-                <ChoiceChip
-                  id={opt}
-                  key={opt}
-                  value={opt}
-                  checked={lintSettings['applyScope'] === opt}
-                  onChange={() => handleApplyScopeChange(opt)}
-                />
-              );
-            })}
           </div>
         </div>
       </div>

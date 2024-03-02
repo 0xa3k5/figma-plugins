@@ -20,10 +20,11 @@ import {
   ISearchSettings,
   MatchingComponents,
   ReplaceProperties,
-} from '../../types';
-import { ButtonDock } from '../button';
-import { Layout } from '../Layout';
-import ScopeSelector from '../scope-selector/ScopeSelector';
+} from '../../../types';
+import { ButtonDock } from '../../button';
+import { EmptyState } from '../../empty-state';
+import { Layout } from '../../Layout';
+import ScopeSelector from '../../scope-selector/ScopeSelector';
 import FindReplaceGroupCard from './FindReplaceGroupCard';
 
 export default function FindReplace(): h.JSX.Element {
@@ -97,10 +98,24 @@ export default function FindReplace(): h.JSX.Element {
     });
   };
 
+  const renderEmptyState = () => {
+    if (searchKey) {
+      if (matchingComps && Object.entries(matchingComps).length === 0) {
+        return (
+          <EmptyState className="py-4">
+            <span className="flex w-full items-start">
+              {`no property named: ${searchKey}`}
+            </span>
+          </EmptyState>
+        );
+      }
+    }
+  };
+
   return (
     <Fragment>
       <Layout>
-        <div className="border-border bg-bg sticky inset-0 z-10 flex flex-col gap-4 border-b p-4 -mx-4">
+        <div className="border-border bg-bg sticky inset-0 z-10 -mx-4 flex flex-col gap-4 border-b p-4">
           <div className="flex flex-col gap-2">
             <ScopeSelector
               label="Search in"
@@ -146,21 +161,29 @@ export default function FindReplace(): h.JSX.Element {
             />
           </div>
         </div>
-        {matchingComps && (
-          <div className="-mx-4 flex h-full flex-col gap-1 pt-4">
-            {Object.entries(matchingComps).map((comps) => {
-              return (
-                <FindReplaceGroupCard
-                  replace={replace}
-                  searchKey={searchKey}
-                  key={comps[0]}
-                  matchingComps={comps}
-                  replaceQue={replaceQue}
-                  handleCompSelect={handleComponentSelect}
-                />
-              );
-            })}
-          </div>
+        {searchKey ? (
+          matchingComps && Object.entries(matchingComps).length > 0 ? (
+            <div className="-mx-4 flex h-full flex-col gap-1 pt-4">
+              {Object.entries(matchingComps).map((comps) => {
+                return (
+                  <FindReplaceGroupCard
+                    replace={replace}
+                    searchKey={searchKey}
+                    key={comps[0]}
+                    matchingComps={comps}
+                    replaceQue={replaceQue}
+                    handleCompSelect={handleComponentSelect}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <EmptyState className="py-4">{`no property named: ${searchKey}`}</EmptyState>
+          )
+        ) : (
+          <EmptyState className="py-4">
+            <span className="flex w-full items-start">{`no property named: ${searchKey}`}</span>
+          </EmptyState>
         )}
       </Layout>
       <ButtonDock>
