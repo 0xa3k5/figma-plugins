@@ -838,33 +838,12 @@ video {
   border-top-width: 1px;
 }
 
-.border-none {
-  border-style: none;
-}
-
 .border-bg-brand {
   border-color: var(--figma-color-bg-brand);
 }
 
 .border-border {
   border-color: var(--figma-color-border);
-}
-
-.border-white {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity));
-}
-
-.border-border-brand {
-  border-color: var(--figma-color-border-brand);
-}
-
-.border-border-selected-strong {
-  border-color: var(--figma-color-border-selected-strong);
-}
-
-.border-border-selected {
-  border-color: var(--figma-color-border-selected);
 }
 
 .border-transparent {
@@ -887,10 +866,6 @@ video {
   background-color: var(--figma-color-bg-inverse);
 }
 
-.bg-bg-secondary {
-  background-color: var(--figma-color-bg-secondary);
-}
-
 .bg-bg-selected-secondary {
   background-color: var(--figma-color-bg-selected-secondary);
 }
@@ -909,14 +884,6 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-bg-brand-secondary {
-  background-color: var(--figma-color-bg-brand-secondary);
-}
-
-.bg-bg-selected {
-  background-color: var(--figma-color-bg-selected);
-}
-
 .p-2 {
   padding: 0.5rem;
 }
@@ -932,6 +899,11 @@ video {
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 
 .px-4 {
@@ -952,11 +924,6 @@ video {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-
-.px-3 {
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
 }
 
 .pl-2 {
@@ -1003,10 +970,6 @@ video {
 
 .text-text-danger {
   color: var(--figma-color-text-danger);
-}
-
-.text-text-onbrand {
-  color: var(--figma-color-text-onbrand);
 }
 
 .text-text-oninverse {
@@ -1130,61 +1093,8 @@ video {
   background-color: var(--figma-color-bg-secondary);
 }
 
-.focus-within\:bg-bg-brand:focus-within {
-  background-color: var(--figma-color-bg-brand);
-}
-
-.focus-within\:bg-bg-hover:focus-within {
-  background-color: var(--figma-color-bg-hover);
-}
-
-.focus-within\:text-text:focus-within {
-  color: var(--figma-color-text);
-}
-
-.focus-within\:text-text-onbrand:focus-within {
-  color: var(--figma-color-text-onbrand);
-}
-
-.focus-within\:outline:focus-within {
-  outline-style: solid;
-}
-
-.focus-within\:outline-bg-brand:focus-within {
-  outline-color: var(--figma-color-bg-brand);
-}
-
-.focus-within\:ring-2:focus-within {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.focus-within\:ring:focus-within {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.focus-within\:ring-blue-500:focus-within {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
-}
-
-.focus-within\:ring-bg-brand:focus-within {
-  --tw-ring-color: var(--figma-color-bg-brand);
-}
-
-.focus-within\:ring-offset-2:focus-within {
-  --tw-ring-offset-width: 2px;
-}
-
 .hover\:cursor-default:hover {
   cursor: default;
-}
-
-.hover\:bg-bg-brand-hover:hover {
-  background-color: var(--figma-color-bg-brand-hover);
 }
 
 .hover\:bg-bg-hover:hover {
@@ -1196,29 +1106,10 @@ video {
   outline-offset: 2px;
 }
 
-.focus\:ring-2:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.focus\:ring-blue-500:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
-}
-
-.focus\:ring-offset-2:focus {
-  --tw-ring-offset-width: 2px;
-}
-
 .active\:scale-95:active {
   --tw-scale-x: .95;
   --tw-scale-y: .95;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.active\:bg-bg-brand-pressed:active {
-  background-color: var(--figma-color-bg-brand-pressed);
 }
 
 .group:focus-within .group-focus-within\:inline-block {

@@ -581,6 +581,10 @@ video {
   right: 0px;
 }
 
+.bottom-0 {
+  bottom: 0px;
+}
+
 .right-0 {
   right: 0px;
 }
@@ -687,6 +691,10 @@ video {
 .size-full {
   width: 100%;
   height: 100%;
+}
+
+.h-1 {
+  height: 0.25rem;
 }
 
 .h-4 {
@@ -838,8 +846,20 @@ video {
   border-width: 1px;
 }
 
+.border-b {
+  border-bottom-width: 1px;
+}
+
+.border-bg-brand {
+  border-color: var(--figma-color-bg-brand);
+}
+
 .border-border {
   border-color: var(--figma-color-border);
+}
+
+.border-transparent {
+  border-color: transparent;
 }
 
 .bg-bg {
@@ -906,6 +926,16 @@ video {
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
+
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .py-1 {
@@ -1111,21 +1141,6 @@ video {
 
 .focus-within\:bg-bg-secondary:focus-within {
   background-color: var(--figma-color-bg-secondary);
-}
-
-.focus-within\:ring-2:focus-within {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.focus-within\:ring-blue-500:focus-within {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
-}
-
-.focus-within\:ring-offset-2:focus-within {
-  --tw-ring-offset-width: 2px;
 }
 
 .hover\:cursor-default:hover {
