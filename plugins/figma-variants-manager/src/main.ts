@@ -93,8 +93,8 @@ const handleReplace = async (
   replacement: string,
   components: IComponent[]
 ) => {
-  for (const comp of components) {
-    const node = (await figma.getNodeByIdAsync(comp.nodeId)) as ComponentNode;
+  components.forEach(async (comp) => {
+    const node = (await figma.getNodeByIdAsync(comp.id)) as ComponentNode;
 
     if (node && comp.properties) {
       const props = node.name.split(', ');
@@ -107,18 +107,19 @@ const handleReplace = async (
         const searchRegex = new RegExp(searchKey, 'gi');
 
         if (index !== -1 && searchRegex.test(propName)) {
-          const convertedPropName = convertString({
-            str: propName,
-            convention: lintSettings.conventions.propName,
-          });
+          const newPropName = propName.replace(
+            new RegExp(searchKey, 'gi'),
+            replacement
+          );
 
-          props[index] = `${convertedPropName}=${propValue}`;
+          props[index] = `${newPropName}=${propValue}`;
         }
       }
 
       node.name = props.join(', ');
     }
-  }
+  });
+
   figma.notify('Replacement complete');
 };
 
@@ -220,7 +221,6 @@ const findLintErrors = async (): Promise<Record<string, ILintError[]>> => {
     }
   }
 
-  console.log('groupedErrors', groupedErrors);
   return groupedErrors;
 };
 
@@ -284,9 +284,6 @@ const fixLintErrors = async (lintErrors: ILintError[]): Promise<void> => {
               props[index] = `${propName}=${convertedPropValue}`;
             }
           }
-
-          // Reconstruct the node name with the fixed property names
-          console.log('reconstructed', props.join(', '));
           node.name = props.join(', ');
         }
       }
@@ -334,10 +331,6 @@ export default function initializePlugin() {
   });
 
   on<FixLintErrors>('FIX_LINT_ERRORS', async (lintErrors) => {
-    const lintable = await findLintErrors();
-
-    console.log('lintable', lintable);
-
     await fixLintErrors(lintErrors);
   });
 
