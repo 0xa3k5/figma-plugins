@@ -1,0 +1,32 @@
+{
+  "scripts": {
+    "build": "build-figma-plugin --typecheck --minify",
+    "watch": "bun run && concurrently bun:watch:js",
+    "watch:js": "build-figma-plugin --typecheck --watch",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "format": "prettier --write '*/**/*.{js,ts,tsx,json}'"
+  },
+  "figma-plugin": {
+    "editorType": [
+      "figma"
+    ],
+    "id": "1349378343489934738",
+    "name": "Create Icon Sets",
+    "main": "src/main.ts",
+    "networkAccess": {
+      "allowedDomains": [
+        "none"
+      ]
+    }
+  },
+  "name": "figma-create-icon-sets",
+  "type": "module",
+  "dependencies": {
+    "@figma/plugin-typings": "1.87.0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@repo/utils": "workspace:*"
+  }
+}
