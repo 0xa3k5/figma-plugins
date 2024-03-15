@@ -44,7 +44,7 @@ export default async function () {
   on<ReplaceProperties>(
     'REPLACE_PROPERTIES',
     (searchKey, replacement, components) => {
-      replaceMatchingProps(searchKey, replacement, components);
+      replaceMatchingProps(searchKey, replacement, components, searchSettings);
       // emit<FindComponents>('FIND_COMPONENTS', searchKey);
     }
   );

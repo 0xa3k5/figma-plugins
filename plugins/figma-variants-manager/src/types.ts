@@ -6,6 +6,7 @@ export interface ISearchSettings {
   caseSensitive: boolean;
   matchWholeWord: boolean;
   scope: IScope;
+  toggles: Record<LintType, boolean>;
 }
 
 export type LintType = 'componentName' | 'propName' | 'propValue';

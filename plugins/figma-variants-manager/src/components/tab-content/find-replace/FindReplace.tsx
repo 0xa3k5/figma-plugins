@@ -1,6 +1,7 @@
 import { Button } from '@create-figma-plugin/ui';
 import { emit, on } from '@create-figma-plugin/utilities';
 import {
+  ChoiceChip,
   IconCaseSensitive,
   IconChip,
   IconWholeWord,
@@ -8,6 +9,7 @@ import {
 } from '@repo/ui';
 import {
   ComponentFocusHandler,
+  convertString,
   groupComponentsByParent,
   IComponent,
 } from '@repo/utils';
@@ -19,6 +21,7 @@ import {
   FindReplaceSettingsChange,
   IScope,
   ISearchSettings,
+  LintType,
   MatchingComponents,
   ReplaceProperties,
 } from '../../../types';
@@ -29,6 +32,7 @@ import ScopeSelector from '../../scope-selector/ScopeSelector';
 import FindReplaceGroupCard from './FindReplaceGroupCard';
 
 export default function FindReplace(): h.JSX.Element {
+  const categories: LintType[] = ['propName', 'propValue'];
   const [searchKey, setSearchKey] = useState('');
   const [replace, setReplacement] = useState('');
 
@@ -42,6 +46,11 @@ export default function FindReplace(): h.JSX.Element {
     caseSensitive: false,
     matchWholeWord: false,
     scope: 'page',
+    toggles: {
+      componentName: true,
+      propName: true,
+      propValue: true,
+    },
   });
 
   useEffect(() => {
@@ -166,6 +175,29 @@ export default function FindReplace(): h.JSX.Element {
               value={replace}
               onInput={(e) => setReplacement(e.currentTarget.value)}
             />
+          </div>
+          <div className="no-scrollbar flex w-fit gap-1 overflow-x-scroll">
+            {categories.map((category) => {
+              return (
+                <ChoiceChip
+                  id={`${category}_${category}`}
+                  checked={searchSettings.toggles[category]}
+                  onChange={() =>
+                    setSearchSettings({
+                      ...searchSettings,
+                      toggles: {
+                        ...searchSettings.toggles,
+                        [category]: !searchSettings.toggles[category],
+                      },
+                    })
+                  }
+                  value={convertString({
+                    str: category,
+                    convention: 'Title Case',
+                  })}
+                />
+              );
+            })}
           </div>
         </div>
         {searchKey ? (

@@ -30,8 +30,11 @@ export const findMatchingComponents = async (
           searchSettings.caseSensitive ? '' : 'i'
         );
 
-        if (searchRegex.test(propName)) {
-          matchedProps[propName] = propValue;
+        if (searchSettings.toggles.propName && searchRegex.test(propName)) {
+          matchedProps[propName] = propName;
+        }
+        if (searchSettings.toggles.propValue && searchRegex.test(propValue)) {
+          matchedProps[propValue] = propValue;
         }
       });
     }
