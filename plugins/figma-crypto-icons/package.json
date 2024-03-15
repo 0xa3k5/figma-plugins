@@ -16,7 +16,12 @@
     "id": "1170720285035693761",
     "name": "Crypto Icons",
     "main": "src/main.ts",
-    "ui": "src/ui.tsx"
+    "ui": "src/ui.tsx",
+    "networkAccess": {
+      "allowedDomains": [
+        "none"
+      ]
+    }
   },
   "dependencies": {
     "cryptocurrency-icons": "^0.18.1",

@@ -16,7 +16,13 @@
     "id": "1300926061062623974",
     "name": "Property Inspector",
     "main": "src/main.ts",
-    "ui": "src/ui.tsx"
+    "ui": "src/ui.tsx",
+    "documentAccess": "dynamic-page",
+    "networkAccess": {
+      "allowedDomains": [
+        "none"
+      ]
+    }
   },
   "name": "figma-property-inspector",
   "type": "module",

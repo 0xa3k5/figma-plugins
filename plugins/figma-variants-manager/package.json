@@ -17,7 +17,12 @@
     "name": "Variants Manager",
     "main": "src/main.ts",
     "ui": "src/ui.tsx",
-    "documentAccess": "dynamic-page"
+    "documentAccess": "dynamic-page",
+    "networkAccess": {
+      "allowedDomains": [
+        "none"
+      ]
+    }
   },
   "name": "figma-variants-manager",
   "type": "module",

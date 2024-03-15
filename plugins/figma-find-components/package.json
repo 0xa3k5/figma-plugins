@@ -16,7 +16,13 @@
     "id": "1311320340932189692",
     "name": "Find Components",
     "main": "src/main.ts",
-    "ui": "src/ui.tsx"
+    "ui": "src/ui.tsx",
+    "documentAccess": "dynamic-page",
+    "networkAccess": {
+      "allowedDomains": [
+        "none"
+      ]
+    }
   },
   "name": "figma-find-components",
   "type": "module",
