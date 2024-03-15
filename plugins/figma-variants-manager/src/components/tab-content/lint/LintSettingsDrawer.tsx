@@ -18,6 +18,7 @@ interface Props {
 const conventions: NamingConvention[] = [
   'camelCase',
   'PascalCase',
+  'Title Case',
   'kebab-case',
   'snake_case',
 ];
