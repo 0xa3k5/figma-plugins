@@ -33,7 +33,7 @@ export const replaceMatchingProps = async (
         }
         if (searchSettings.toggles.propValue) {
           const index = props.findIndex(
-            (p) => p.split('=')[0].trim() === propValue
+            (p) => p.split('=')[1].trim() === propValue
           );
 
           const searchRegex = new RegExp(searchKey, 'gi');

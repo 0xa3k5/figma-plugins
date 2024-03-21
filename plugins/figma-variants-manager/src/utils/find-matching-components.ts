@@ -18,7 +18,17 @@ export const findMatchingComponents = async (
       break;
   }
 
-  const components = await getNodesByType({ types: ['COMPONENT'], context });
+  let components: IComponent[] = [];
+
+  try {
+    components = await getNodesByType({ types: ['COMPONENT'], context });
+  } catch (err: any) {
+    if (err.message.includes('has existing errors')) {
+      figma.notify(
+        `A component or component set in ${searchSettings.scope} has errors. Please fix them before continuing.`
+      );
+    }
+  }
 
   components.forEach((component) => {
     const matchedProps: IComponent['properties'] = {};
@@ -31,10 +41,10 @@ export const findMatchingComponents = async (
         );
 
         if (searchSettings.toggles.propName && searchRegex.test(propName)) {
-          matchedProps[propName] = propName;
+          matchedProps[propName] = propValue;
         }
         if (searchSettings.toggles.propValue && searchRegex.test(propValue)) {
-          matchedProps[propValue] = propValue;
+          matchedProps[propName] = propValue;
         }
       });
     }
