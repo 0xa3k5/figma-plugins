@@ -13,7 +13,10 @@ export const mapComponentNodeToIComponent = (
         : undefined,
     remote: node.remote,
     page: getNodePage(node),
-    properties: node.componentPropertyDefinitions,
+    properties:
+      node.parent && node.parent.type === 'COMPONENT_SET'
+        ? null
+        : node.componentPropertyDefinitions,
   };
 };
 

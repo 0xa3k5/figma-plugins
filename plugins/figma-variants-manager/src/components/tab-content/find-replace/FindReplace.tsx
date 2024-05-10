@@ -12,6 +12,7 @@ import {
   convertString,
   groupComponentsByParent,
   IComponent,
+  IComponentSet,
 } from '@repo/utils';
 import { Fragment, h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
@@ -36,10 +37,12 @@ export default function FindReplace(): h.JSX.Element {
   const [searchKey, setSearchKey] = useState('');
   const [replace, setReplacement] = useState('');
 
-  const [replaceQue, setReplaceQue] = useState<IComponent[]>([]);
+  const [replaceQue, setReplaceQue] = useState<(IComponentSet | IComponent)[]>(
+    []
+  );
   const [matchingComps, setMatchingComps] = useState<Record<
     string,
-    IComponent[]
+    (IComponentSet | IComponent)[]
   > | null>();
 
   const [searchSettings, setSearchSettings] = useState<ISearchSettings>({
@@ -63,8 +66,8 @@ export default function FindReplace(): h.JSX.Element {
     return () => clearTimeout(timeoutId);
   }, [searchKey, searchSettings]);
 
-  on<MatchingComponents>('MATCHING_COMPONENTS', (components) => {
-    const groupedComponents = groupComponentsByParent(components);
+  on<MatchingComponents>('MATCHING_COMPONENTS', (componentSets) => {
+    const groupedComponents = groupComponentsByParent(componentSets);
 
     setMatchingComps(groupedComponents);
     setReplaceQue(groupedComponents[Object.keys(groupedComponents)[0]]);
@@ -72,19 +75,16 @@ export default function FindReplace(): h.JSX.Element {
     const firstGroup = Object.values(groupedComponents)[0];
 
     if (firstGroup && firstGroup.length > 0) {
-      emit<ComponentFocusHandler>(
-        'FOCUS_COMPONENT',
-        firstGroup[0].parent?.id ?? firstGroup[0].id
-      );
+      emit<ComponentFocusHandler>('FOCUS_COMPONENT', firstGroup[0].id);
     }
   });
 
-  const handleReplace = (components: IComponent[]) => {
+  const handleReplace = (componentSets: (IComponentSet | IComponent)[]) => {
     emit<ReplaceProperties>(
       'REPLACE_PROPERTIES',
       searchKey,
       replace,
-      components
+      componentSets
     );
   };
 
@@ -94,9 +94,9 @@ export default function FindReplace(): h.JSX.Element {
 
   const handleComponentSelect = (
     parentId: string,
-    components: IComponent[]
+    componentSets: (IComponentSet | IComponent)[]
   ) => {
-    setReplaceQue(components);
+    setReplaceQue(componentSets);
     emit<ComponentFocusHandler>('FOCUS_COMPONENT', parentId);
   };
 
@@ -114,6 +114,7 @@ export default function FindReplace(): h.JSX.Element {
     );
   }, [searchSettings]);
 
+  // todo
   const renderEmptyState = () => {
     if (searchKey) {
       if (matchingComps && Object.entries(matchingComps).length === 0) {

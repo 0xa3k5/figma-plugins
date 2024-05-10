@@ -18,7 +18,7 @@ type ReturnTypeMap = {
  *
  * @param types Node types to search for.
  * @param page Page to search within. Defaults to current page if not provided.
- * @param fromRoot If true, searches the entire document. Overrides 'page' parameter.
+ * @param root If true, searches the entire document. Overrides 'page' parameter.
  * @returns Array of SceneNodes of specified types.
  */
 export const getNodesByType = async <T extends NodeTypes>({
@@ -26,13 +26,13 @@ export const getNodesByType = async <T extends NodeTypes>({
   context = { page: figma.currentPage },
 }: {
   types: T[];
-  context?: { fromRoot: true } | { inSelection: true } | { page: PageNode };
+  context?: { root: true } | { selection: true } | { page: PageNode };
 }): Promise<ReturnTypeMap[T][]> => {
   let rawNodes: Array<SceneNode | PageNode> = [];
 
-  if ('fromRoot' in context && context.fromRoot) {
+  if ('root' in context && context.root) {
     rawNodes = figma.root.findAllWithCriteria({ types });
-  } else if ('inSelection' in context && context.inSelection) {
+  } else if ('selection' in context && context.selection) {
     rawNodes = figma.currentPage.selection.filter((node) =>
       types.includes(node.type as T)
     );
@@ -41,7 +41,6 @@ export const getNodesByType = async <T extends NodeTypes>({
   } else {
     throw new Error('Invalid search context');
   }
-
   const nodes = await Promise.all(
     rawNodes
       .filter((node): node is SceneNode => node.type !== 'PAGE')

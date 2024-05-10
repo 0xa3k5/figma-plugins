@@ -1,4 +1,9 @@
-import { getNodesByType, IComponent, NamingConvention } from '@repo/utils';
+import {
+  getNodesByType,
+  IComponent,
+  IComponentSet,
+  NamingConvention,
+} from '@repo/utils';
 
 import { ILintError, ILintSettings, LintType } from '../types';
 import { checkConventions } from './check-conventions';
@@ -13,30 +18,34 @@ export const findLintErrors = async (
       context = { page: figma.currentPage };
       break;
     case 'all pages':
-      context = { fromRoot: true };
+      context = { root: true };
       break;
   }
 
-  const components = await getNodesByType({ types: ['COMPONENT'], context });
+  const componentSets: (IComponentSet | IComponent)[] = await getNodesByType({
+    types: ['COMPONENT_SET', 'COMPONENT'],
+    context,
+  });
 
   const groupedErrors: Record<string, ILintError[]> = {};
 
-  for (const component of components) {
+  for (const componentSet of componentSets) {
     const isLocal =
-      component.parent?.name.startsWith('_') ||
-      component.parent?.name.startsWith('_') ||
-      component.name.startsWith('.') ||
-      component.name.startsWith('_');
+      componentSet.name.startsWith('_') || componentSet.name.startsWith('.');
 
     if (lintSettings.ignoreLocalComponents && isLocal) {
       continue;
     }
-    const parentId = component.parent?.id ?? component.id;
-    const errors = await findLintErrorsInComponent(component, lintSettings);
+
+    if (!componentSet.properties) {
+      continue;
+    }
+
+    const errors = await findLintErrorsInComponent(componentSet, lintSettings);
 
     if (errors.errors.length > 0) {
-      groupedErrors[parentId] = groupedErrors[parentId] || [];
-      groupedErrors[parentId].push(errors);
+      groupedErrors[componentSet.id] = groupedErrors[componentSet.id] || [];
+      groupedErrors[componentSet.id].push(errors);
     }
   }
 
@@ -44,7 +53,7 @@ export const findLintErrors = async (
 };
 
 async function findLintErrorsInComponent(
-  component: IComponent,
+  componentSet: IComponentSet | IComponent,
   lintSettings: ILintSettings
 ): Promise<ILintError> {
   const errors: {
@@ -52,42 +61,24 @@ async function findLintErrorsInComponent(
     value: string;
     convention: NamingConvention;
   }[] = [];
-  const node = (await figma.getNodeByIdAsync(component.id)) as ComponentNode;
 
   if (lintSettings.toggles.componentName) {
-    if (component.parent) {
-      const passesConvention = checkConventions(
-        component.parent.name,
-        lintSettings.conventions.componentName
-      );
+    const passesConvention = checkConventions(
+      componentSet.name,
+      lintSettings.conventions.componentName
+    );
 
-      if (!passesConvention) {
-        errors.push({
-          type: 'componentName',
-          value: component.parent.name,
-          convention: lintSettings.conventions.componentName,
-        });
-      }
-    } else {
-      const passesConvention = checkConventions(
-        component.name,
-        lintSettings.conventions.componentName
-      );
-
-      if (!passesConvention) {
-        errors.push({
-          type: 'componentName',
-          value: component.name,
-          convention: lintSettings.conventions.componentName,
-        });
-      }
+    if (!passesConvention) {
+      errors.push({
+        type: 'componentName',
+        value: componentSet.name,
+        convention: lintSettings.conventions.componentName,
+      });
     }
   }
 
-  const properties = node.variantProperties;
-
-  if (properties) {
-    for (const [propName, propValue] of Object.entries(properties)) {
+  if (componentSet.properties) {
+    Object.entries(componentSet.properties).forEach(([propName, propValue]) => {
       if (
         lintSettings.toggles.propName &&
         !checkConventions(propName, lintSettings.conventions.propName)
@@ -98,18 +89,28 @@ async function findLintErrorsInComponent(
           convention: lintSettings.conventions.propName,
         });
       }
-      if (
-        lintSettings.toggles.propValue &&
-        !checkConventions(propValue, lintSettings.conventions.propValue)
-      ) {
-        errors.push({
-          type: 'propValue',
-          value: propValue,
-          convention: lintSettings.conventions.propValue,
-        });
+
+      if (lintSettings.toggles.propValue) {
+        if (propValue.type === 'VARIANT') {
+          const propValues = propValue.variantOptions;
+
+          if (propValues !== undefined) {
+            propValues.forEach((value) => {
+              if (
+                !checkConventions(value, lintSettings.conventions.propValue)
+              ) {
+                errors.push({
+                  type: 'propValue',
+                  value,
+                  convention: lintSettings.conventions.propValue,
+                });
+              }
+            });
+          }
+        }
       }
-    }
+    });
   }
 
-  return { ...component, properties: properties, errors: errors };
+  return { ...componentSet, errors: errors };
 }

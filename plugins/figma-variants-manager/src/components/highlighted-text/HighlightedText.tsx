@@ -36,36 +36,17 @@ export default function HighlightedText({
           >
             {isMatch && replace ? (
               <Fragment>
-                <span className="text-text-secondary line-through">{part}</span>
+                <span className="text-text-secondary line-through">
+                  {part.split('#')[0]}
+                </span>
                 <span className="">{renderReplace(replace)}</span>
               </Fragment>
             ) : (
-              <span>{part}</span>
+              <span>{part.split('#')[0]}</span>
             )}
           </span>
         );
       })}
     </span>
   );
-  // const parts = fullText.split(new RegExp(`(${highlightedPart})`, 'gi'));
-
-  // return (
-  //   <span className="flex flex-wrap text-sm">
-  //     {parts.map((part, index) => {
-  //       return (
-  //         <span
-  //           key={index}
-  //           className={
-  //             part.toLowerCase() === highlightedPart.toLowerCase()
-  //               ? 'text-text font-medium'
-  //               : 'opacity-60'
-  //           }
-  //         >
-  //           {part}
-  //         </span>
-  //       );
-  //     })}
-  //     {replace && <span className="line-through opacity-60">{replace}</span>}
-  //   </span>
-  // );
 }

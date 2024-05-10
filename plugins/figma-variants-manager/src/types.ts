@@ -1,7 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { EventHandler } from '@create-figma-plugin/utilities';
-import { IComponent, NamingConvention } from '@repo/utils';
+import { IComponent, IComponentSet, NamingConvention } from '@repo/utils';
 
-import FindReplace from './components/tab-content/find-replace/FindReplace';
 export interface ISearchSettings {
   caseSensitive: boolean;
   matchWholeWord: boolean;
@@ -11,7 +11,7 @@ export interface ISearchSettings {
 
 export type LintType = 'componentName' | 'propName' | 'propValue';
 
-export type IScope = 'page' | 'all pages';
+export type IScope = 'page' | 'all pages' | 'selection';
 
 export interface ILintSettings {
   conventions: Record<LintType, NamingConvention>;
@@ -32,13 +32,13 @@ export interface ReplaceProperties extends EventHandler {
   handler: (
     searchKey: string,
     replace: string,
-    components: IComponent[]
+    componentSets: (IComponentSet | IComponent)[]
   ) => void;
 }
 
 export interface MatchingComponents extends EventHandler {
   name: 'MATCHING_COMPONENTS';
-  handler: (components: IComponent[]) => void;
+  handler: (componentSets: (IComponentSet | IComponent)[]) => void;
 }
 
 export interface FindComponents extends EventHandler {

@@ -1,57 +1,54 @@
-import { IComponent } from '@repo/utils';
+import { IComponent, IComponentSet } from '@repo/utils';
 
 import { ISearchSettings } from '../types';
 
 export const replaceMatchingProps = async (
   searchKey: string,
   replacement: string,
-  components: IComponent[],
+  componentSets: (IComponentSet | IComponent)[],
   searchSettings: ISearchSettings
 ) => {
-  components.forEach(async (comp) => {
-    const node = (await figma.getNodeByIdAsync(comp.id)) as ComponentNode;
+  componentSets.forEach(async (compSet) => {
+    const node = (await figma.getNodeByIdAsync(compSet.id)) as ComponentSetNode;
 
-    if (node && comp.properties) {
-      const props = node.name.split(', ');
-
-      for (const [propName, propValue] of Object.entries(comp.properties)) {
+    if (node && compSet.properties) {
+      Object.entries(compSet.properties).forEach(([propName, propValue]) => {
         if (searchSettings.toggles.propName) {
-          const index = props.findIndex(
-            (p) => p.split('=')[0].trim() === propName
+          const newPropName = propName.replace(
+            new RegExp(searchKey, 'gi'),
+            replacement
           );
 
-          const searchRegex = new RegExp(searchKey, 'gi');
+          // figma includes an id in the name of the property
+          // when the property is not a variant
+          // we don't want the id on the prop name to be persisted
 
-          if (index !== -1 && searchRegex.test(propName)) {
-            const newPropName = propName.replace(
-              new RegExp(searchKey, 'gi'),
-              replacement
+          try {
+            node.editComponentProperty(propName, {
+              name: newPropName.split('#')[0], // remove the id from the prop name while replacing
+            });
+          } catch (err: any) {
+            console.log(err);
+            figma.notify(
+              `Error replacing property name: ${err.message}. Please fix the property name before continuing.`
             );
-
-            props[index] = `${newPropName}=${propValue}`;
           }
         }
+
+        // if we want to replace the property value
+        // we need to rename the children of the component set
         if (searchSettings.toggles.propValue) {
-          const index = props.findIndex(
-            (p) => p.split('=')[1].trim() === propValue
-          );
-
-          const searchRegex = new RegExp(searchKey, 'gi');
-
-          if (index !== -1 && searchRegex.test(propValue)) {
-            const newPropValue = propValue.replace(
-              new RegExp(searchKey, 'gi'),
-              replacement
-            );
-
-            props[index] = `${propName}=${newPropValue}`;
-          }
+          node.children.forEach((child) => {
+            child.name = child.name
+              .split(', ')
+              .map((n) => {
+                return n.replace(new RegExp(searchKey, 'gi'), replacement);
+              })
+              .join(', ');
+          });
         }
-      }
-
-      node.name = props.join(', ');
+      });
     }
+    figma.notify('Replacement complete');
   });
-
-  figma.notify('Replacement complete');
 };

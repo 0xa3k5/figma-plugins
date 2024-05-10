@@ -7,10 +7,10 @@
   "name": "Variants Manager",
   "main": "build/main.js",
   "ui": "build/ui.js",
+  "documentAccess": "dynamic-page",
   "networkAccess": {
     "allowedDomains": [
       "none"
     ]
-  },
-  "documentAccess": "dynamic-page"
+  }
 }

@@ -1,6 +1,6 @@
 import { emit } from '@create-figma-plugin/utilities';
 import { IconComponent, IconTarget } from '@repo/ui';
-import { ComponentFocusHandler, IComponent } from '@repo/utils';
+import { ComponentFocusHandler, IComponentSet } from '@repo/utils';
 import { h } from 'preact';
 
 import { IconButton } from '../../button';
@@ -9,9 +9,9 @@ import HighlightedText from '../../highlighted-text/HighlightedText';
 interface Props {
   searchKey: string;
   replace: string;
-  matchingComps: [string, IComponent[]];
-  replaceQue: IComponent[];
-  handleCompSelect: (parentId: string, components: IComponent[]) => void;
+  matchingComps: [string, IComponentSet[]];
+  replaceQue: IComponentSet[];
+  handleCompSelect: (parentId: string, components: IComponentSet[]) => void;
 }
 
 export default function FindReplaceGroupCard({
@@ -47,7 +47,7 @@ export default function FindReplaceGroupCard({
         </span>
         <span className="flex flex-col items-start gap-1 py-1">
           <span className="text-text-component text-xs">
-            {components[0].parent?.name ?? components[0].name}
+            {components[0].name}
           </span>
           {searchKey.length > 0 &&
             uniquePropNames.size > 0 &&

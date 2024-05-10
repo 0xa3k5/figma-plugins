@@ -14,10 +14,10 @@ export const findMatchingComponents = async (
       context = { page: figma.currentPage };
       break;
     case 'all pages':
-      context = { fromRoot: true };
+      context = { page: true };
       break;
     case 'selection':
-      context = { inSelection: true };
+      context = { selection: true };
       break;
   }
 
