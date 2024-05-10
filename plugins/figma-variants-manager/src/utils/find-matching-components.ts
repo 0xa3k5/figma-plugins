@@ -1,4 +1,4 @@
-import { getNodesByType, IComponent } from '@repo/utils';
+import { getNodesByType, IComponent, IComponentSet } from '@repo/utils';
 
 import { ISearchSettings } from '../types';
 
@@ -6,7 +6,7 @@ export const findMatchingComponents = async (
   searchKey: string,
   searchSettings: ISearchSettings
 ) => {
-  const matchingComps: IComponent[] = [];
+  const matchingComps: IComponentSet[] = [];
   let context: any;
 
   switch (searchSettings.scope) {
@@ -16,43 +16,56 @@ export const findMatchingComponents = async (
     case 'all pages':
       context = { fromRoot: true };
       break;
+    case 'selection':
+      context = { inSelection: true };
+      break;
   }
 
-  let components: IComponent[] = [];
+  const componentSets: (IComponentSet | IComponent)[] = await getNodesByType({
+    types: ['COMPONENT_SET', 'COMPONENT'],
+    context,
+  });
 
-  try {
-    components = await getNodesByType({ types: ['COMPONENT'], context });
-  } catch (err: any) {
-    if (err.message.includes('has existing errors')) {
-      figma.notify(
-        `A component or component set in ${searchSettings.scope} has errors. Please fix them before continuing.`
-      );
-    }
-  }
+  console.log(componentSets);
 
-  components.forEach((component) => {
-    const matchedProps: IComponent['properties'] = {};
+  const searchRegex = new RegExp(
+    searchSettings.matchWholeWord ? `\\b${searchKey}\\b` : searchKey,
+    searchSettings.caseSensitive ? '' : 'i'
+  );
 
-    if (component.properties) {
-      Object.entries(component.properties).forEach(([propName, propValue]) => {
-        const searchRegex = new RegExp(
-          searchSettings.matchWholeWord ? `\\b${searchKey}\\b` : searchKey,
-          searchSettings.caseSensitive ? '' : 'i'
-        );
-
-        if (searchSettings.toggles.propName && searchRegex.test(propName)) {
-          matchedProps[propName] = propValue;
+  componentSets.forEach((compSet) => {
+    if (compSet.properties) {
+      Object.entries(compSet.properties).forEach(([propName, propValue]) => {
+        if (searchSettings.toggles.propName) {
+          if (searchRegex.test(propName)) {
+            matchingComps.push({
+              ...compSet,
+              properties: { [propName]: { ...propValue } },
+            });
+          }
         }
-        if (searchSettings.toggles.propValue && searchRegex.test(propValue)) {
-          matchedProps[propName] = propValue;
-        }
-      });
-    }
 
-    if (Object.keys(matchedProps).length > 0) {
-      matchingComps.push({
-        ...component,
-        properties: matchedProps,
+        if (searchSettings.toggles.propValue) {
+          if (propValue.type === 'VARIANT') {
+            const propValues = propValue.variantOptions;
+
+            if (propValues !== undefined) {
+              propValues.forEach((value) => {
+                if (searchRegex.test(value)) {
+                  matchingComps.push({
+                    ...compSet,
+                    properties: {
+                      [propName]: {
+                        variantOptions: [value],
+                        ...propValue,
+                      },
+                    },
+                  });
+                }
+              });
+            }
+          }
+        }
       });
     }
   });

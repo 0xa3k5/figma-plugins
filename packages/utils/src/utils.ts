@@ -1,5 +1,3 @@
-import SceneNode from '@figma/plugin-typings';
-
 import {
   mapComponentNodeToIComponent,
   mapComponentSetNodeToIComponentSet,
@@ -30,7 +28,7 @@ export const getNodesByType = async <T extends NodeTypes>({
   types: T[];
   context?: { fromRoot: true } | { inSelection: true } | { page: PageNode };
 }): Promise<ReturnTypeMap[T][]> => {
-  let rawNodes: Array<SceneNode | PageNode>;
+  let rawNodes: Array<SceneNode | PageNode> = [];
 
   if ('fromRoot' in context && context.fromRoot) {
     rawNodes = figma.root.findAllWithCriteria({ types });
@@ -44,28 +42,22 @@ export const getNodesByType = async <T extends NodeTypes>({
     throw new Error('Invalid search context');
   }
 
-  const nodes = (await Promise.all(
+  const nodes = await Promise.all(
     rawNodes
       .filter((node): node is SceneNode => node.type !== 'PAGE')
       .map(async (node: SceneNode): Promise<ReturnTypeMap[T]> => {
-        switch (node.type) {
-          case 'COMPONENT':
-            return mapComponentNodeToIComponent(
-              node as ComponentNode
-            ) as ReturnTypeMap[T];
-          case 'COMPONENT_SET':
-            return mapComponentSetNodeToIComponentSet(
-              node as ComponentSetNode
-            ) as ReturnTypeMap[T];
-          case 'INSTANCE':
-            return (await mapInstanceNodeToIInstance(
-              node as InstanceNode
-            )) as ReturnTypeMap[T];
-          default:
-            throw new Error(`Unsupported node type: ${node.type}`);
+        if (node.type === 'COMPONENT') {
+          return mapComponentNodeToIComponent(node) as ReturnTypeMap[T];
         }
+        if (node.type === 'COMPONENT_SET') {
+          return mapComponentSetNodeToIComponentSet(node) as ReturnTypeMap[T];
+        }
+        if (node.type === 'INSTANCE') {
+          return (await mapInstanceNodeToIInstance(node)) as ReturnTypeMap[T];
+        }
+        throw new Error(`Unsupported node type: ${node.type}`);
       })
-  )) as ReturnTypeMap[T][];
+  );
 
   return nodes;
 };

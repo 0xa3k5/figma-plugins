@@ -13,7 +13,7 @@ export const mapComponentNodeToIComponent = (
         : undefined,
     remote: node.remote,
     page: getNodePage(node),
-    properties: node.variantProperties,
+    properties: node.componentPropertyDefinitions,
   };
 };
 
@@ -33,10 +33,12 @@ export const mapInstanceNodeToIInstance = async (
 
 export const mapComponentSetNodeToIComponentSet = (
   node: ComponentSetNode
-): IComponentSet => ({
-  id: node.id,
-  name: node.name,
-  page: getNodePage(node),
-  remote: node.remote,
-  properties: node.variantGroupProperties,
-});
+): IComponentSet => {
+  return {
+    id: node.id,
+    name: node.name,
+    page: getNodePage(node),
+    remote: node.remote,
+    properties: node.componentPropertyDefinitions,
+  };
+};
