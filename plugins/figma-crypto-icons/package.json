@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "bun run build:css && bun run build:js",
+    "build": "bun run build:css && bun run build:js && bun run format",
     "build:css": "tailwindcss --input ./src/css/input.css --output ./src/css/output.css",
     "build:js": "build-figma-plugin --typecheck --minify",
     "dev": "bun run build:css && concurrently bun:dev:css bun:dev:js",

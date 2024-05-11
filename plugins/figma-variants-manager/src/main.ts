@@ -75,7 +75,7 @@ export default async function () {
   });
 
   on<FixLintErrors>('FIX_LINT_ERRORS', async (lintErrors) => {
-    await fixLintErrors(lintErrors, lintSettings);
+    await fixLintErrors(lintErrors);
 
     const newLintErrors = await findLintErrors(lintSettings);
 
