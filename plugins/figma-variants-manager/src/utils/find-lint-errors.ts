@@ -81,7 +81,10 @@ async function findLintErrorsInComponent(
     Object.entries(componentSet.properties).forEach(([propName, propValue]) => {
       if (
         lintSettings.toggles.propName &&
-        !checkConventions(propName, lintSettings.conventions.propName)
+        !checkConventions(
+          propName.split('#')[0], // remove the id from the prop name while checking
+          lintSettings.conventions.propName
+        )
       ) {
         errors.push({
           type: 'propName',

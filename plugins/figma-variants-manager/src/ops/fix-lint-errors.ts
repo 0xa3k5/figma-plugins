@@ -1,10 +1,9 @@
-import { convertString, IComponent, IComponentSet } from '@repo/utils';
+import { convertString } from '@repo/utils';
 
-import { ILintError, ILintSettings } from '../types';
+import { ILintError } from '../types';
 
 export const fixLintErrors = async (
-  lintErrors: ILintError[],
-  lintSettings: ILintSettings
+  lintErrors: ILintError[]
 ): Promise<void> => {
   for (const lintError of lintErrors) {
     const node = (await figma.getNodeByIdAsync(lintError.id)) as
@@ -39,6 +38,19 @@ export const fixLintErrors = async (
 
           node.editComponentProperty(err.value, {
             name: newPropName,
+          });
+        }
+        if (err.type === 'propValue') {
+          node.children.forEach((child) => {
+            child.name = child.name
+              .split(', ')
+              .map((n) => {
+                return convertString({
+                  str: n,
+                  convention: err.convention,
+                });
+              })
+              .join(', ');
           });
         }
       }

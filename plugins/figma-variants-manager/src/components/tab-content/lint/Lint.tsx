@@ -25,8 +25,8 @@ const categories: LintType[] = ['componentName', 'propName', 'propValue'];
 export default function Lint(): h.JSX.Element {
   const [lintSettings, setLintSettings] = useState<ILintSettings>({
     conventions: {
-      componentName: 'camelCase',
-      propName: 'kebab-case',
+      componentName: 'PascalCase',
+      propName: 'camelCase',
       propValue: 'kebab-case',
     },
     toggles: {
