@@ -14,7 +14,18 @@ export default async function () {
 
     // group frames based on the name before the first "/"
     selectedFrames.forEach((frame) => {
-      const [name] = frame.name.split('/');
+      // detect the separator (between "/", ":", or "\")
+      const separator = ['/', ':', '\\'].find((separator) =>
+        frame.name.includes(separator)
+      );
+      if (!separator) {
+        figma.notify(
+          'Frames must be named with a separator ("/", ":", or "\\")'
+        );
+        figma.closePlugin();
+      }
+
+      const [name] = frame.name.split(separator);
 
       if (!groupedFrames[name]) {
         groupedFrames[name] = [];
