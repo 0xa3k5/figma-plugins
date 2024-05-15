@@ -37,25 +37,25 @@ export const getNodesByType = async <T extends NodeTypes>({
       types.includes(node.type as T)
     );
   } else if ('page' in context) {
-    rawNodes = context.page.findAllWithCriteria({ types });
+    rawNodes = figma.currentPage.findAllWithCriteria({ types });
   } else {
     throw new Error('Invalid search context');
   }
   const nodes = await Promise.all(
     rawNodes
       .filter((node): node is SceneNode => node.type !== 'PAGE')
-      .map(async (node: SceneNode): Promise<ReturnTypeMap[T]> => {
+      .map(async (node: SceneNode): Promise<ReturnTypeMap[T] | undefined> => {
         if (node.type === 'COMPONENT') {
           return mapComponentNodeToIComponent(node) as ReturnTypeMap[T];
-        }
-        if (node.type === 'COMPONENT_SET') {
+        } else if (node.type === 'COMPONENT_SET') {
           return mapComponentSetNodeToIComponentSet(node) as ReturnTypeMap[T];
-        }
-        if (node.type === 'INSTANCE') {
+        } else if (node.type === 'INSTANCE') {
           return (await mapInstanceNodeToIInstance(node)) as ReturnTypeMap[T];
+        } else {
+          return;
         }
-        throw new Error(`Unsupported node type: ${node.type}`);
       })
+      .filter((node): node is any => node !== undefined)
   );
 
   return nodes;

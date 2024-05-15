@@ -1,8 +1,7 @@
-import { emit, on } from '@create-figma-plugin/utilities';
+import { emit } from '@create-figma-plugin/utilities';
 import { IconComponent, IconExpandChevron, IconTarget } from '@repo/ui';
 import { ComponentFocusHandler } from '@repo/utils';
 import { h } from 'preact';
-import { StateUpdater } from 'preact/hooks';
 
 import { ILintError } from '../../../types';
 import { IconButton } from '../../button';
@@ -11,8 +10,9 @@ interface Props {
   parentId: string;
   errors: ILintError[];
   isExpanded: boolean;
-  setIsExpanded: StateUpdater<boolean>;
-  setSelectedErrors: StateUpdater<ILintError[]>;
+  setIsExpanded: (value: boolean) => void;
+  selectedErrors: ILintError[];
+  setSelectedErrors: (value: ILintError[]) => void;
 }
 
 export default function LintComponentHeader({
@@ -20,6 +20,7 @@ export default function LintComponentHeader({
   errors,
   isExpanded,
   setIsExpanded,
+  selectedErrors,
   setSelectedErrors,
 }: Props): h.JSX.Element {
   const handleFocusComponents = (parentId: string) => {
@@ -27,7 +28,7 @@ export default function LintComponentHeader({
   };
 
   const handleSelectedError = (error: ILintError[]) => {
-    setSelectedErrors((prev) => (prev.includes(error[0]) ? [] : error));
+    setSelectedErrors(selectedErrors.includes(error[0]) ? [] : error);
   };
 
   return (

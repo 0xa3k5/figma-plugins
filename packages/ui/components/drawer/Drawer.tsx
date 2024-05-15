@@ -1,10 +1,11 @@
 import { h } from 'preact';
 import { PropsWithChildren } from 'preact/compat';
-import { StateUpdater, useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
 
 interface DrawerProps {
   isOpen: boolean;
-  setIsOpen: StateUpdater<boolean>;
+  // eslint-disable-next-line no-unused-vars
+  setIsOpen: (value: boolean) => void;
 }
 
 const Drawer = ({

@@ -14,7 +14,7 @@ export const findMatchingComponents = async (
       context = { page: figma.currentPage };
       break;
     case 'all pages':
-      context = { page: true };
+      context = { root: true };
       break;
     case 'selection':
       context = { selection: true };
@@ -25,8 +25,6 @@ export const findMatchingComponents = async (
     types: ['COMPONENT_SET', 'COMPONENT'],
     context,
   });
-
-  console.log(componentSets);
 
   const searchRegex = new RegExp(
     searchSettings.matchWholeWord ? `\\b${searchKey}\\b` : searchKey,

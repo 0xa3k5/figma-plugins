@@ -22,7 +22,7 @@
   "name": "figma-create-icon-sets",
   "type": "module",
   "dependencies": {
-    "@figma/plugin-typings": "1.87.0"
+    "@figma/plugin-typings": "1.93.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

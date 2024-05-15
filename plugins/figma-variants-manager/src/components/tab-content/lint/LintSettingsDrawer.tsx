@@ -2,16 +2,18 @@ import { emit } from '@create-figma-plugin/utilities';
 import { ChoiceChip, Drawer, Toggle } from '@repo/ui';
 import { convertString, NamingConvention } from '@repo/utils';
 import { h } from 'preact';
-import { StateUpdater } from 'preact/hooks';
 
 import { ILintSettings, LintSettingsChange, LintType } from '../../../types';
 
 interface Props {
   isDrawerOpen: boolean;
-  setIsDrawerOpen: StateUpdater<boolean>;
   lintSettings: ILintSettings;
-  setLintSettings: StateUpdater<ILintSettings>;
   lintCategories: LintType[];
+  // eslint-disable-next-line no-unused-vars
+  setIsDrawerOpen: (value: boolean) => void;
+  // eslint-disable-next-line no-unused-vars
+  setLintSettings: (value: ILintSettings) => void;
+  // eslint-disable-next-line no-unused-vars
   handleToggleChange: (category: LintType) => void;
 }
 
@@ -37,18 +39,17 @@ export default function LintSettingsDrawer(props: Props): h.JSX.Element {
     category: LintType,
     value: NamingConvention | null
   ) => {
-    setLintSettings((prev) => {
-      const updatedSettings = {
-        ...prev,
-        conventions: {
-          ...prev.conventions,
-          [category]: value,
-        },
-      };
+    const updatedSettings = {
+      ...lintSettings,
+      conventions: {
+        ...lintSettings.conventions,
+        [category]: value,
+      },
+    };
 
-      emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', updatedSettings);
-      return updatedSettings;
-    });
+    setLintSettings(updatedSettings);
+    emit<LintSettingsChange>('LINT_SETTINGS_CHANGE', updatedSettings);
+    return updatedSettings;
   };
 
   return (
@@ -112,10 +113,10 @@ export default function LintSettingsDrawer(props: Props): h.JSX.Element {
             <Toggle
               isOn={lintSettings['ignoreLocalComponents']}
               onToggle={() => {
-                setLintSettings((prev) => ({
-                  ...prev,
-                  ignoreLocalComponents: !prev.ignoreLocalComponents,
-                }));
+                setLintSettings({
+                  ...lintSettings,
+                  ignoreLocalComponents: !lintSettings.ignoreLocalComponents,
+                });
               }}
             />
           </div>

@@ -9,7 +9,7 @@ interface Props {
   className?: string;
   errorGroup: [string, ILintError[]];
   selectedErrors: ILintError[];
-  setSelectedErrors: StateUpdater<ILintError[]>;
+  setSelectedErrors: (value: ILintError[]) => void;
 }
 
 const categories: LintType[] = ['componentName', 'propName', 'propValue'];
@@ -56,6 +56,7 @@ export default function LintErrorGroupCard({
         parentId={parentId}
         isExpanded={isExpanded}
         setIsExpanded={setIsExpanded}
+        selectedErrors={selectedErrors}
         setSelectedErrors={setSelectedErrors}
       />
       {isExpanded && (
