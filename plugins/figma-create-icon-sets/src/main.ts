@@ -24,9 +24,10 @@ export default async function () {
           'Frames must be named with a separator ("/", ":", or "\\")'
         );
         figma.closePlugin();
+        return
       }
 
-      const [name] = frame.name.split(separator as string);
+      const [name] = frame.name.split(separator);
 
       if (!groupedFrames[name]) {
         groupedFrames[name] = [];
