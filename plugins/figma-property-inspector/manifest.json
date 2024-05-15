@@ -1,1 +1,1 @@
-{"api":"1.0.0","editorType":["figma"],"id":"1300926061062623974","name":"Property Inspector","main":"build/main.js","ui":"build/ui.js"}
+{"api":"1.0.0","editorType":["figma"],"id":"1300926061062623974","name":"Property Inspector","main":"build/main.js","ui":"build/ui.js","networkAccess":{"allowedDomains":["none"]},"documentAccess":"dynamic-page"}

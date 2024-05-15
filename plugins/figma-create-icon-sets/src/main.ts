@@ -18,6 +18,7 @@ export default async function () {
       const separator = ['/', ':', '\\'].find((separator) =>
         frame.name.includes(separator)
       );
+
       if (!separator) {
         figma.notify(
           'Frames must be named with a separator ("/", ":", or "\\")'
@@ -25,7 +26,7 @@ export default async function () {
         figma.closePlugin();
       }
 
-      const [name] = frame.name.split(separator);
+      const [name] = frame.name.split(separator as string);
 
       if (!groupedFrames[name]) {
         groupedFrames[name] = [];
@@ -48,7 +49,6 @@ export default async function () {
         figma.createComponentFromNode(frame)
       );
 
-      // figma.combineAsVariants(components, figma.currentPage);
       const componentSet = figma.combineAsVariants(
         components,
         figma.currentPage
