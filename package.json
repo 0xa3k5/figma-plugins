@@ -1,35 +1,35 @@
 {
   "name": "figma-plugins",
   "dependencies": {
-    "@create-figma-plugin/ui": "^3.1.0",
-    "@create-figma-plugin/utilities": "^3.1.0"
+    "@create-figma-plugin/ui": "^3.2.0",
+    "@create-figma-plugin/utilities": "^3.2.0"
   },
   "devDependencies": {
-    "@create-figma-plugin/build": "^3.1.0",
-    "@figma/plugin-typings": "1.87.0",
+    "@create-figma-plugin/build": "^3.2.0",
+    "@figma/plugin-typings": "1.93.0",
     "@repo/eslint-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
-    "@typescript-eslint/eslint-plugin": "^6.17.0",
-    "@typescript-eslint/parser": "^6.17.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
     "bun-types": "latest",
     "concurrently": ">=8",
-    "eslint": "^8.56.0",
+    "eslint": "^9.2.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-tailwindcss": "^3.14.2",
+    "eslint-plugin-tailwindcss": "^3.15.1",
     "preact": ">=10",
     "preact-hooks": "^0.0.0-0.0.0",
-    "prettier": "^3.1.1",
-    "prettier-plugin-tailwindcss": "^0.4.1",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.14",
     "tailwindcss": ">=3",
     "turbo": "latest",
-    "typescript": ">=4"
+    "typescript": ">=5"
   },
   "overrides": {
-    "@figma/plugin-typings": "1.87.0"
+    "@figma/plugin-typings": "1.93.0"
   },
   "engines": {
     "node": ">=18"
