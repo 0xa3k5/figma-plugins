@@ -1,10 +1,11 @@
 import { on } from '@create-figma-plugin/utilities';
 
 export default async function () {
+  const SEPARATORS = ['/', ':', '\\'];
+
   figma.on('run', () => {
     const selectedFrames = figma.currentPage.selection;
 
-    console.log(selectedFrames.map((frame) => frame.name));
     if (selectedFrames.length === 0) {
       figma.notify('Select frames to start');
       figma.closePlugin();
@@ -12,10 +13,10 @@ export default async function () {
 
     let groupedFrames: { [name: string]: SceneNode[] } = {};
 
-    // group frames based on the name before the first "/"
+    // group frames based on the name before the first separator
     selectedFrames.forEach((frame) => {
       // detect the separator (between "/", ":", or "\")
-      const separator = ['/', ':', '\\'].find((separator) =>
+      const separator = SEPARATORS.find((separator) =>
         frame.name.includes(separator)
       );
 
@@ -24,10 +25,13 @@ export default async function () {
           'Frames must be named with a separator ("/", ":", or "\\")'
         );
         figma.closePlugin();
-        return
+        return;
       }
 
       const [name] = frame.name.split(separator);
+
+      // this is needed for figma to group the components correctly
+      frame.name = frame.name.replaceAll(separator, '/');
 
       if (!groupedFrames[name]) {
         groupedFrames[name] = [];
@@ -96,6 +100,10 @@ export default async function () {
 
       // Update xOffset for the next component set with spacing
       xOffset += componentSet.width + spacing;
+
+      // focus on the component set
+      figma.currentPage.selection = [componentSet];
+      figma.viewport.scrollAndZoomIntoView([componentSet]);
     });
 
     figma.closePlugin();

@@ -1,14 +1,8 @@
 {
   "api": "1.0.0",
-  "editorType": [
-    "figma"
-  ],
+  "editorType": ["figma"],
   "id": "1349378343489934738",
   "name": "Create Icon Sets",
   "main": "build/main.js",
-  "networkAccess": {
-    "allowedDomains": [
-      "none"
-    ]
-  }
+  "networkAccess": { "allowedDomains": ["none"] }
 }
