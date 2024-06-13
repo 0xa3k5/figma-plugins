@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "build-figma-plugin --typecheck --minify",
-    "watch": "bun run && concurrently bun:watch:js",
+    "watch": "bun run build && concurrently bun:watch:js",
     "watch:js": "build-figma-plugin --typecheck --watch",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "format": "prettier --write '*/**/*.{js,ts,tsx,json}'"
@@ -12,12 +12,50 @@
     ],
     "id": "1349378343489934738",
     "name": "Create Icon Sets",
-    "main": "src/main.ts",
     "networkAccess": {
       "allowedDomains": [
         "none"
       ]
-    }
+    },
+    "menu": [
+      {
+        "name": "Create Icon Sets",
+        "main": "src/create-icons.ts"
+      },
+      {
+        "name": "Update Icon Size",
+        "main": "src/update-icon-size.ts",
+        "parameters": [
+          {
+            "key": "frame-size",
+            "description": "Size for the wrapper frame in pixels",
+            "allowFreeform": true
+          },
+          {
+            "key": "biggest-dimension-size",
+            "description": "Define the maximum size of the biggest dimension of the frame",
+            "allowFreeform": true
+          }
+        ]
+      },
+      {
+        "name": "Find Unexpected Sizes",
+        "description": "Finds icons that are not the expected size",
+        "main": "src/find-unexpected-sizes.ts",
+        "parameters": [
+          {
+            "key": "width",
+            "description": "Width of the frame",
+            "allowFreeform": true
+          },
+          {
+            "key": "height",
+            "description": "Height of the frame",
+            "allowFreeform": true
+          }
+        ]
+      }
+    ]
   },
   "name": "figma-create-icon-sets",
   "type": "module",

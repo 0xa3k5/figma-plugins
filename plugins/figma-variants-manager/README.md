@@ -5,7 +5,22 @@
 Features:
 
 - [x] Find & Replace Variant Names
-- [ ] Variant Name Linter
+- [x] Variant Name Linter
+
+Quickly find and replace property names, enforce naming rules, and work seamlessly across multiple pages or within specific selections
+
+### Find & Replace
+Ever needed to rename a specific property name through out your design system? Instead of going through each page, trying to see which components has that property name or property value is a pain. This plugin allows you to quickly find & replace your property names.
+
+### Lint
+Enforcing naming conventions is good. Choose your naming convention for component names, property names and property values and see which components have lint errors. Replace all of them in an instant.
+
+#### Supported Naming Conventions
+- camelCase
+- PascalCase
+- snake_case
+- kebab-case
+
 
 ## See also
 
