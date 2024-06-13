@@ -28,9 +28,6 @@
     "turbo": "^1.13.3",
     "typescript": ">=5"
   },
-  "overrides": {
-    "@figma/plugin-typings": "1.93.0"
-  },
   "engines": {
     "node": ">=18"
   },

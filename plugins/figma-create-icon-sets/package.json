@@ -59,9 +59,6 @@
   },
   "name": "figma-create-icon-sets",
   "type": "module",
-  "dependencies": {
-    "@figma/plugin-typings": "1.93.0"
-  },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",

@@ -1,5 +1,3 @@
-import { on } from '@create-figma-plugin/utilities';
-
 export default async function () {
   figma.parameters.on(
     'input',
@@ -18,9 +16,7 @@ export default async function () {
       parameters['biggest-dimension-size']
     );
 
-    const selectedFrames = figma.currentPage.selection.filter(
-      (frame) => frame.type === 'FRAME'
-    );
+    const selectedFrames = figma.currentPage.selection;
 
     if (selectedFrames.length === 0) {
       figma.notify('Select frames to start');
@@ -28,6 +24,11 @@ export default async function () {
     }
 
     selectedFrames.forEach((frame) => {
+      if (frame.type !== 'FRAME') {
+        figma.notify('Select only frames');
+        figma.closePlugin();
+        return;
+      }
       const children = frame.children;
       // create a new group for the children
       const group = figma.group(children, frame);

@@ -1,5 +1,3 @@
-import { on } from '@create-figma-plugin/utilities';
-
 export default async function () {
   const SEPARATORS = ['/', ':', '\\'];
 
