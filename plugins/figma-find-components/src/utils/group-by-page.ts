@@ -7,7 +7,7 @@ export default function groupByPage(
   Object.keys(components).forEach((mainCompName) => {
     const groupedByPageName = components[mainCompName].reduce(
       (acc, componentInstance) => {
-        const pageName = componentInstance.page.name;
+        const pageName = componentInstance.page?.name ?? 'root';
 
         acc[pageName] = acc[pageName] || [];
         acc[pageName].push(componentInstance);

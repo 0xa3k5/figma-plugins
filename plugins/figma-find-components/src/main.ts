@@ -1,7 +1,10 @@
 import { emit, on, showUI } from '@create-figma-plugin/utilities';
+import gdsJson from './gds.json';
+import GDSKEYS from './gds-keys.json';
 import {
   deleteInstance,
   focusOnNodes,
+  getNodePage,
   getNodesByType,
   IComponent,
   IComponentSet,
@@ -12,14 +15,18 @@ import {
   ClearLibraries,
   DeleteInstances,
   DetachInstances,
+  FindAllInstances,
   GetLibraries,
   GetLocalMissing,
+  GetNodeByID,
   GetRemoteMissing,
+  GetThisInstance,
   ReplaceInstances,
   ResizeWindowHandler,
   ScanLibrary,
   SelectNodes,
   TLibrary,
+  UpdateInstances,
   UpdateLocalMissing,
   UpdateRemoteComponents,
   UpdateUserLibraries,
@@ -50,6 +57,44 @@ const getUserLibraries = async (): Promise<TLibrary[]> => {
   );
 
   return asdad;
+};
+
+const getMainsInPage = async () => {
+  const mains = await getNodesByType({
+    types: ['COMPONENT'],
+    context: { page: figma.currentPage },
+  });
+
+  console.log('mains', mains);
+};
+
+const getThisInstance = () => {
+  const nodes: BaseNode[] = [];
+  const mainKeys: string[] = [];
+  figma.currentPage.selection.map(async (node) => {
+    const baseNode = await figma.getNodeByIdAsync(node.id);
+    if (baseNode) {
+      nodes.push(baseNode);
+    }
+  });
+
+  nodes.forEach(async (node) => {
+    if (node.type !== 'INSTANCE') {
+      figma.notify('Select an instance');
+      return;
+    }
+
+    const main = await node.getMainComponentAsync();
+    if (!main) {
+      return;
+    }
+
+    if (main.type === 'COMPONENT') {
+      mainKeys.push(main.key);
+    }
+  });
+
+  console.log('mainKeys', mainKeys);
 };
 
 export default function () {
@@ -130,59 +175,78 @@ export default function () {
   });
 
   on<ScanLibrary>('SCAN_LIBRARY', async () => {
-    const componentData = new Set<IComponent | IComponentSet>();
+    await figma.loadAllPagesAsync();
 
-    const components = getNodesByType({
-      types: ['COMPONENT', 'COMPONENT_SET'],
-    });
+    const components: string[] = [];
 
-    if (components) {
-      (await components).forEach((component) => {
-        const isExisting = [...componentData].some(
-          (c) => c.id === component.id
-        );
+    try {
+      const cmp = await getNodesByType({
+        types: ['COMPONENT'],
+        context: { root: true },
+      });
 
-        if (!isExisting) {
-          componentData.add(component);
+      cmp.forEach((c) => {
+        if (c.key) {
+          components.push(c.key);
         }
       });
+    } catch (err) {
+      console.log('err', err);
     }
 
-    const libraryName = figma.root.name;
-    const userLibraries =
-      (await figma.clientStorage.getAsync('userLibraries')) || {};
-
-    userLibraries[libraryName] = {
-      name: libraryName,
-      components: [...componentData],
-    };
-
-    figma.clientStorage
-      .setAsync('userLibraries', userLibraries)
-      .then(() => {
-        figma.notify(
-          `${libraryName} is saved with ${componentData.size} components`
-        );
-        emit<UpdateUserLibraries>('UPDATE_USER_LIBRARIES', userLibraries);
-      })
-      .catch((error) => {
-        console.error('Error saving component data:', error);
-      });
+    console.log('lib', components);
   });
 
-  // on<FindRemoteMissingInstances>('FIND_REMOTE_MISSING', async () => {
-  //   const userLibraries = await getUserLibraries();
-  //   const instances = getInstances();
+  const findAllInstances = async () => {
+    // await figma.loadAllPagesAsync();
+    const instances = await getNodesByType({
+      types: ['INSTANCE'],
+      context: { page: figma.currentPage },
+      // context: { root: true },
+    });
 
-  //   const remoteMissingInstances = compareWithLibrary(userLibraries, instances);
-  // });
+    const notInGDS: IInstance[] = [];
+
+    instances.forEach((instance) => {
+      // ignore hidden instances
+      if (instance.mainComponent) {
+        if (instance.mainComponent.remote) {
+          const InGDS = (GDSKEYS as string[]).find(
+            (key) => key === instance.mainComponent?.key
+          );
+          if (!InGDS) {
+            console.log('not in GDS', instance);
+            notInGDS.push(instance);
+          }
+        }
+      }
+    });
+
+    emit<UpdateInstances>('UPDATE_INSTANCES', notInGDS);
+    console.log('notInGDS', notInGDS);
+  };
+
+  on<GetThisInstance>('GET_THIS_INSTANCE', getMainsInPage);
+
+  on<GetNodeByID>('GET_NODE_BY_ID', async () => {
+    const node = await figma.getNodeByIdAsync('36148:91067');
+
+    if (!node || node.type === 'PAGE' || node.type === 'DOCUMENT') {
+      figma.notify('nope');
+      return;
+    }
+    figma.currentPage.selection = [node];
+    console.log('node', node);
+  });
+
+  on<FindAllInstances>('FIND_ALL_INSTANCES', findAllInstances);
 
   on<DetachInstances>('DETACH_INSTANCES', (instances: IInstance[]) => {
     const detachedFrames: FrameNode[] = [];
 
     instances.forEach(async (instance) => {
       const instanceNode = (await figma.getNodeByIdAsync(
-        instance.nodeId
+        instance.id
       )) as InstanceNode;
 
       detachedFrames.push(instanceNode.detachInstance());
@@ -200,7 +264,7 @@ export default function () {
   on<DeleteInstances>('DELETE_INSTANCES', (instances: IInstance[]) => {
     instances.forEach(async (instance) => {
       deleteInstance({
-        node: (await figma.getNodeByIdAsync(instance.nodeId)) as InstanceNode,
+        node: (await figma.getNodeByIdAsync(instance.id)) as InstanceNode,
       });
     });
     figma.notify(`🗑️ Deleted: ${instances.length} instances`);
@@ -219,7 +283,7 @@ export default function () {
       if (componentNode && componentNode.type === 'COMPONENT') {
         instances.forEach(async (instance) => {
           (
-            (await figma.getNodeByIdAsync(instance.nodeId)) as InstanceNode
+            (await figma.getNodeByIdAsync(instance.id)) as InstanceNode
           ).mainComponent = componentNode;
         });
       }

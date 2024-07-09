@@ -7,6 +7,7 @@ import { useEffect, useState } from 'preact/hooks';
 import InstanceDisplayer from '../components/InstanceDisplayer';
 import {
   ClearLibraries,
+  FindAllInstances,
   GetLibraries,
   GetRemoteMissing,
   ScanLibrary,
@@ -21,10 +22,6 @@ interface Props {
 }
 
 export default function Remote({ libraries, instances }: Props): h.JSX.Element {
-  useEffect(() => {
-    emit<GetLibraries>('GET_LIBRARIES');
-    emit<GetRemoteMissing>('GET_REMOTE_MISSING');
-  }, []);
   const [checkedInstanceIds, setCheckedInstanceIds] = useState<{
     [key: string]: boolean;
   }>({});
@@ -43,12 +40,9 @@ export default function Remote({ libraries, instances }: Props): h.JSX.Element {
     emit<ClearLibraries>('CLEAR_LIBRARIES');
   };
 
-  useEffect(() => {
-    on<UpdateUserLibraries>(
-      'UPDATE_USER_LIBRARIES',
-      (data) => libraries === data
-    );
-  });
+  const handleFindAllInstances = () => {
+    emit<FindAllInstances>('FIND_ALL_INSTANCES');
+  };
 
   if (libraries.length === 0) {
     return (
@@ -57,6 +51,7 @@ export default function Remote({ libraries, instances }: Props): h.JSX.Element {
         <Button onClick={handleScanLibrary}>Scan this file as library</Button>
         <Button onClick={handleGetUserLibraries}>Find User Libraries</Button>
         <Button onClick={handleClearLibraries}>CLEAR LIBRARIES</Button>
+        <Button onClick={handleFindAllInstances}>Find All Instances</Button>
       </div>
     );
   }
@@ -100,6 +95,7 @@ export default function Remote({ libraries, instances }: Props): h.JSX.Element {
       <Button onClick={handleScanLibrary}>Scan this file as library</Button>
       <Button onClick={handleGetUserLibraries}>Find User Libraries</Button>
       <Button onClick={handleClearLibraries}>CLEAR LIBRARIES</Button>
+      <Button onClick={handleFindAllInstances}>Find All Instances</Button>
     </div>
   );
 }

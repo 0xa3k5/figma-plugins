@@ -67,7 +67,7 @@ export const getNodesByType = async <T extends NodeTypes>({
  * @param node The node to find the PageNode for.
  * @returns The PageNode that the node is part of.
  */
-export const getNodePage = (node: BaseNode): PageNode => {
+export const getNodePage = (node: BaseNode): PageNode | undefined => {
   if (node.type === 'PAGE') {
     return node as PageNode;
   }
@@ -76,7 +76,7 @@ export const getNodePage = (node: BaseNode): PageNode => {
   }
 
   // The node is not part of any page, probably the node is root
-  throw new Error('Node is not part of any page.');
+  console.log('Node is not part of any page.');
 };
 
 /**
@@ -137,7 +137,7 @@ export function groupComponentsByParent<T extends IComponent | IInstance>(
     (acc, item) => {
       const key =
         'mainComponent' in item
-          ? item.mainComponent.id
+          ? item.mainComponent?.id ?? item.id
           : item.parent?.id ?? item.id;
 
       if (!acc[key]) {

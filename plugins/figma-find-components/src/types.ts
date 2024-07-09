@@ -4,6 +4,7 @@ import { IComponent, IInstance } from '@repo/utils';
 export enum ETabs {
   LOCAL = 'Local Missing',
   REMOTE = 'Remote',
+  MISSING = 'Missing',
 }
 export interface ResizeWindowHandler extends EventHandler {
   name: 'RESIZE_WINDOW';
@@ -80,4 +81,23 @@ export interface ReplaceInstances extends EventHandler {
 export interface ClearLibraries extends EventHandler {
   name: 'CLEAR_LIBRARIES';
   handler: () => void;
+}
+
+export interface FindAllInstances extends EventHandler {
+  name: 'FIND_ALL_INSTANCES';
+  handler: () => void;
+}
+
+export interface GetThisInstance extends EventHandler {
+  name: 'GET_THIS_INSTANCE';
+  handler: () => void;
+}
+
+export interface GetNodeByID extends EventHandler {
+  name: 'GET_NODE_BY_ID';
+  handler: () => void;
+}
+export interface UpdateInstances extends EventHandler {
+  name: 'UPDATE_INSTANCES';
+  handler: (instances: IInstance[]) => void;
 }
