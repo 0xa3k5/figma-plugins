@@ -9,80 +9,79 @@ import {
   ClearLibraries,
   FindAllInstances,
   GetLibraries,
-  GetRemoteMissing,
   ScanLibrary,
   TLibrary,
+  UpdateRemoteMissingInstances,
   UpdateUserLibraries,
 } from '../types';
 import { groupByPage } from '../utils';
 
-interface Props {
-  libraries: TLibrary[];
-  instances: IInstance[];
-}
-
-export default function Remote({ libraries, instances }: Props): h.JSX.Element {
+export default function RemoteMissing(): h.JSX.Element {
   const [checkedInstanceIds, setCheckedInstanceIds] = useState<{
     [key: string]: boolean;
   }>({});
+  const [groupedInstances, setGroupedInstances] = useState<{
+    [key: string]: Record<string, IInstance[]>;
+  }>({});
+
+  const [libraries, setLibraries] = useState<TLibrary[]>([]);
+
+  on<UpdateRemoteMissingInstances>(
+    'UPDATE_REMOTE_MISSING_INSTANCES',
+    (instances: IInstance[]) => {
+      setGroupedInstances(groupByPage(groupComponentsByParent(instances)));
+    }
+  );
+
+  on<UpdateUserLibraries>('UPDATE_USER_LIBRARIES', (libraries: TLibrary[]) => {
+    setLibraries(libraries);
+  });
+
   const isAnyInstanceChecked = Object.values(checkedInstanceIds).some(
     (isChecked) => isChecked
   );
 
-  const handleGetUserLibraries = () => {
+  useEffect(() => {
     emit<GetLibraries>('GET_LIBRARIES');
-  };
-
-  const handleScanLibrary = () => {
-    emit<ScanLibrary>('SCAN_LIBRARY');
-  };
-  const handleClearLibraries = () => {
-    emit<ClearLibraries>('CLEAR_LIBRARIES');
-  };
-
-  const handleFindAllInstances = () => {
-    emit<FindAllInstances>('FIND_ALL_INSTANCES');
-  };
-
-  if (libraries.length === 0) {
-    return (
-      <div className="flex size-full flex-col items-center justify-center gap-4 py-8">
-        <h2 className="">No User Libraries</h2>
-        <Button onClick={handleScanLibrary}>Scan this file as library</Button>
-        <Button onClick={handleGetUserLibraries}>Find User Libraries</Button>
-        <Button onClick={handleClearLibraries}>CLEAR LIBRARIES</Button>
-        <Button onClick={handleFindAllInstances}>Find All Instances</Button>
-      </div>
-    );
-  }
-
-  const grouped = groupByPage(groupComponentsByParent(instances));
-
-  console.log('instance', instances);
-  console.log(grouped, 'grouped');
+  }, []);
 
   return (
-    <div className="mt-12">
-      <div className="">
-        {Object.values(libraries).map((library) => (
-          <div key={library.name}>
-            <span>Lib: {library.name}</span>
-          </div>
-        ))}
+    <div className="w-full">
+      <div className="flex w-full flex-col gap-2 border-b p-4">
+        {libraries.map((lib) => {
+          return (
+            <div className="flex w-full items-center gap-2 text-sm">
+              <IconLayerComponent16 />
+              <span>{lib.name}</span>
+              <span className="opacity-40">{lib.components.length}</span>
+            </div>
+          );
+        })}
+        <div className="flex gap-2">
+          <Button secondary onClick={() => emit<ScanLibrary>('SCAN_LIBRARY')}>
+            Scan this file as library
+          </Button>
+          <Button
+            secondary
+            onClick={() => emit<ClearLibraries>('CLEAR_LIBRARIES')}
+          >
+            Clear Libraries
+          </Button>
+        </div>
       </div>
-      {Object.keys(grouped).map((mainCompName) => (
+      {Object.keys(groupedInstances).map((mainCompName) => (
         <div className="flex flex-col items-start" key={mainCompName}>
           <div className="flex items-center gap-2 px-4 py-2 text-sm">
             <IconLayerComponent16 />
             <span>{mainCompName}</span>
           </div>
-          {Object.keys(grouped[mainCompName]).map((pageName) => {
-            const instancessss = grouped[mainCompName][pageName];
+          {Object.keys(groupedInstances[mainCompName]).map((pageName) => {
+            const instances = groupedInstances[mainCompName][pageName];
 
             return (
               <InstanceDisplayer
-                key={instancessss[0].id}
-                instances={instancessss}
+                key={instances[0].id}
+                instances={instances}
                 pageName={pageName}
                 checkedInstanceIds={checkedInstanceIds}
                 setCheckedInstanceIds={setCheckedInstanceIds}
@@ -92,10 +91,9 @@ export default function Remote({ libraries, instances }: Props): h.JSX.Element {
           })}
         </div>
       ))}
-      <Button onClick={handleScanLibrary}>Scan this file as library</Button>
-      <Button onClick={handleGetUserLibraries}>Find User Libraries</Button>
-      <Button onClick={handleClearLibraries}>CLEAR LIBRARIES</Button>
-      <Button onClick={handleFindAllInstances}>Find All Instances</Button>
+      <Button onClick={() => emit<FindAllInstances>('FIND_ALL_INSTANCES')}>
+        Find Missing Components
+      </Button>
     </div>
   );
 }

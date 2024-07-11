@@ -4,8 +4,8 @@ export default function groupByPage(
 ): Record<string, Record<string, IInstance[]>> {
   const grouped: Record<string, Record<string, IInstance[]>> = {};
 
-  Object.keys(components).forEach((mainCompName) => {
-    const groupedByPageName = components[mainCompName].reduce(
+  Object.keys(components).forEach((mainCompId) => {
+    const groupedByPageName = components[mainCompId].reduce(
       (acc, componentInstance) => {
         const pageName = componentInstance.page?.name ?? 'root';
 
@@ -16,7 +16,7 @@ export default function groupByPage(
       {} as Record<string, IInstance[]>
     );
 
-    grouped[mainCompName] = groupedByPageName;
+    grouped[mainCompId] = groupedByPageName;
   });
 
   return grouped;

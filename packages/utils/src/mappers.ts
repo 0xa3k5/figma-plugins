@@ -5,7 +5,6 @@ export const mapComponentNodeToIComponent = (
   node: ComponentNode
 ): IComponent | null => {
   if (node === null) {
-    console.log({ node });
     return null;
   }
   return {
@@ -18,10 +17,10 @@ export const mapComponentNodeToIComponent = (
         : undefined,
     remote: node.remote,
     page: getNodePage(node),
-    // properties:
-    //   node.parent !== null && node.parent.type === 'COMPONENT_SET'
-    //     ? null
-    //     : node.componentPropertyDefinitions,
+    properties:
+      node.parent !== null && node.parent.type === 'COMPONENT_SET'
+        ? null
+        : node.componentPropertyDefinitions,
   };
 };
 
@@ -44,7 +43,6 @@ export const mapComponentSetNodeToIComponentSet = (
   node: ComponentSetNode
 ): IComponentSet | null => {
   if (node === null) {
-    console.log({ node });
     return null;
   }
 
@@ -53,6 +51,6 @@ export const mapComponentSetNodeToIComponentSet = (
     name: node.name,
     page: getNodePage(node),
     remote: node.remote,
-    // properties: node.componentPropertyDefinitions,
+    properties: node.componentPropertyDefinitions,
   };
 };

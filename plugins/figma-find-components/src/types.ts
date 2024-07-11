@@ -3,23 +3,17 @@ import { IComponent, IInstance } from '@repo/utils';
 
 export enum ETabs {
   LOCAL = 'Local Missing',
-  REMOTE = 'Remote',
-  MISSING = 'Missing',
+  REMOTE = 'Remote Missing',
 }
 export interface ResizeWindowHandler extends EventHandler {
   name: 'RESIZE_WINDOW';
   handler: (windowSize: { width: number; height: number }) => void;
 }
-// export interface IComponent {
-//   id: string;
-//   name: string;
-// }
-export interface ILibrary {
-  name: string;
-  components: IComponent[];
-}
 
-export type TLibrary = Record<string, ILibrary>;
+export interface TLibrary {
+  name: string;
+  components: string[];
+}
 
 export interface GetRemoteMissing extends EventHandler {
   name: 'GET_REMOTE_MISSING';
@@ -80,7 +74,7 @@ export interface ReplaceInstances extends EventHandler {
 
 export interface ClearLibraries extends EventHandler {
   name: 'CLEAR_LIBRARIES';
-  handler: () => void;
+  handler: (key?: string) => void;
 }
 
 export interface FindAllInstances extends EventHandler {
@@ -97,7 +91,7 @@ export interface GetNodeByID extends EventHandler {
   name: 'GET_NODE_BY_ID';
   handler: () => void;
 }
-export interface UpdateInstances extends EventHandler {
-  name: 'UPDATE_INSTANCES';
+export interface UpdateRemoteMissingInstances extends EventHandler {
+  name: 'UPDATE_REMOTE_MISSING_INSTANCES';
   handler: (instances: IInstance[]) => void;
 }

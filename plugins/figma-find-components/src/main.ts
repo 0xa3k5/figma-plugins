@@ -1,10 +1,8 @@
 import { emit, on, showUI } from '@create-figma-plugin/utilities';
-import gdsJson from './gds.json';
-import GDSKEYS from './gds-keys.json';
+
 import {
   deleteInstance,
   focusOnNodes,
-  getNodePage,
   getNodesByType,
   IComponent,
   IComponentSet,
@@ -18,20 +16,16 @@ import {
   FindAllInstances,
   GetLibraries,
   GetLocalMissing,
-  GetNodeByID,
-  GetRemoteMissing,
   GetThisInstance,
   ReplaceInstances,
   ResizeWindowHandler,
   ScanLibrary,
   SelectNodes,
   TLibrary,
-  UpdateInstances,
+  UpdateRemoteMissingInstances,
   UpdateLocalMissing,
-  UpdateRemoteComponents,
   UpdateUserLibraries,
 } from './types';
-import { compareWithLibrary } from './utils';
 
 let localMissingData: {
   missingInstances: IInstance[];
@@ -47,16 +41,17 @@ const updateLocalMissingData = (updatedInstances: IInstance[]) => {
   );
 };
 
-const getUserLibraries = async (): Promise<TLibrary[]> => {
-  const userLibraries =
-    (await figma.clientStorage.getAsync('userLibraries')) || {};
+const getUserLibraries = async () => {
+  const libKeys = await figma.clientStorage.keysAsync();
+  const userLibraries: TLibrary[] = [];
 
-  console.log(userLibraries);
-  const asdad: TLibrary[] = Object.keys(userLibraries).map(
-    (libName) => userLibraries[libName]
-  );
+  for (const key of libKeys) {
+    const componentKeys = await figma.clientStorage.getAsync(key);
+    userLibraries.push({ name: key, components: componentKeys });
+  }
 
-  return asdad;
+  emit<UpdateUserLibraries>('UPDATE_USER_LIBRARIES', userLibraries);
+  return userLibraries;
 };
 
 const getMainsInPage = async () => {
@@ -64,37 +59,6 @@ const getMainsInPage = async () => {
     types: ['COMPONENT'],
     context: { page: figma.currentPage },
   });
-
-  console.log('mains', mains);
-};
-
-const getThisInstance = () => {
-  const nodes: BaseNode[] = [];
-  const mainKeys: string[] = [];
-  figma.currentPage.selection.map(async (node) => {
-    const baseNode = await figma.getNodeByIdAsync(node.id);
-    if (baseNode) {
-      nodes.push(baseNode);
-    }
-  });
-
-  nodes.forEach(async (node) => {
-    if (node.type !== 'INSTANCE') {
-      figma.notify('Select an instance');
-      return;
-    }
-
-    const main = await node.getMainComponentAsync();
-    if (!main) {
-      return;
-    }
-
-    if (main.type === 'COMPONENT') {
-      mainKeys.push(main.key);
-    }
-  });
-
-  console.log('mainKeys', mainKeys);
 };
 
 export default function () {
@@ -142,42 +106,34 @@ export default function () {
     });
   });
 
-  on<ClearLibraries>('CLEAR_LIBRARIES', async () => {
-    await figma.clientStorage.deleteAsync('userLibraries');
-  });
+  on<ClearLibraries>('CLEAR_LIBRARIES', async (key?: string) => {
+    if (key) {
+      await figma.clientStorage.deleteAsync(key);
+      figma.notify(`🗑️ Deleted: ${key}`);
+      await getUserLibraries();
+      return;
+    }
+    const keys = await figma.clientStorage.keysAsync();
 
-  on<GetRemoteMissing>('GET_REMOTE_MISSING', async () => {
-    const instances = getNodesByType({ types: ['INSTANCE'] });
-    const userLibraries = await getUserLibraries();
-
-    const remoteInstances: IInstance[] = [];
-
-    (await instances).forEach((instance) => {
-      if (instance.mainComponent && instance.mainComponent.remote) {
-        remoteInstances.push(instance);
-      }
+    keys.forEach(async (key) => {
+      await figma.clientStorage.deleteAsync(key);
     });
 
-    // todo
-    // console.log('remote_INSTANCES', remoteInstances);
-    const remoteMissing = compareWithLibrary(userLibraries, remoteInstances);
+    if (keys.length > 1) {
+      figma.notify(`🗑️ Deleted: ${keys.length} libraries`);
+      return;
+    }
 
-    // const grouped = groupByMain(remoteInstances);
-    console.log('remoteMissing', remoteMissing);
-
-    emit<UpdateRemoteComponents>('UPDATE_REMOTE_COMPONENTS', remoteMissing);
+    figma.notify(`🗑️ Deleted: ${key}`);
+    await getUserLibraries();
   });
 
-  on<GetLibraries>('GET_LIBRARIES', async () => {
-    const userLibraries = await getUserLibraries();
-
-    emit<UpdateUserLibraries>('UPDATE_USER_LIBRARIES', userLibraries);
-  });
+  on<GetLibraries>('GET_LIBRARIES', async () => await getUserLibraries());
 
   on<ScanLibrary>('SCAN_LIBRARY', async () => {
     await figma.loadAllPagesAsync();
 
-    const components: string[] = [];
+    const componentKeys: string[] = [];
 
     try {
       const cmp = await getNodesByType({
@@ -187,17 +143,21 @@ export default function () {
 
       cmp.forEach((c) => {
         if (c.key) {
-          components.push(c.key);
+          componentKeys.push(c.key);
         }
       });
     } catch (err) {
       console.log('err', err);
     }
 
-    console.log('lib', components);
+    await figma.clientStorage.setAsync(
+      figma.root.name ?? 'default',
+      componentKeys
+    );
+    await getUserLibraries();
   });
 
-  const findAllInstances = async () => {
+  const findRemoteMissingInstances = async () => {
     // await figma.loadAllPagesAsync();
     const instances = await getNodesByType({
       types: ['INSTANCE'],
@@ -205,41 +165,41 @@ export default function () {
       // context: { root: true },
     });
 
-    const notInGDS: IInstance[] = [];
+    const libKeys = await getUserLibraries();
+
+    if (libKeys.length === 0) {
+      figma.notify('No libraries found, scan a library to start');
+      return;
+    }
+
+    const remoteMissing: IInstance[] = [];
 
     instances.forEach((instance) => {
-      // ignore hidden instances
-      if (instance.mainComponent) {
-        if (instance.mainComponent.remote) {
-          const InGDS = (GDSKEYS as string[]).find(
-            (key) => key === instance.mainComponent?.key
-          );
-          if (!InGDS) {
-            console.log('not in GDS', instance);
-            notInGDS.push(instance);
-          }
+      if (!instance.mainComponent) {
+        return;
+      }
+
+      if (instance.mainComponent.remote) {
+        const exists = libKeys.find(
+          (lib) => lib.components.includes(instance.mainComponent!.key) // ! because we check it before??
+        );
+
+        if (!exists) {
+          remoteMissing.push(instance);
         }
       }
     });
 
-    emit<UpdateInstances>('UPDATE_INSTANCES', notInGDS);
-    console.log('notInGDS', notInGDS);
+    figma.notify(`Found: ${remoteMissing.length} missing components`);
+    emit<UpdateRemoteMissingInstances>(
+      'UPDATE_REMOTE_MISSING_INSTANCES',
+      remoteMissing
+    );
   };
 
   on<GetThisInstance>('GET_THIS_INSTANCE', getMainsInPage);
 
-  on<GetNodeByID>('GET_NODE_BY_ID', async () => {
-    const node = await figma.getNodeByIdAsync('36148:91067');
-
-    if (!node || node.type === 'PAGE' || node.type === 'DOCUMENT') {
-      figma.notify('nope');
-      return;
-    }
-    figma.currentPage.selection = [node];
-    console.log('node', node);
-  });
-
-  on<FindAllInstances>('FIND_ALL_INSTANCES', findAllInstances);
+  on<FindAllInstances>('FIND_ALL_INSTANCES', findRemoteMissingInstances);
 
   on<DetachInstances>('DETACH_INSTANCES', (instances: IInstance[]) => {
     const detachedFrames: FrameNode[] = [];

@@ -1,7 +1,6 @@
 import Local from './Local';
 import Remote from './Remote';
-import Missing from './Missing';
 
-const Tabs = { Local, Remote, Missing };
+const Tabs = { Local, Remote };
 
 export default Tabs;

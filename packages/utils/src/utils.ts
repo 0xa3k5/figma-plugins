@@ -3,7 +3,7 @@ import {
   mapComponentSetNodeToIComponentSet,
   mapInstanceNodeToIInstance,
 } from './mappers';
-import { IComponent, IComponentSet, IInstance } from './types';
+import { IComponent, IComponentSet, IInstance, IPage } from './types';
 
 type NodeTypes = 'COMPONENT' | 'COMPONENT_SET' | 'INSTANCE';
 type ReturnTypeMap = {
@@ -67,16 +67,28 @@ export const getNodesByType = async <T extends NodeTypes>({
  * @param node The node to find the PageNode for.
  * @returns The PageNode that the node is part of.
  */
-export const getNodePage = (node: BaseNode): PageNode | undefined => {
+export const getNodePage = (node: BaseNode): IPage | null => {
   if (node.type === 'PAGE') {
-    return node as PageNode;
+    return {
+      id: node.id,
+      name: node.name,
+      node: node,
+    };
+  }
+
+  if (
+    (node.type === 'COMPONENT_SET' || node.type === 'COMPONENT') &&
+    node.remote
+  ) {
+    // we can't get the parent of the remote component
+    return null;
   }
   if (node.parent) {
     return getNodePage(node.parent);
   }
 
   // The node is not part of any page, probably the node is root
-  console.log('Node is not part of any page.');
+  return null;
 };
 
 /**
@@ -122,7 +134,7 @@ export const focusOnNodes = async ({
     const pageNode = getNodePage(nodes[0]);
 
     if (pageNode) {
-      await figma.setCurrentPageAsync(pageNode);
+      await figma.setCurrentPageAsync(pageNode.node);
     }
     figma.currentPage.selection = nodes;
     figma.viewport.scrollAndZoomIntoView(nodes);
@@ -137,8 +149,8 @@ export function groupComponentsByParent<T extends IComponent | IInstance>(
     (acc, item) => {
       const key =
         'mainComponent' in item
-          ? item.mainComponent?.id ?? item.id
-          : item.parent?.id ?? item.id;
+          ? item.mainComponent?.name ?? item.name
+          : item.parent?.name ?? item.name;
 
       if (!acc[key]) {
         acc[key] = [];

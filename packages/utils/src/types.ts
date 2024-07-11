@@ -5,10 +5,10 @@ export interface IComponent {
   name: string;
   parent?: IComponentSet;
   isSet?: boolean;
-  page?: PageNode;
+  page: IPage | null;
   remote: boolean;
   properties?: ComponentPropertyDefinitions | null;
-  key?: string;
+  key: string;
   visible?: boolean;
 }
 
@@ -16,7 +16,7 @@ export interface IInstance {
   id: string;
   name: string;
   mainComponent?: IComponent;
-  page?: PageNode;
+  page: IPage | null;
   parent?: BaseNode;
   visible?: boolean;
 }
@@ -24,10 +24,16 @@ export interface IInstance {
 export interface IComponentSet {
   id: string;
   name: string;
-  page?: PageNode;
+  page: IPage | null;
   remote: boolean;
   properties?: ComponentPropertyDefinitions | null;
   visible?: boolean;
+}
+
+export interface IPage {
+  id: string;
+  name: string;
+  node: PageNode;
 }
 
 export type NamingConvention =
