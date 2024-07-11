@@ -9,17 +9,10 @@ import { useEffect, useState } from 'preact/hooks';
 import Layout from './components/Layout';
 import TabBar from './components/TabBar';
 import Tabs from './tabs';
-import {
-  ETabs,
-  GetLocalMissing,
-  TLibrary,
-  UpdateLocalMissing,
-  UpdateRemoteComponents,
-  UpdateUserLibraries,
-} from './types';
+import { ETabs, GetLocalMissing, UpdateLocalMissing } from './types';
 
 function FindComponents(): h.JSX.Element {
-  const [activeTab, setActiveTab] = useState(ETabs.LOCAL);
+  const [activeTab, setActiveTab] = useState(ETabs.REMOTE);
 
   const [localMissingInstances, setLocalMissingInstances] = useState<
     IInstance[]
@@ -27,11 +20,6 @@ function FindComponents(): h.JSX.Element {
   const [localMainComponents, setLocalMainComponents] = useState<IComponent[]>(
     []
   );
-
-  const [remoteMissingInstances, setRemoteMissingInstances] = useState<
-    IInstance[]
-  >([]);
-  const [userLibraries, setUserLibraries] = useState<TLibrary[]>([]);
 
   useEffect(() => {
     on<UpdateLocalMissing>(
@@ -41,15 +29,6 @@ function FindComponents(): h.JSX.Element {
         setLocalMainComponents(data.components);
       }
     );
-    on<UpdateRemoteComponents>(
-      'UPDATE_REMOTE_COMPONENTS',
-      (data: IInstance[]) => {
-        setRemoteMissingInstances(data);
-      }
-    );
-    on<UpdateUserLibraries>('UPDATE_USER_LIBRARIES', (data: TLibrary[]) => {
-      setUserLibraries(data);
-    });
   }, []);
 
   const handleGetLocalMissing = () => {
@@ -72,12 +51,8 @@ function FindComponents(): h.JSX.Element {
             localMain={localMainComponents}
           />
         )}
-        {activeTab === ETabs.REMOTE && (
-          <Tabs.Remote
-            libraries={userLibraries}
-            instances={remoteMissingInstances}
-          />
-        )}
+
+        {activeTab === ETabs.REMOTE && <Tabs.Remote />}
       </Layout>
     </div>
   );

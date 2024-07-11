@@ -48,7 +48,7 @@ export default function Local({
             <span>
               {
                 Object.values(groupedLocalMissing[mainCompId])[0][0]
-                  .mainComponent.name
+                  .mainComponent?.name
               }
             </span>
           </div>

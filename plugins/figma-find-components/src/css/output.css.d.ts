@@ -81,7 +81,6 @@ declare const styles: {
   readonly 'max-w-sm': string;
   readonly 'mb-12': string;
   readonly 'ml-2': string;
-  readonly 'mt-12': string;
   readonly 'mt-4': string;
   readonly 'opacity-0': string;
   readonly 'opacity-100': string;
@@ -90,6 +89,7 @@ declare const styles: {
   readonly 'overflow-auto': string;
   readonly 'p-1': string;
   readonly 'p-2': string;
+  readonly 'p-4': string;
   readonly 'pl-4': string;
   readonly 'placeholder:text-text-tertiary': string;
   readonly 'px-2': string;

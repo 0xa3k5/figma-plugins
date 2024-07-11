@@ -5,25 +5,35 @@ export interface IComponent {
   name: string;
   parent?: IComponentSet;
   isSet?: boolean;
-  page: PageNode;
+  page: IPage | null;
   remote: boolean;
-  properties: ComponentPropertyDefinitions | null;
+  properties?: ComponentPropertyDefinitions | null;
+  key: string;
+  visible?: boolean;
 }
 
 export interface IInstance {
   id: string;
   name: string;
-  nodeId: string;
-  mainComponent: IComponent;
-  page: PageNode;
+  mainComponent?: IComponent;
+  page: IPage | null;
+  parent?: BaseNode;
+  visible?: boolean;
 }
 
 export interface IComponentSet {
   id: string;
   name: string;
-  page: PageNode;
+  page: IPage | null;
   remote: boolean;
-  properties: ComponentPropertyDefinitions | null;
+  properties?: ComponentPropertyDefinitions | null;
+  visible?: boolean;
+}
+
+export interface IPage {
+  id: string;
+  name: string;
+  node: PageNode;
 }
 
 export type NamingConvention =
